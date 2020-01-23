@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
+    // attributes
     public float maxSpeed = .1f;
     public float speed = .02f;
     public float friction = .9f;
@@ -12,6 +13,9 @@ public class EnemyScript : MonoBehaviour
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
+
+    bool attacking;
+    Vector3 attackDir;
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +30,7 @@ public class EnemyScript : MonoBehaviour
         float playerDis = (player.transform.position - transform.position).magnitude;
 
         // Where is PLAYER
-        if (playerDis < detectionDistance && !AttackCheck(playerDis))
+        if (playerDis < detectionDistance && !AttackCheck(playerDis) && !attacking)
             direction = (player.transform.position - transform.position).normalized;
 
         // Slowdown if nothing
@@ -46,6 +50,8 @@ public class EnemyScript : MonoBehaviour
     {
         if (attackRange > playerDis)
         {
+            attacking = true;
+            attackDir = direction;
             return true;
         }
 
