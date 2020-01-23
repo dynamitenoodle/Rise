@@ -24,11 +24,16 @@ public class EnemyScript : MonoBehaviour
     public GameObject attackPrefab;
     GameObject attack;
 
+    // health
+    public float healthMax = 2;
+    float health;
+
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         velocity = Vector3.zero;
+        health = healthMax;
     }
 
     // Update is called once per frame
@@ -61,14 +66,8 @@ public class EnemyScript : MonoBehaviour
                 attack.transform.right = attackDir;
                 velocity += attackDir * (speed*2.5f);
 
-                // Checking the bounds
-                Bounds playerBounds = player.GetComponent<BoxCollider2D>().bounds;
-                playerBounds.extents += Vector3.forward * Mathf.Infinity; // scale the bounds to infinity on z
-
-                Bounds attackBounds = attack.GetComponent<BoxCollider2D>().bounds;
-                attackBounds.extents += Vector3.forward * Mathf.Infinity;
-
-                if (attackBounds.Intersects(playerBounds))
+                // Checking if player gets hit
+                if (player.GetComponent<Renderer>().bounds.Intersects(attack.GetComponent<Renderer>().bounds))
                     player.GetComponent<PlayerScript>().GetHit();
             }
 
