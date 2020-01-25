@@ -5,7 +5,6 @@ using UnityEngine;
 public class LevelGeneration : MonoBehaviour
 {
     //public vars for adjustments
-    public int mapSize;
     public int minRoomSpawns;
     public int maxRoomSpawns;
 
@@ -13,6 +12,8 @@ public class LevelGeneration : MonoBehaviour
     public int minMoveLength;
 
     public List<GameObject> rooms;
+
+    public Transform mapTransform;
 
     //class vars
     Helper helper;
@@ -37,7 +38,7 @@ public class LevelGeneration : MonoBehaviour
         int numRooms = Random.Range(minRoomSpawns, maxRoomSpawns);
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
-
+        InstantiateRooms(roomSpawns);
     }
 
     //generates the locations to spawn preset rooms
@@ -113,6 +114,16 @@ public class LevelGeneration : MonoBehaviour
         roomSpawn.location = new Vector2(x, y);
 
         return roomSpawn;
+    }
+
+    private void InstantiateRooms(List<RoomSpawn> roomSpawns)
+    {
+        foreach (RoomSpawn roomSpawn in roomSpawns)
+        {
+            GameObject room = Instantiate(rooms[roomSpawn.type], mapTransform);
+            room.transform.position = roomSpawn.location;
+        }
+        Debug.Log("FINISH");
     }
 
 }

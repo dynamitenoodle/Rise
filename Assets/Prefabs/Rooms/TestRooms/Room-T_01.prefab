@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1996871539691788165}
+  - component: {fileID: 8810667337223604064}
   m_Layer: 0
   m_Name: Room-T_01
   m_TagString: Untagged
@@ -33,6 +34,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8810667337223604064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1932620637698431790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4265afbd5d4a96488d3d7c605c3ca11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorways:
+  - {fileID: 8100044497705978528}
+  - {fileID: 8100044499550670776}
+  - {fileID: 8100044499118904671}
+  - {fileID: 8100044498630170976}
+  size: 12
 --- !u!1 &4123814196267449100
 GameObject:
   m_ObjectHideFlags: 0
