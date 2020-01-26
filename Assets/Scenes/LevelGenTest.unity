@@ -251,7 +251,7 @@ MonoBehaviour:
   maxMoveLength: 40
   minMoveLength: 10
   rooms:
-  - {fileID: 1932620637698431790, guid: d1f2018289d716848855df30539498af, type: 3}
+  - {fileID: 1932620637698431790, guid: c5d88c014927d134d8b80e1749855bf9, type: 3}
   mapTransform: {fileID: 1918115911}
 --- !u!1 &1918115910
 GameObject:
