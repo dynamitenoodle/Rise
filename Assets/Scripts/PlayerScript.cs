@@ -62,14 +62,15 @@ public class PlayerScript : MonoBehaviour
 
             //Flicker effect
             Color tempColor = GetComponent<SpriteRenderer>().color;
-            if ((hitTimer*100) % 20 > 10)
+            
+            if ((hitTimer * 100) % 20 > 10)
                 tempColor.a = .6f;
             else
                 tempColor.a = 1f;
 
             GetComponent<SpriteRenderer>().color = tempColor;
 
-            if (hitTimer>hitTimerMax)
+            if (hitTimer > hitTimerMax)
             {
                 hitTimer = 0;
                 invul = false;
