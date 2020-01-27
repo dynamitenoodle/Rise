@@ -23,6 +23,9 @@ public class EnemyScript : MonoBehaviour
     float attackTimer;
     public GameObject attackPrefab;
     GameObject attack;
+    public bool isMelee = true;
+    bool fired = false;
+    public float bulletSpeed = .2f;
 
     // health
     public float healthMax = 2;
@@ -59,23 +62,20 @@ public class EnemyScript : MonoBehaviour
             attackTimer += Time.deltaTime;
 
             // Create the attack when it is time
-            if (attackTimer > attackDelay && attack == null)
+            if (attackTimer > attackDelay && ((isMelee && attack == null) || !isMelee))
             {
-                attack = Instantiate(attackPrefab);
-                attack.transform.position = transform.position + (attackDir * attackSpacing);
-                attack.transform.right = attackDir;
-                
-                velocity += attackDir * (speed * 2.5f);
-
-                // Checking if player gets hit
-                if (player.GetComponent<Renderer>().bounds.Intersects(attack.GetComponent<Renderer>().bounds))
-                    player.GetComponent<PlayerScript>().GetHit();
+                Attack();
             }
 
             // Reset the attack timer
             if (attackTimer >= attackTimerMax)
             {
-                Destroy(attack);
+                if (isMelee)
+                    Destroy(attack);
+
+                else
+                    fired = false;
+
                 attackTimer = 0;
                 attacking = false;
             }
@@ -101,5 +101,45 @@ public class EnemyScript : MonoBehaviour
         }
 
         return false;
+    }
+
+    void Attack()
+    {
+        if (isMelee)
+        {
+            // Melee Attack
+            attack = Instantiate(attackPrefab);
+            attack.transform.position = transform.position + (attackDir * attackSpacing);
+            attack.transform.right = attackDir;
+
+            velocity += attackDir * (speed * 2.5f);
+
+            // Checking if player gets hit
+            if (player.GetComponent<Renderer>().bounds.Intersects(attack.GetComponent<Renderer>().bounds))
+                player.GetComponent<PlayerScript>().GetHit();
+        }
+
+        else if (!fired && !isMelee)
+        {
+            // Range Attack
+            attack = Instantiate(attackPrefab);
+            attack.transform.position = transform.position + (attackDir * attackSpacing);
+            attack.transform.right = attackDir;
+            attack.GetComponent<BulletScript>().SetAttributes(attackDir, bulletSpeed);
+
+            velocity += attackDir * (speed * -1.5f);
+
+            fired = true;
+        }
+    }
+
+    // Called by other scripts to hit the player
+    public void GetHit()
+    {
+        Debug.Log(gameObject.name + " was hit!");
+        health--;
+
+        if (health < 0)
+            Destroy(gameObject);
     }
 }
