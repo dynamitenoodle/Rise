@@ -64,6 +64,7 @@ public class EnemyScript : MonoBehaviour
                 attack = Instantiate(attackPrefab);
                 attack.transform.position = transform.position + (attackDir * attackSpacing);
                 attack.transform.right = attackDir;
+                
                 velocity += attackDir * (speed * 2.5f);
 
                 // Checking if player gets hit
