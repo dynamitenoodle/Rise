@@ -39,15 +39,7 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Input check
-        if (Input.GetKey(KeyCode.W))
-            direction.y += 1;
-        if (Input.GetKey(KeyCode.S))
-            direction.y -= 1;
-        if (Input.GetKey(KeyCode.D))
-            direction.x += 1;
-        if (Input.GetKey(KeyCode.A))
-            direction.x -= 1;
+        InputCheck();
 
         // Slowdown if nothing
         if (direction == Vector3.zero)
@@ -111,28 +103,10 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    // Checks if the player is colliding with walls
     void WallCheck()
     {
-        /*
-        List<GameObject> closeWalls = new List<GameObject>();
-        closeWalls.Add(walls[0]);
-        float closeDis = Vector3.Distance(closeWalls[0].transform.position, transform.position);
-        foreach (GameObject wall in walls)
-        {
-            float newDis = Vector3.Distance(wall.transform.position, transform.position);
-            if (newDis < closeDis)
-            {
-                closeWalls = new List<GameObject>();
-                closeWalls.Add(wall);
-                closeDis = newDis;
-            }
-            else if (newDis == closeDis && wall != walls[0])
-            {
-                closeWalls.Add(wall);
-            }
-        }
-        */
-
+        // Checking all the wall collisions
         foreach (GameObject wall in walls)
         {
             if (GetComponent<Renderer>().bounds.Intersects(wall.GetComponent<Renderer>().bounds))
@@ -154,40 +128,80 @@ public class PlayerScript : MonoBehaviour
                 // Set a distance to check walls (the number here works well with 1x1 boxes)
                 float dis = .08f;
 
-                // Checking which side to stop the player
+                // set a distance for how far the player and wall should be from each other
+                float dis2 = .6f;
+
+                /* 
+                 * Checking which side to stop the player
+                 * The fist check looks to see if the bounding boxes sides are within a certain distance.
+                 * The second check looks to see if the player is a certain orientation from the wall (aka, right checks makes sure the player is to the left of the wall). Helps with corners.
+                 * The third check is to ensure that when the player is right against a wall, the player can still move in every direction (except into a wall).
+                */
+
+                Vector3 fixedPos = transform.position;
                 // Right
-                if ((Mathf.Abs(playerRight - wallLeft) < dis) && transform.position.x < wallPos.x)
+                if ((Mathf.Abs(playerRight - wallLeft) < dis) && transform.position.x < wallPos.x /*&& (Mathf.Abs(transform.position.y - wallPos.y) < dis2)*/)
                 {
                     if (direction.x > 0)
                         direction.x = 0;
                     if (velocity.x > 0)
                         velocity.x = 0;
+
+                    Debug.Log("HIT");
+                    fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
                 }
                 // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis && transform.position.x > wallPos.x)
+                if (Mathf.Abs(playerLeft - wallRight) < dis && transform.position.x > wallPos.x /*&& (Mathf.Abs(transform.position.y - wallPos.y) < dis2)*/)
                 {
                     if (direction.x < 0)
                         direction.x = 0;
                     if (velocity.x < 0)
                         velocity.x = 0;
+
+                    fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
                 }
                 // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis && transform.position.y < wallPos.y)
+                if (Mathf.Abs(playerTop - wallBot) < dis && transform.position.y < wallPos.y /*&& (Mathf.Abs(transform.position.x - wallPos.x) < dis2)*/)
                 {
                     if (direction.y > 0)
                         direction.y = 0;
                     if (velocity.y > 0)
                         velocity.y = 0;
+
+                    fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
                 }
                 // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis && transform.position.y > wallPos.y)
+                if (Mathf.Abs(playerBot - wallTop) < dis && transform.position.y > wallPos.y /*&& (Mathf.Abs(transform.position.x - wallPos.x) < dis2)*/)
                 {
                     if (direction.y < 0)
                         direction.y = 0;
                     if (velocity.y < 0)
                         velocity.y = 0;
+
+                    fixedPos.y = fixedPos.y + (Mathf.Abs(playerBot - wallTop));
                 }
+
+                transform.position = fixedPos;
             }
         }
+    }
+    
+    // Checks the inputs
+    void InputCheck()
+    {
+        if (Input.GetKey(KeyCode.W))
+            direction.y += 1;
+        if (Input.GetKey(KeyCode.S))
+            direction.y -= 1;
+        if (Input.GetKey(KeyCode.D))
+            direction.x += 1;
+        if (Input.GetKey(KeyCode.A))
+            direction.x -= 1;
+
+        // If nothing is pressed, get rid of the direction
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+            direction.y = 0;
+        if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
+            direction.x = 0;
     }
 }
