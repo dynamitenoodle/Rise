@@ -113,6 +113,7 @@ public class PlayerScript : MonoBehaviour
 
     void WallCheck()
     {
+        /*
         List<GameObject> closeWalls = new List<GameObject>();
         closeWalls.Add(walls[0]);
         float closeDis = Vector3.Distance(closeWalls[0].transform.position, transform.position);
@@ -130,8 +131,9 @@ public class PlayerScript : MonoBehaviour
                 closeWalls.Add(wall);
             }
         }
+        */
 
-        foreach (GameObject wall in closeWalls)
+        foreach (GameObject wall in walls)
         {
             if (GetComponent<Renderer>().bounds.Intersects(wall.GetComponent<Renderer>().bounds))
             {
@@ -154,7 +156,7 @@ public class PlayerScript : MonoBehaviour
 
                 // Checking which side to stop the player
                 // Right
-                if (Mathf.Abs(playerRight - wallLeft) < dis)
+                if ((Mathf.Abs(playerRight - wallLeft) < dis) && transform.position.x < wallPos.x)
                 {
                     if (direction.x > 0)
                         direction.x = 0;
@@ -162,7 +164,7 @@ public class PlayerScript : MonoBehaviour
                         velocity.x = 0;
                 }
                 // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis)
+                if (Mathf.Abs(playerLeft - wallRight) < dis && transform.position.x > wallPos.x)
                 {
                     if (direction.x < 0)
                         direction.x = 0;
@@ -170,7 +172,7 @@ public class PlayerScript : MonoBehaviour
                         velocity.x = 0;
                 }
                 // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis)
+                if (Mathf.Abs(playerTop - wallBot) < dis && transform.position.y < wallPos.y)
                 {
                     if (direction.y > 0)
                         direction.y = 0;
@@ -178,7 +180,7 @@ public class PlayerScript : MonoBehaviour
                         velocity.y = 0;
                 }
                 // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis)
+                if (Mathf.Abs(playerBot - wallTop) < dis && transform.position.y > wallPos.y)
                 {
                     if (direction.y < 0)
                         direction.y = 0;
