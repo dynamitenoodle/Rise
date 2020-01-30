@@ -131,20 +131,20 @@ public class PlayerScript : MonoBehaviour
                 // Set a distance to check walls (the number here works well with 1x1 boxes)
                 float dis = .08f;
 
-                // set a distance for how far the player and wall should be from each other
-                float dis2 = .6f;
-
                 /* 
                  * Checking which side to stop the player
                  * The fist check looks to see if the bounding boxes sides are within a certain distance.
-                 * The second check looks to see if the player is a certain orientation from the wall (aka, right checks makes sure the player is to the left of the wall). Helps with corners.
-                 * The third check is to ensure that when the player is right against a wall, the player can still move in every direction (except into a wall).
                 */
 
                 Vector3 fixedPos = transform.position;
 
+                Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
+                Vector3 right = new Vector3(1, 0);
+                float angle = Vector3.Angle(playerToWall, right);
+                Debug.Log(angle);
+
                 // Right
-                if ((Mathf.Abs(playerRight - wallLeft) < dis)/* && transform.position.x < wallPos.x && (Mathf.Abs(transform.position.y - wallPos.y) < dis2) && Mathf.Abs(wallPos.x - transform.position.x) > dis2*/)
+                if (Mathf.Abs(playerRight - wallLeft) < dis && (angle > 0 && angle < 45f))
                 {
                     if (direction.x > 0)
                         direction.x = 0;
@@ -155,7 +155,7 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis/* && transform.position.x > wallPos.x && (Mathf.Abs(transform.position.y - wallPos.y) < dis2) && Mathf.Abs(wallPos.x - transform.position.x) > dis2*/)
+                if (Mathf.Abs(playerLeft - wallRight) < dis && (angle > 135f && angle < 225f))
                 {
                     if (direction.x < 0)
                         direction.x = 0;
@@ -166,8 +166,8 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis/* && transform.position.y < wallPos.y && (Mathf.Abs(transform.position.x - wallPos.x) < dis2) && Mathf.Abs(wallPos.y - transform.position.y) > dis2 */)
-                {
+                if (Mathf.Abs(playerTop - wallBot) < dis && (angle > 45f && angle < 135f))
+                { 
                     if (direction.y > 0)
                         direction.y = 0;
                     if (velocity.y > 0)
@@ -177,7 +177,7 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis/* && transform.position.y > wallPos.y && (Mathf.Abs(transform.position.x - wallPos.x) < dis2) && Mathf.Abs(wallPos.y - transform.position.y) > dis2 */)
+                if (Mathf.Abs(playerBot - wallTop) < dis && (angle > 45f && angle < 135f))
                 {
                     if (direction.y < 0)
                         direction.y = 0;
