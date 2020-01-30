@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7020881039946169963}
   - component: {fileID: 7020881039946169962}
   m_Layer: 0
-  m_Name: RangeEnemy (1)
+  m_Name: RangeEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -98,8 +98,8 @@ MonoBehaviour:
   friction: 0.9
   detectionDistance: 12
   attackRange: 6
-  attackTimerMax: 0.6
-  attackDelay: 0.25
+  attackTimerMax: 1
+  attackDelay: 0.3
   attackSpacing: 1
   attackPrefab: {fileID: 7932270264175950735, guid: 96c5a1447f753b04cac2c9413136feac,
     type: 3}

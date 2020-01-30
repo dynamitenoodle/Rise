@@ -27,11 +27,24 @@ public class BulletScript : MonoBehaviour
             player.GetComponent<PlayerScript>().GetHit();
             Destroy(gameObject);
         }
+
+        CollisionCheck();
     }
 
     public void SetAttributes(Vector3 dir, float spd)
     {
         direction = dir;
         speed = spd;
+    }
+
+    void CollisionCheck()
+    {
+        foreach (Collider2D col in FindObjectsOfType<Collider2D>())
+        {
+            // if the col isn't this object
+            if (col.gameObject != gameObject)
+                if (col.bounds.Intersects(GetComponent<Collider2D>().bounds))
+                    Destroy(gameObject);
+        }
     }
 }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7932270264175950733}
   - component: {fileID: 7932270264175950732}
   - component: {fileID: 4481260164966246358}
+  - component: {fileID: 5752485810399604700}
   m_Layer: 0
   m_Name: enemyRangeAttack
   m_TagString: EnemyAttack
@@ -93,3 +94,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2e3ba0a5e6bcd43b43c38c9bb357d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: {x: 0, y: 0, z: 0}
+  speed: 0
+--- !u!61 &5752485810399604700
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7932270264175950735}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 10.24, y: 10.24}
+    newSize: {x: 10.24, y: 10.24}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 10.24, y: 10.24}
+  m_EdgeRadius: 0
