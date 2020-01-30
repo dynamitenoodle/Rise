@@ -8,9 +8,8 @@ public class PlayerScript : MonoBehaviour
     public float maxSpeed = .1f;
     public float speed = .02f;
     public float friction = .9f;
-    public float sprintMultiplier = 1.5f;
     Vector3 velocity;
-    public Vector3 direction;
+    Vector3 direction;
 
     // health stuffs
     public float healthMax;
@@ -56,11 +55,7 @@ public class PlayerScript : MonoBehaviour
 
         velocity += (direction * speed);
 
-        // Sprinting
-        if (Input.GetKey(KeyCode.LeftShift))
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed * sprintMultiplier);
-        else
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
         // Carry out the math
         transform.position += velocity;
@@ -116,21 +111,21 @@ public class PlayerScript : MonoBehaviour
         // Checking all the wall collisions
         foreach (GameObject wall in walls)
         {
-            if (GetComponent<Renderer>().bounds.Intersects(wall.GetComponent<Renderer>().bounds))
+            if (GetComponent<Collider2D>().bounds.Intersects(wall.GetComponent<Collider2D>().bounds))
             {
                 // Make an easier variable
                 Vector3 wallPos = wall.transform.position;
 
                 // Calculate the bounding boxes of the player and the wall
-                float playerRight = transform.position.x + GetComponent<Renderer>().bounds.extents.x;
-                float playerLeft = transform.position.x - GetComponent<Renderer>().bounds.extents.x;
-                float playerTop = transform.position.y + GetComponent<Renderer>().bounds.extents.y;
-                float playerBot = transform.position.y - GetComponent<Renderer>().bounds.extents.y;
+                float playerRight = transform.position.x + GetComponent<Collider2D>().bounds.extents.x;
+                float playerLeft = transform.position.x - GetComponent<Collider2D>().bounds.extents.x;
+                float playerTop = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
+                float playerBot = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
 
-                float wallRight = wallPos.x + wall.GetComponent<Renderer>().bounds.extents.x;
-                float wallLeft = wallPos.x - wall.GetComponent<Renderer>().bounds.extents.x;
-                float wallTop = wallPos.y + wall.GetComponent<Renderer>().bounds.extents.y;
-                float wallBot = wallPos.y - wall.GetComponent<Renderer>().bounds.extents.y;
+                float wallRight = wallPos.x + wall.GetComponent<Collider2D>().bounds.extents.x;
+                float wallLeft = wallPos.x - wall.GetComponent<Collider2D>().bounds.extents.x;
+                float wallTop = wallPos.y + wall.GetComponent<Collider2D>().bounds.extents.y;
+                float wallBot = wallPos.y - wall.GetComponent<Collider2D>().bounds.extents.y;
 
                 // Set a distance to check walls (the number here works well with 1x1 boxes)
                 float dis = .08f;
@@ -138,6 +133,7 @@ public class PlayerScript : MonoBehaviour
                 /* 
                  * Checking which side to stop the player
                  * The fist check looks to see if the bounding boxes sides are within a certain distance.
+                 * The second check looks to see if the wall is on the correct side to check
                 */
 
                 Vector3 fixedPos = transform.position;
@@ -145,10 +141,9 @@ public class PlayerScript : MonoBehaviour
                 Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
                 Vector3 right = new Vector3(1, 0);
                 float angle = Vector3.Angle(playerToWall, right);
-                Debug.Log(angle);
 
                 // Right
-                if (Mathf.Abs(playerRight - wallLeft) < dis && (angle > 0 && angle < 45f))
+                if (Mathf.Abs(playerRight - wallLeft) < dis && (angle >= 0 && angle <= 45f))
                 {
                     if (direction.x > 0)
                         direction.x = 0;
@@ -159,7 +154,7 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis && (angle > 135f && angle < 225f))
+                if (Mathf.Abs(playerLeft - wallRight) < dis && (angle >= 135f && angle <= 225f))
                 {
                     if (direction.x < 0)
                         direction.x = 0;
@@ -170,8 +165,8 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis && (angle > 45f && angle < 135f))
-                { 
+                if (Mathf.Abs(playerTop - wallBot) < dis && (angle >= 45f && angle <= 135f))
+                {
                     if (direction.y > 0)
                         direction.y = 0;
                     if (velocity.y > 0)
@@ -181,7 +176,7 @@ public class PlayerScript : MonoBehaviour
                 }
 
                 // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis && (angle > 45f && angle < 135f))
+                if (Mathf.Abs(playerBot - wallTop) < dis && (angle >= 45f && angle <= 135f))
                 {
                     if (direction.y < 0)
                         direction.y = 0;
