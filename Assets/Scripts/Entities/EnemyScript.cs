@@ -26,6 +26,7 @@ public class EnemyScript : MonoBehaviour
     public bool isMelee = true;
     bool fired = false;
     public float bulletSpeed = .2f;
+    public float kickBack = 2.5f;
 
     // health
     public float healthMax = 2;
@@ -112,7 +113,7 @@ public class EnemyScript : MonoBehaviour
             attack.transform.position = transform.position + (attackDir * attackSpacing);
             attack.transform.right = attackDir;
 
-            velocity += attackDir * (speed * 2.5f);
+            velocity += attackDir * (speed * kickBack);
 
             // Checking if player gets hit
             if (player.GetComponent<Renderer>().bounds.Intersects(attack.GetComponent<Renderer>().bounds))
@@ -127,7 +128,7 @@ public class EnemyScript : MonoBehaviour
             attack.transform.right = attackDir;
             attack.GetComponent<BulletScript>().SetAttributes(attackDir, bulletSpeed);
 
-            velocity += attackDir * (speed * -1.5f);
+            velocity += attackDir * (speed * kickBack);
 
             fired = true;
         }

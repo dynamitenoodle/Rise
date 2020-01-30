@@ -42,9 +42,13 @@ public class BulletScript : MonoBehaviour
         foreach (Collider2D col in FindObjectsOfType<Collider2D>())
         {
             // if the col isn't this object
-            if (col.gameObject != gameObject)
+            if (col.gameObject != gameObject && col.gameObject.tag == "Wall")
+            {
                 if (col.bounds.Intersects(GetComponent<Collider2D>().bounds))
+                {
                     Destroy(gameObject);
+                }
+            }
         }
     }
 }
