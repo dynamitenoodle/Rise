@@ -45,6 +45,9 @@ public class PlayerScript : MonoBehaviour
         if (direction == Vector3.zero)
             velocity *= friction;
 
+        if (velocity.magnitude < 0.008f)
+            velocity = Vector3.zero;
+
         WallCheck();
 
         velocity += (direction * speed);
@@ -139,19 +142,20 @@ public class PlayerScript : MonoBehaviour
                 */
 
                 Vector3 fixedPos = transform.position;
+
                 // Right
-                if ((Mathf.Abs(playerRight - wallLeft) < dis) && transform.position.x < wallPos.x /*&& (Mathf.Abs(transform.position.y - wallPos.y) < dis2)*/)
+                if ((Mathf.Abs(playerRight - wallLeft) < dis)/* && transform.position.x < wallPos.x && (Mathf.Abs(transform.position.y - wallPos.y) < dis2) && Mathf.Abs(wallPos.x - transform.position.x) > dis2*/)
                 {
                     if (direction.x > 0)
                         direction.x = 0;
                     if (velocity.x > 0)
                         velocity.x = 0;
 
-                    Debug.Log("HIT");
                     fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
                 }
+
                 // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis && transform.position.x > wallPos.x /*&& (Mathf.Abs(transform.position.y - wallPos.y) < dis2)*/)
+                if (Mathf.Abs(playerLeft - wallRight) < dis/* && transform.position.x > wallPos.x && (Mathf.Abs(transform.position.y - wallPos.y) < dis2) && Mathf.Abs(wallPos.x - transform.position.x) > dis2*/)
                 {
                     if (direction.x < 0)
                         direction.x = 0;
@@ -160,8 +164,9 @@ public class PlayerScript : MonoBehaviour
 
                     fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
                 }
+
                 // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis && transform.position.y < wallPos.y /*&& (Mathf.Abs(transform.position.x - wallPos.x) < dis2)*/)
+                if (Mathf.Abs(playerTop - wallBot) < dis/* && transform.position.y < wallPos.y && (Mathf.Abs(transform.position.x - wallPos.x) < dis2) && Mathf.Abs(wallPos.y - transform.position.y) > dis2 */)
                 {
                     if (direction.y > 0)
                         direction.y = 0;
@@ -170,8 +175,9 @@ public class PlayerScript : MonoBehaviour
 
                     fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
                 }
+
                 // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis && transform.position.y > wallPos.y /*&& (Mathf.Abs(transform.position.x - wallPos.x) < dis2)*/)
+                if (Mathf.Abs(playerBot - wallTop) < dis/* && transform.position.y > wallPos.y && (Mathf.Abs(transform.position.x - wallPos.x) < dis2) && Mathf.Abs(wallPos.y - transform.position.y) > dis2 */)
                 {
                     if (direction.y < 0)
                         direction.y = 0;
