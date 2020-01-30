@@ -10,7 +10,7 @@ public class PlayerScript : MonoBehaviour
     public float friction = .9f;
     public float sprintMultiplier = 1.5f;
     Vector3 velocity;
-    Vector3 direction;
+    public Vector3 direction;
 
     // health stuffs
     public float healthMax;
@@ -44,6 +44,10 @@ public class PlayerScript : MonoBehaviour
         // Slowdown if nothing
         if (direction == Vector3.zero)
             velocity *= friction;
+        else if (direction.x == 0)
+            velocity.x *= friction;
+        else if (direction.y == 0)
+            velocity.y *= friction;
 
         if (velocity.magnitude < 0.008f)
             velocity = Vector3.zero;
