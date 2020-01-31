@@ -5,21 +5,21 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     // attributes
-    public float maxSpeed = .1f;
-    public float speed = .02f;
-    public float friction = .9f;
+    [SerializeField] float maxSpeed = .1f;
+    [SerializeField] float speed = .02f;
+    [SerializeField] float friction = .9f;
     Vector3 velocity;
     Vector3 direction;
 
     // health stuffs
-    public float healthMax;
+    [SerializeField] float healthMax = 3;
     float health;
     bool invul;
-    public float hitTimerMax;
+    [SerializeField] float hitTimerMax = 2;
     float hitTimer;
 
     // Wall collisions
-    public List<GameObject> walls;
+    List<GameObject> walls;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +27,8 @@ public class PlayerScript : MonoBehaviour
         velocity = Vector3.zero;
         health = healthMax;
         invul = false;
+
+        walls = new List<GameObject>();
 
         foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Wall"))
         {

@@ -5,11 +5,11 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour
 {
     // attributes
-    public float maxSpeed = .1f;
-    public float speed = .02f;
-    public float friction = .9f;
-    public float detectionDistance = 10f;
-    public float attackRange = 1f;
+    [SerializeField] float maxSpeed = .1f;
+    [SerializeField] float speed = .02f;
+    [SerializeField] float friction = .9f;
+    [SerializeField] float detectionDistance = 10f;
+    [SerializeField] float attackRange = 1f;
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
@@ -17,19 +17,21 @@ public class EnemyScript : MonoBehaviour
     // attack stuff
     bool attacking;
     Vector3 attackDir;
-    public float attackTimerMax = 1.5f;
-    public float attackDelay = .5f;
-    public float attackSpacing = 1.5f;
+    [SerializeField] float attackTimerMax = 1.5f;
+    [SerializeField] float attackDelay = .5f;
+    [SerializeField] float attackSpacing = 1.5f;
     float attackTimer;
-    public GameObject attackPrefab;
+    [SerializeField] GameObject attackPrefab;
     GameObject attack;
-    public bool isMelee = true;
+    [SerializeField] float kickBack = 2.5f;
+
+    // ranged attack info
+    [SerializeField] bool isMelee = true;
     bool fired = false;
-    public float bulletSpeed = .2f;
-    public float kickBack = 2.5f;
+    [SerializeField] float bulletSpeed = .2f;
 
     // health
-    public float healthMax = 2;
+    [SerializeField] float healthMax = 2;
     float health;
 
     // Start is called before the first frame update
@@ -85,6 +87,14 @@ public class EnemyScript : MonoBehaviour
         // Carry out the math
         transform.position += velocity;
         direction = Vector3.zero;
+
+        if (Mathf.Abs(Vector3.Magnitude(player.transform.position - transform.position)) <= GetComponent<Collider2D>().bounds.extents.x * 2)
+        {
+            if (player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
+            {
+                player.GetComponent<PlayerScript>().GetHit();
+            }
+        }
     }
 
     // The check for attacking

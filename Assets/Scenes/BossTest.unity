@@ -379,7 +379,7 @@ PrefabInstance:
     - target: {fileID: 3007092971998139330, guid: e48678ffc4dcc8e48828dfee2dbcea9b,
         type: 3}
       propertyPath: attackRange
-      value: 9
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 3007092971998139330, guid: e48678ffc4dcc8e48828dfee2dbcea9b,
         type: 3}
@@ -894,7 +894,6 @@ MonoBehaviour:
   friction: 0.85
   healthMax: 3
   hitTimerMax: 2
-  walls: []
 --- !u!61 &598229458
 BoxCollider2D:
   m_ObjectHideFlags: 0

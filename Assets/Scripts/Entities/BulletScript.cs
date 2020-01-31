@@ -5,14 +5,15 @@ using UnityEngine;
 public class BulletScript : MonoBehaviour
 {
     //attributes
-    public Vector3 direction;
-    public float speed;
+    [HideInInspector] public Vector3 direction;
+    [HideInInspector] public float speed;
     GameObject player;
 
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        if (gameObject.tag == "EnemyAttack")
+            player = GameObject.FindGameObjectWithTag("Player");
         
     }
 
@@ -22,7 +23,7 @@ public class BulletScript : MonoBehaviour
         transform.position += (direction * speed);
 
         // Checking if player gets hit
-        if (player.GetComponent<Renderer>().bounds.Intersects(GetComponent<Renderer>().bounds))
+        if (gameObject.tag == "EnemyAttack" && player.GetComponent<Renderer>().bounds.Intersects(GetComponent<Renderer>().bounds))
         {
             player.GetComponent<PlayerScript>().GetHit();
             Destroy(gameObject);
