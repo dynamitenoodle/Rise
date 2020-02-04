@@ -23,7 +23,7 @@ public class LevelGeneration : MonoBehaviour
         public Vector2 location;
         public int roomSize;
         public List<DoorDescriber> doors;
-        public List<int> connections;
+        public GameObject obj;
     }
 
     struct Hall
@@ -48,9 +48,17 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
-        Debug.Log("Instatiating rooms...");
-        InstantiateRooms(roomSpawns);
-
+        for (int i = 0; i < roomSpawns.Count; i++)
+        {
+            for (int j = 0; j < roomSpawns[i].doors.Count; j++)
+            {
+                if (roomSpawns[i].doors[j].doorOpen)
+                {
+                    GameObject testDoor = Instantiate(tester);
+                    testDoor.transform.position = roomSpawns[i].location + roomSpawns[i].doors[j].location;
+                }
+            }
+        }
 
         Debug.Log("Finished!");
     }
@@ -62,6 +70,7 @@ public class LevelGeneration : MonoBehaviour
 
         //spawn first room
         roomSpawns.Add(GenerateRoom(0, 0));
+        roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
         for (int i = 0; i < numRooms - 1; i++)
         {
@@ -71,8 +80,8 @@ public class LevelGeneration : MonoBehaviour
             do
             {
                 //pick room that already exists
-                int roomPick = Random.Range(0, roomSpawns.Count);
-                int doorPick = Random.Range(0, roomSpawns[roomPick].doors.Count);
+                int roomPick = GetRandomValidRoom(roomSpawns);
+                int doorPick = GetRandomValidDoor(roomSpawns[roomPick]);
 
                 Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
 
@@ -94,15 +103,31 @@ public class LevelGeneration : MonoBehaviour
                         roomMove = matchLoc - doorLoc;
 
                         //remove used doors
-                        roomSpawns[roomPick].doors.RemoveAt(doorPick);
+                        test(roomSpawns[roomPick]);
+                        roomSpawns[roomPick].doors[doorPick].doorOpen = false;
+                        test(roomSpawns[roomPick]);
+                        Debug.Log("----------");
+                        test(roomSpawn);
+                        roomSpawn.doors[j].doorOpen = false;
+                        test(roomSpawn);
 
-                        roomSpawn.doors.RemoveAt(j);
-
+                        Debug.Log($"closing door on new room spawn @ door {j}");
+                        
                         break;
                     }
                 }
 
+                int countTest = 0;
+                for (int a = 0; a < roomSpawn.doors.Count; a++)
+                {
+                    if (!roomSpawn.doors[a].doorOpen)
+                    {
+                        countTest++;
+                    }
+                }
+                Debug.Log($"New room spawn has {countTest} closed doors");
                 roomSpawn.location += roomMove;
+                roomSpawn.obj.transform.position = roomSpawn.location;
 
                 //Debug.Log($"New room spawned moving it: {roomMove} ");
                 Debug.Log($"Spawning room at loc: {roomSpawn.location} of type [{roomSpawn.type}] from room {roomPick}");
@@ -122,6 +147,53 @@ public class LevelGeneration : MonoBehaviour
         }
 
         return roomSpawns;
+    }
+
+    private void test(RoomSpawn room)
+    {
+        for (int a = 0; a < room.doors.Count; a++)
+        {
+            Debug.Log($"door {a}: {room.doors[a].doorOpen}");
+        }
+    }
+
+    private int GetRandomValidDoor(RoomSpawn roomSpawn)
+    {
+        List<int> validDoors = new List<int>();
+
+        for (int i = 0; i < roomSpawn.doors.Count; i++)
+        {
+            if (roomSpawn.doors[i].doorOpen)
+            {
+                validDoors.Add(i);
+            }
+        }
+
+        return validDoors[Random.Range(0, validDoors.Count - 1)];
+    }
+
+    private int GetRandomValidRoom(List<RoomSpawn> roomSpawns)
+    {
+        List<int> validRooms = new List<int>();
+
+        for (int i = 0; i < roomSpawns.Count; i++)
+        {
+            int validDoors = 0;
+            for (int j = 0; j < roomSpawns[i].doors.Count; j++)
+            {
+                if (roomSpawns[i].doors[j].doorOpen)
+                {
+                    validDoors++;
+                }
+            }
+
+            if (validDoors != 0)
+            {
+                validRooms.Add(i);
+            }
+        }
+
+        return validRooms[Random.Range(0, validRooms.Count - 1)];
     }
 
     private bool IsDoorInverse(Vector2 door, Vector2 door2)
@@ -161,12 +233,13 @@ public class LevelGeneration : MonoBehaviour
 
         int roomPick = Random.Range(0, rooms.Count);
 
-        RoomDescriber describer = rooms[roomPick].GetComponent<RoomDescriber>();
+        GameObject roomObj = InstantiateRoom(roomPick);
+        RoomDescriber describer = roomObj.GetComponent<RoomDescriber>();
 
         roomSpawn.type = roomPick;
         roomSpawn.roomSize = describer.size;
         roomSpawn.location = new Vector2(x, y);
-        roomSpawn.connections = new List<int>();
+        roomSpawn.obj = roomObj;
 
         //add each doorway
         List<DoorDescriber> doors = new List<DoorDescriber>();
@@ -176,26 +249,14 @@ public class LevelGeneration : MonoBehaviour
             doors[i].location = new Vector2(
                 describer.doorways[i].transform.position.x, 
                 describer.doorways[i].transform.position.y);
-            Debug.Log($"Door for room [{i}] spawning at position: {doors[i].location}");
+            doors[i].doorOpen = true;
         }
         roomSpawn.doors = doors;
         return roomSpawn;
     }
 
-    private void InstantiateRooms(List<RoomSpawn> roomSpawns)
+    private GameObject InstantiateRoom(int roomPick)
     {
-        foreach (RoomSpawn roomSpawn in roomSpawns)
-        {
-            GameObject room = Instantiate(rooms[roomSpawn.type], mapTransform);
-            room.transform.position = roomSpawn.location;
-
-            for (int i = 0; i < roomSpawn.doors.Count; i++)
-            {
-                GameObject doorTester = Instantiate(tester);
-                doorTester.transform.position = roomSpawn.location + roomSpawn.doors[i].location;
-                Debug.Log($"Spawning door tester obj @ location: {doorTester.transform.position} from location {roomSpawn.doors[i].location}");
-            }
-        }
-        Debug.Log("FINISH");
+        return Instantiate(rooms[roomPick], mapTransform);
     }
 }
