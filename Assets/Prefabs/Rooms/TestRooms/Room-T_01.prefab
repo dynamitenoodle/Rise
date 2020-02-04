@@ -2056,6 +2056,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doorLocation: 0
+  doorOpen: 1
 --- !u!1 &8100044498704147063
 GameObject:
   m_ObjectHideFlags: 0
@@ -3144,6 +3145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doorLocation: 2
+  doorOpen: 1
 --- !u!1 &8100044499308484031
 GameObject:
   m_ObjectHideFlags: 0
@@ -3478,6 +3480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doorLocation: 3
+  doorOpen: 1
 --- !u!1 &8100044499567266123
 GameObject:
   m_ObjectHideFlags: 0
@@ -3759,6 +3762,11 @@ PrefabInstance:
     - target: {fileID: -4153404015567321170, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
         type: 3}
       propertyPath: doorLocation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4153404015567321170, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
+        type: 3}
+      propertyPath: doorOpen
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1627186438711920084, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
