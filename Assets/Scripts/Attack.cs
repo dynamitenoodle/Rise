@@ -16,5 +16,13 @@ public class Attack : ScriptableObject
     // ranged attack info
     public bool isMelee = true;
     public float bulletSpeed = .2f;
+
+    // multiple shots
+    public int shotNumMax = 3;
+    public float increasedDelay = 1.0f;
+
+    // SPEEEEEn
+    public bool speen;
+    public float speenSpeed = 15f;
 }
 

@@ -21,6 +21,13 @@ public class PlayerScript : MonoBehaviour
     // Wall collisions
     List<GameObject> walls;
 
+    // Dash
+    bool dashing;
+    [SerializeField] float dashSpeed = 2.0f;
+    [SerializeField] float dashCooldown = 3.0f;
+    float dashTimer;
+    [SerializeField] float dashTimerMax = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,6 +42,7 @@ public class PlayerScript : MonoBehaviour
             walls.Add(wall);
         }
 
+        dashTimer = dashCooldown;
     }
 
     // Update is called once per frame
@@ -55,9 +63,23 @@ public class PlayerScript : MonoBehaviour
 
         WallCheck();
 
-        velocity += (direction * speed);
+        if (!dashing)
+        {
+            velocity += (direction * speed);
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        }
+        else
+        {
+            velocity += (direction * speed * dashSpeed);
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed * dashSpeed);
+        }
 
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        if (dashTimer > dashTimerMax && dashing)
+            dashing = false;
+
+        if (dashTimer <= dashCooldown)
+            dashTimer += Time.deltaTime;
 
         // Carry out the math
         transform.position += velocity;
@@ -75,7 +97,6 @@ public class PlayerScript : MonoBehaviour
         if (!invul)
         {
             invul = true;
-            Debug.Log("Player was hit!");
             health--;
 
             if (health < 0)
@@ -192,7 +213,7 @@ public class PlayerScript : MonoBehaviour
             }
         }
     }
-    
+
     // Checks the inputs
     void InputCheck()
     {
@@ -210,5 +231,12 @@ public class PlayerScript : MonoBehaviour
             direction.y = 0;
         if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
             direction.x = 0;
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !dashing && dashTimer > dashCooldown)
+        {
+            dashing = true;
+            velocity = (direction * speed * dashSpeed);
+            dashTimer = 0;
+        }
     }
 }

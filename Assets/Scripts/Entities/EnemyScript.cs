@@ -14,13 +14,17 @@ public class EnemyScript : MonoBehaviour
     GameObject player;
 
     // attack stuff
-    List<Attack> attacks;
+    [SerializeField] List<Attack> attacks;
     bool attacking;
     int attackRoll;
     float attackTimer;
     GameObject attackGO;
     bool fired = false;
     Vector3 attackDir;
+    int shotNum;
+    float globalAttackTimer;
+    [SerializeField] float minTimeBtwnAttacks = 2.0f;
+    bool speenDir = false;
 
     // health
     [SerializeField] float healthMax = 2;
@@ -34,16 +38,93 @@ public class EnemyScript : MonoBehaviour
         health = healthMax;
 
         attackRoll = -1;
+        shotNum = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float playerDis = (player.transform.position - transform.position).magnitude;
+        // If we don't have an attack selected
+        if (attackRoll == -1)
+        {
+            globalAttackTimer += Time.deltaTime;
+            
+            // If the enemy can attack again
+            if (globalAttackTimer > minTimeBtwnAttacks)
+            {
+                attackRoll = Random.Range(0, attacks.Count);
+                globalAttackTimer = 0;
 
-        // Where is PLAYER
-        if (playerDis < detectionDistance && !AttackCheck(playerDis) && !attacking)
-            direction = (player.transform.position - transform.position).normalized;
+                // pick spin direction for the attack
+                switch (Random.Range(0,2))
+                {
+                    case 0:
+                        speenDir = false;
+                        break;
+                    default:
+                        speenDir = true;
+                        break;
+                }
+            }
+        }
+
+        else
+        {
+            float playerDis = (player.transform.position - transform.position).magnitude;
+
+            // Where is PLAYER
+            if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
+                direction = (player.transform.position - transform.position).normalized;
+
+            // Attacking stuff
+            if (attacking)
+            {
+                attackTimer += Time.deltaTime;
+
+                // SPEEEEN calculation
+                if (attackGO != null && attacks[attackRoll].speen)
+                {
+                    if (speenDir)
+                        attackGO.transform.Rotate(Vector3.forward * attacks[attackRoll].speenSpeed * Time.deltaTime);
+                    else
+                        attackGO.transform.Rotate(Vector3.back * attacks[attackRoll].speenSpeed * Time.deltaTime);
+                }
+
+                // Create the attackGO when it is time            THIS NEEDS TO BE SIMPLIFIED / MADE IT'S OWN METHOD LOL
+                if (CanAttackCheck())
+                {
+                    Attack();
+                }
+
+                // Reset the attack timer
+                if ((attackTimer >= attacks[attackRoll].attackTimerMax && (attacks[attackRoll].shotNumMax == 1 || shotNum > attacks[attackRoll].shotNumMax)) || attackTimer >= attacks[attackRoll].attackTimerMax + attacks[attackRoll].attackDelay)
+                {
+                    if (attacks[attackRoll].isMelee)
+                        Destroy(attackGO);
+
+                    else
+                        fired = false;
+
+                    attackTimer = 0;
+
+                    // Checks if we should shoot more
+                    if (shotNum + 1 < attacks[attackRoll].shotNumMax)
+                    {
+                        shotNum++; 
+                    }
+
+                    // Reset the attack
+                    else
+                    {
+                        attacking = false;
+                        shotNum = 0;
+                        attackRoll = -1;
+                    }
+                }
+            }
+
+        
+        }
 
         // Slowdown if nothing
         if (direction == Vector3.zero)
@@ -52,34 +133,6 @@ public class EnemyScript : MonoBehaviour
         velocity += (direction * speed);
 
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-        if (attackRoll == -1)
-            attackRoll = Random.Range(0, attacks.Count);
-
-        // Attacking stuff
-        if (attacking)
-        {
-            attackTimer += Time.deltaTime;
-
-            // Create the attackGO when it is time
-            if (attackTimer > attackDelay && ((isMelee && attackGO == null) || !isMelee))
-            {
-                Attack();
-            }
-
-            // Reset the attack timer
-            if (attackTimer >= attackTimerMax)
-            {
-                if (isMelee)
-                    Destroy(attackGO);
-
-                else
-                    fired = false;
-
-                attackTimer = 0;
-                attacking = false;
-            }
-        }
 
         // Carry out the math
         transform.position += velocity;
@@ -92,10 +145,16 @@ public class EnemyScript : MonoBehaviour
                 player.GetComponent<PlayerScript>().GetHit();
             }
         }
+
+        if (!attacking && attackRoll != -1)
+        {
+            float cannonAngle = (Mathf.Atan2((player.transform.position - transform.position).normalized.y, (player.transform.position - transform.position).normalized.x) * Mathf.Rad2Deg) - 90f;
+            gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
+        }
     }
 
-    // The check for attacking
-    bool AttackCheck(float playerDis)
+    // The check for if player is within attack distance
+    bool AttackDisCheck(float playerDis)
     {
         if (attacking)
             return true;
@@ -111,31 +170,48 @@ public class EnemyScript : MonoBehaviour
         return false;
     }
 
+    // Method to see if the enemy can attack the player
+    bool CanAttackCheck()
+    {
+        if (((attacks[attackRoll].isMelee && attackGO == null) || !attacks[attackRoll].isMelee))
+        {
+            if ((attackTimer > attacks[attackRoll].attackDelay && attacks[attackRoll].shotNumMax == 1))
+                return true;
+
+            if (attackTimer > attacks[attackRoll].attackDelay + attacks[attackRoll].increasedDelay && attacks[attackRoll].shotNumMax > 1 && shotNum == 0)
+                return true;
+
+            if (attackTimer > attacks[attackRoll].attackDelay && attacks[attackRoll].shotNumMax > 1 && shotNum > 0)
+                return true;
+        }
+        return false;
+    }
+
     void Attack()
     {
         if (attacks[attackRoll].isMelee)
         {
             // Melee Attack
-            attackGO = Instantiate(attackPrefab);
-            attackGO.transform.position = transform.position + (attackDir * attackSpacing);
+            attackGO = Instantiate(attacks[attackRoll].attackPrefab);
+            attackGO.transform.position = transform.position + (attackDir * attacks[attackRoll].attackSpacing);
             attackGO.transform.right = attackDir;
 
-            velocity += attackDir * (speed * kickBack);
+            velocity += attackDir * (speed * attacks[attackRoll].kickBack);
 
             // Checking if player gets hit
             if (player.GetComponent<Renderer>().bounds.Intersects(attackGO.GetComponent<Renderer>().bounds))
                 player.GetComponent<PlayerScript>().GetHit();
         }
 
-        else if (!fired && !isMelee)
+        else if (!fired && !attacks[attackRoll].isMelee)
         {
             // Range Attack
-            attackGO = Instantiate(attackPrefab);
-            attackGO.transform.position = transform.position + (attackDir * attackSpacing);
+            attackGO = Instantiate(attacks[attackRoll].attackPrefab);
+            attackGO.transform.position = transform.position + (attackDir * attacks[attackRoll].attackSpacing);
             attackGO.transform.right = attackDir;
-            attackGO.GetComponent<BulletScript>().SetAttributes(attackDir, bulletSpeed);
+            attackGO.GetComponent<BulletScript>().SetAttributes(attackDir, attacks[attackRoll].bulletSpeed);
 
-            velocity += attackDir * (speed * kickBack);
+            velocity += attackDir * (speed * attacks[attackRoll].kickBack);
 
             fired = true;
         }
@@ -150,4 +226,5 @@ public class EnemyScript : MonoBehaviour
         if (health < 0)
             Destroy(gameObject);
     }
+
 }
