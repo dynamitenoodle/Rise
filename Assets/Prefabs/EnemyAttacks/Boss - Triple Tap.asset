@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 328ee1d7f6c6d564fa9201de6db77cd3, type: 3}
   m_Name: Boss - Triple Tap
   m_EditorClassIdentifier: 
-  attackRange: 12
+  attackRange: 10
   attackTimerMax: 0.15
   attackDelay: 0.05
   attackSpacing: 2
@@ -22,3 +22,6 @@ MonoBehaviour:
   isMelee: 0
   bulletSpeed: 0.125
   shotNumMax: 3
+  increasedDelay: 1
+  speen: 0
+  speenSpeed: 15

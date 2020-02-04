@@ -97,7 +97,9 @@ public class EnemyScript : MonoBehaviour
                 }
 
                 // Reset the attack timer
-                if ((attackTimer >= attacks[attackRoll].attackTimerMax && (attacks[attackRoll].shotNumMax == 1 || shotNum > attacks[attackRoll].shotNumMax)) || attackTimer >= attacks[attackRoll].attackTimerMax + attacks[attackRoll].attackDelay)
+                if (attackTimer >= attacks[attackRoll].attackTimerMax && 
+					((attacks[attackRoll].shotNumMax == 1 || shotNum >= attacks[attackRoll].shotNumMax) 
+					|| attackTimer >= attacks[attackRoll].attackTimerMax + attacks[attackRoll].attackDelay))
                 {
                     if (attacks[attackRoll].isMelee)
                         Destroy(attackGO);
@@ -108,18 +110,15 @@ public class EnemyScript : MonoBehaviour
                     attackTimer = 0;
 
                     // Checks if we should shoot more
-                    if (shotNum + 1 < attacks[attackRoll].shotNumMax)
-                    {
+                    if (shotNum < attacks[attackRoll].shotNumMax && attacks[attackRoll].shotNumMax != 1)
                         shotNum++; 
-                    }
 
-                    // Reset the attack
-                    else
-                    {
-                        attacking = false;
-                        shotNum = 0;
-                        attackRoll = -1;
-                    }
+					else
+					{
+						attacking = false;
+						shotNum = 0;
+						attackRoll = -1;
+					}
                 }
             }
 
@@ -146,7 +145,7 @@ public class EnemyScript : MonoBehaviour
             }
         }
 
-        if (!attacking && attackRoll != -1)
+        if (!attacking && attackRoll != -1 && attacks.Count != 1)
         {
             float cannonAngle = (Mathf.Atan2((player.transform.position - transform.position).normalized.y, (player.transform.position - transform.position).normalized.x) * Mathf.Rad2Deg) - 90f;
             gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);

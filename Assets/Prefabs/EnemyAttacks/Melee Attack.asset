@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackRange: 1.8
   attackTimerMax: 1.5
-  attackDelay: 0.5
-  attackSpacing: 1.5
+  attackDelay: 0.75
+  attackSpacing: 1
   attackPrefab: {fileID: 978165682433616991, guid: 8f21f3729c9752145a736fc7c4aefad7,
     type: 3}
   kickBack: 2.5
   isMelee: 1
   bulletSpeed: 0.2
   shotNumMax: 1
+  increasedDelay: 1
+  speen: 0
+  speenSpeed: 15

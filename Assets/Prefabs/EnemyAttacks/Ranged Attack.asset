@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 328ee1d7f6c6d564fa9201de6db77cd3, type: 3}
   m_Name: Ranged Attack
   m_EditorClassIdentifier: 
-  attackRange: 6
+  attackRange: 5
   attackTimerMax: 1
   attackDelay: 0.3
   attackSpacing: 1
@@ -21,4 +21,7 @@ MonoBehaviour:
   kickBack: -1.5
   isMelee: 0
   bulletSpeed: 0.2
-  shotNumMax: 1
+  shotNumMax: 0
+  increasedDelay: 1
+  speen: 0
+  speenSpeed: 15
