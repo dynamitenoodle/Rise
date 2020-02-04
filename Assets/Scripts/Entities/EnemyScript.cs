@@ -198,7 +198,7 @@ public class EnemyScript : MonoBehaviour
             velocity += attackDir * (speed * attacks[attackRoll].kickBack);
 
             // Checking if player gets hit
-            if (player.GetComponent<Renderer>().bounds.Intersects(attackGO.GetComponent<Renderer>().bounds))
+            if (player.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
                 player.GetComponent<PlayerScript>().GetHit();
         }
 

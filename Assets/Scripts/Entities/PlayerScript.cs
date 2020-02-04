@@ -28,6 +28,19 @@ public class PlayerScript : MonoBehaviour
     float dashTimer;
     [SerializeField] float dashTimerMax = 1.0f;
 
+    // ATTACK STUFF
+    public Attack melee;
+    bool attacking;
+    int attackRoll;
+    float attackTimer;
+    GameObject attackGO;
+    bool fired = false;
+    Vector3 attackDir;
+    int shotNum;
+    float globalAttackTimer;
+    [SerializeField] float minTimeBtwnAttacks = 0.3f;
+    bool speenDir = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,6 +56,7 @@ public class PlayerScript : MonoBehaviour
         }
 
         dashTimer = dashCooldown;
+        attackTimer = globalAttackTimer;
     }
 
     // Update is called once per frame
@@ -88,6 +102,20 @@ public class PlayerScript : MonoBehaviour
         if (invul)
         {
             Flicker();
+        }
+
+        // Timers
+        attackTimer += Time.deltaTime;
+
+        // If attack exists
+        if (attackGO != null)
+        {
+            // Checking if enemy gets hit
+            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            {
+                if (enemy.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
+                    enemy.GetComponent<EnemyScript>().GetHit();
+            }
         }
     }
 
@@ -238,5 +266,23 @@ public class PlayerScript : MonoBehaviour
             velocity = (direction * speed * dashSpeed);
             dashTimer = 0;
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && attackTimer > globalAttackTimer)
+        {
+            Attack();
+            attackTimer = 0;
+        }
+    }
+
+    // Player Attack Method
+    void Attack()
+    {
+        // Melee Attack
+        attackGO = Instantiate(melee.attackPrefab);
+        attackGO.transform.position = transform.position + (attackDir * melee.attackSpacing);
+        attackGO.transform.right = attackDir;
+
+        velocity += attackDir * (speed * melee.kickBack);
+
     }
 }

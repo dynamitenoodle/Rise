@@ -467,6 +467,8 @@ MonoBehaviour:
   dashSpeed: 2
   dashCooldown: 3
   dashTimerMax: 0.5
+  melee: {fileID: 11400000, guid: 44bac2626ccc8274985339087e425b5f, type: 2}
+  minTimeBtwnAttacks: 2
 --- !u!61 &598229458
 BoxCollider2D:
   m_ObjectHideFlags: 0
