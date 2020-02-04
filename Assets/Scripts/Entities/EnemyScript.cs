@@ -29,6 +29,9 @@ public class EnemyScript : MonoBehaviour
     // health
     [SerializeField] float healthMax = 2;
     float health;
+    bool invul;
+    [SerializeField] float hitTimerMax = 2;
+    float hitTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +47,9 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player == null)
+            Destroy(gameObject);
+
         // If we don't have an attack selected
         if (attackRoll == -1)
         {
@@ -74,8 +80,14 @@ public class EnemyScript : MonoBehaviour
 
             // Where is PLAYER
             if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
+            {
                 direction = (player.transform.position - transform.position).normalized;
-
+                if (!attacking && attackRoll != -1 && (attacks.Count != 1 || !attacks[0].isMelee))
+                {
+                    float cannonAngle = (Mathf.Atan2((player.transform.position - transform.position).normalized.y, (player.transform.position - transform.position).normalized.x) * Mathf.Rad2Deg) - 90f;
+                    gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
+                }
+            }
             // Attacking stuff
             if (attacking)
             {
@@ -121,9 +133,12 @@ public class EnemyScript : MonoBehaviour
 					}
                 }
             }
-
-        
         }
+
+        // Checking if player gets hit
+        if (attackRoll != -1 && attacks[attackRoll].isMelee && attackGO != null)
+            if (player.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
+                player.GetComponent<PlayerScript>().GetHit();
 
         // Slowdown if nothing
         if (direction == Vector3.zero)
@@ -145,10 +160,12 @@ public class EnemyScript : MonoBehaviour
             }
         }
 
-        if (!attacking && attackRoll != -1 && attacks.Count != 1)
+        
+
+
+        if (invul)
         {
-            float cannonAngle = (Mathf.Atan2((player.transform.position - transform.position).normalized.y, (player.transform.position - transform.position).normalized.x) * Mathf.Rad2Deg) - 90f;
-            gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
+            Flicker();
         }
     }
 
@@ -196,10 +213,6 @@ public class EnemyScript : MonoBehaviour
             attackGO.transform.right = attackDir;
 
             velocity += attackDir * (speed * attacks[attackRoll].kickBack);
-
-            // Checking if player gets hit
-            if (player.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                player.GetComponent<PlayerScript>().GetHit();
         }
 
         else if (!fired && !attacks[attackRoll].isMelee)
@@ -217,13 +230,65 @@ public class EnemyScript : MonoBehaviour
     }
 
     // Called by other scripts to hit the player
-    public void GetHit()
+    public void GetHit(Vector3 knockback, float knockbackAmt)
     {
-        Debug.Log(gameObject.name + " was hit!");
-        health--;
+        if (!invul)
+        {
+            invul = true;
+            health--;
 
-        if (health < 0)
-            Destroy(gameObject);
+            velocity += knockback * knockbackAmt;
+
+            if (health - 1 < 0)
+            {
+                if (attackGO != null)
+                    Destroy(attackGO);
+
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    // Flickering if hit
+    public void Flicker()
+    {
+        hitTimer += Time.deltaTime;
+
+        //Flicker effect
+        Color tempColor = GetComponent<SpriteRenderer>().color;
+
+        if ((hitTimer * 100) % 20 > 10)
+            tempColor.a = .6f;
+        else
+            tempColor.a = 1f;
+
+        GetComponent<SpriteRenderer>().color = tempColor;
+
+        if (attacks.Count != 1 || !attacks[0].isMelee)
+        {
+            //Flicker effect
+            Color tempColorCannon = transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
+
+            if ((hitTimer * 100) % 20 > 10)
+                tempColorCannon.a = .6f;
+            else
+                tempColorCannon.a = 1f;
+
+            transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColorCannon;
+            if (hitTimer > hitTimerMax)
+            {
+                tempColorCannon.a = 1f;
+                transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColorCannon;
+            }
+        }
+
+        if (hitTimer > hitTimerMax)
+        {
+            hitTimer = 0;
+            invul = false;
+            tempColor.a = 1f;
+            GetComponent<SpriteRenderer>().color = tempColor;
+        }
     }
 
 }

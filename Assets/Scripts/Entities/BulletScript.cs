@@ -23,12 +23,20 @@ public class BulletScript : MonoBehaviour
         transform.position += (direction * speed);
 
         // Checking if player gets hit
-        if (gameObject.tag == "EnemyAttack" && player.GetComponent<Renderer>().bounds.Intersects(GetComponent<Renderer>().bounds))
+        if (gameObject.tag == "EnemyAttack" && player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
         {
             player.GetComponent<PlayerScript>().GetHit();
             Destroy(gameObject);
         }
 
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            if (gameObject.tag == "PlayerAttack" && enemy.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
+            {
+                enemy.GetComponent<EnemyScript>().GetHit(Vector3.zero, 1);
+                Destroy(gameObject);
+            }
+        }
         CollisionCheck();
     }
 

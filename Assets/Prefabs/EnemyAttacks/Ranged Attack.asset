@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: Ranged Attack
   m_EditorClassIdentifier: 
   attackRange: 5
-  attackTimerMax: 1
+  attackTimerMax: 0.5
   attackDelay: 0.3
   attackSpacing: 1
   attackPrefab: {fileID: 7932270264175950735, guid: 96c5a1447f753b04cac2c9413136feac,
     type: 3}
   kickBack: -1.5
   isMelee: 0
-  bulletSpeed: 0.2
-  shotNumMax: 0
-  increasedDelay: 1
+  bulletSpeed: 0.15
+  shotNumMax: 1
+  increasedDelay: 0
   speen: 0
   speenSpeed: 15

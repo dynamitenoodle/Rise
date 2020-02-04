@@ -31,15 +31,14 @@ public class PlayerScript : MonoBehaviour
     // ATTACK STUFF
     public Attack melee;
     bool attacking;
-    int attackRoll;
     float attackTimer;
     GameObject attackGO;
     bool fired = false;
     Vector3 attackDir;
-    int shotNum;
     float globalAttackTimer;
     [SerializeField] float minTimeBtwnAttacks = 0.3f;
     bool speenDir = false;
+    Vector3 lastDir;
 
     // Start is called before the first frame update
     void Start()
@@ -97,7 +96,12 @@ public class PlayerScript : MonoBehaviour
 
         // Carry out the math
         transform.position += velocity;
-        direction = Vector3.zero;
+
+        if (direction != Vector3.zero)
+        {
+            lastDir = direction;
+            direction = Vector3.zero;
+        }
 
         if (invul)
         {
@@ -107,6 +111,19 @@ public class PlayerScript : MonoBehaviour
         // Timers
         attackTimer += Time.deltaTime;
 
+        // Reset the attack timer
+        if (attackTimer >= melee.attackTimerMax)
+        {
+            if (melee.isMelee)
+                Destroy(attackGO);
+
+            else
+                fired = false;
+
+            attackTimer = 0;
+            attacking = false;
+        }
+
         // If attack exists
         if (attackGO != null)
         {
@@ -114,7 +131,17 @@ public class PlayerScript : MonoBehaviour
             foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
             {
                 if (enemy.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                    enemy.GetComponent<EnemyScript>().GetHit();
+                    enemy.GetComponent<EnemyScript>().GetHit(Vector3.Normalize(transform.position - enemy.transform.position), 3);
+            }
+
+            foreach (GameObject bullet in GameObject.FindGameObjectsWithTag("EnemyAttack"))
+            {
+                if (bullet.GetComponent<BulletScript>() != null)
+                    if (bullet.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
+                    {
+                        bullet.GetComponent<BulletScript>().direction = -bullet.GetComponent<BulletScript>().direction;
+                        bullet.tag = "PlayerAttack";
+                    }
             }
         }
     }
@@ -127,7 +154,7 @@ public class PlayerScript : MonoBehaviour
             invul = true;
             health--;
 
-            if (health < 0)
+            if (health - 1 < 0)
                 Destroy(gameObject);
         }
     }
@@ -245,15 +272,17 @@ public class PlayerScript : MonoBehaviour
     // Checks the inputs
     void InputCheck()
     {
-        if (Input.GetKey(KeyCode.W))
-            direction.y += 1;
-        if (Input.GetKey(KeyCode.S))
-            direction.y -= 1;
-        if (Input.GetKey(KeyCode.D))
-            direction.x += 1;
-        if (Input.GetKey(KeyCode.A))
-            direction.x -= 1;
-
+        if (!attacking)
+        {
+            if (Input.GetKey(KeyCode.W))
+                direction.y += 1;
+            if (Input.GetKey(KeyCode.S))
+                direction.y -= 1;
+            if (Input.GetKey(KeyCode.D))
+                direction.x += 1;
+            if (Input.GetKey(KeyCode.A))
+                direction.x -= 1;
+        }
         // If nothing is pressed, get rid of the direction
         if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
             direction.y = 0;
@@ -267,7 +296,7 @@ public class PlayerScript : MonoBehaviour
             dashTimer = 0;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && attackTimer > globalAttackTimer)
+        if (Input.GetKeyDown(KeyCode.Space) && attackTimer > globalAttackTimer && attackGO == null)
         {
             Attack();
             attackTimer = 0;
@@ -279,10 +308,10 @@ public class PlayerScript : MonoBehaviour
     {
         // Melee Attack
         attackGO = Instantiate(melee.attackPrefab);
-        attackGO.transform.position = transform.position + (attackDir * melee.attackSpacing);
-        attackGO.transform.right = attackDir;
+        attackGO.transform.position = transform.position + (lastDir * melee.attackSpacing);
+        attackGO.transform.right = lastDir;
 
-        velocity += attackDir * (speed * melee.kickBack);
-
+        velocity = attackDir * (speed * melee.kickBack);
+        attacking = true;
     }
 }

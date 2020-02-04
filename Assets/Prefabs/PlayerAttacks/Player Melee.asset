@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Player Melee
   m_EditorClassIdentifier: 
   attackRange: 1.8
-  attackTimerMax: 0.3
-  attackDelay: 0.1
+  attackTimerMax: 0.2
+  attackDelay: 0.075
   attackSpacing: 1
   attackPrefab: {fileID: 978165682433616991, guid: 1ffabf76e8fca954ea949be9d101f9c7,
     type: 3}
