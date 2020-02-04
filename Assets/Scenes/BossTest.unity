@@ -600,8 +600,8 @@ MonoBehaviour:
   maxSpeed: 0.06
   speed: 0.02
   friction: 0.85
-  healthMax: 3
-  hitTimerMax: 2
+  healthMax: 10
+  hitTimerMax: 3
   dashSpeed: 2
   dashCooldown: 3
   dashTimerMax: 0.5
