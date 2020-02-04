@@ -9,26 +9,18 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] float speed = .02f;
     [SerializeField] float friction = .9f;
     [SerializeField] float detectionDistance = 10f;
-    [SerializeField] float attackRange = 1f;
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
 
     // attack stuff
+    List<Attack> attacks;
     bool attacking;
-    Vector3 attackDir;
-    [SerializeField] float attackTimerMax = 1.5f;
-    [SerializeField] float attackDelay = .5f;
-    [SerializeField] float attackSpacing = 1.5f;
+    int attackRoll;
     float attackTimer;
-    [SerializeField] GameObject attackPrefab;
-    GameObject attack;
-    [SerializeField] float kickBack = 2.5f;
-
-    // ranged attack info
-    [SerializeField] bool isMelee = true;
+    GameObject attackGO;
     bool fired = false;
-    [SerializeField] float bulletSpeed = .2f;
+    Vector3 attackDir;
 
     // health
     [SerializeField] float healthMax = 2;
@@ -40,6 +32,8 @@ public class EnemyScript : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         velocity = Vector3.zero;
         health = healthMax;
+
+        attackRoll = -1;
     }
 
     // Update is called once per frame
@@ -59,13 +53,16 @@ public class EnemyScript : MonoBehaviour
 
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
+        if (attackRoll == -1)
+            attackRoll = Random.Range(0, attacks.Count);
+
         // Attacking stuff
         if (attacking)
         {
             attackTimer += Time.deltaTime;
 
-            // Create the attack when it is time
-            if (attackTimer > attackDelay && ((isMelee && attack == null) || !isMelee))
+            // Create the attackGO when it is time
+            if (attackTimer > attackDelay && ((isMelee && attackGO == null) || !isMelee))
             {
                 Attack();
             }
@@ -74,7 +71,7 @@ public class EnemyScript : MonoBehaviour
             if (attackTimer >= attackTimerMax)
             {
                 if (isMelee)
-                    Destroy(attack);
+                    Destroy(attackGO);
 
                 else
                     fired = false;
@@ -104,7 +101,7 @@ public class EnemyScript : MonoBehaviour
             return true;
 
         // IS IT TIME TO ATTACK
-        else if (attackRange > playerDis)
+        else if (attacks[attackRoll].attackRange > playerDis)
         {
             attacking = true;
             attackDir = (player.transform.position - transform.position).normalized;
@@ -116,27 +113,27 @@ public class EnemyScript : MonoBehaviour
 
     void Attack()
     {
-        if (isMelee)
+        if (attacks[attackRoll].isMelee)
         {
             // Melee Attack
-            attack = Instantiate(attackPrefab);
-            attack.transform.position = transform.position + (attackDir * attackSpacing);
-            attack.transform.right = attackDir;
+            attackGO = Instantiate(attackPrefab);
+            attackGO.transform.position = transform.position + (attackDir * attackSpacing);
+            attackGO.transform.right = attackDir;
 
             velocity += attackDir * (speed * kickBack);
 
             // Checking if player gets hit
-            if (player.GetComponent<Renderer>().bounds.Intersects(attack.GetComponent<Renderer>().bounds))
+            if (player.GetComponent<Renderer>().bounds.Intersects(attackGO.GetComponent<Renderer>().bounds))
                 player.GetComponent<PlayerScript>().GetHit();
         }
 
         else if (!fired && !isMelee)
         {
             // Range Attack
-            attack = Instantiate(attackPrefab);
-            attack.transform.position = transform.position + (attackDir * attackSpacing);
-            attack.transform.right = attackDir;
-            attack.GetComponent<BulletScript>().SetAttributes(attackDir, bulletSpeed);
+            attackGO = Instantiate(attackPrefab);
+            attackGO.transform.position = transform.position + (attackDir * attackSpacing);
+            attackGO.transform.right = attackDir;
+            attackGO.GetComponent<BulletScript>().SetAttributes(attackDir, bulletSpeed);
 
             velocity += attackDir * (speed * kickBack);
 
