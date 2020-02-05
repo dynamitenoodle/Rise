@@ -13,4 +13,6 @@ public class DoorDescriber : MonoBehaviour
     }
 
     public DoorLocation doorLocation = DoorLocation.North;
+    public bool doorOpen = true;
+    public Vector2 location = Vector2.zero;
 }

@@ -19,18 +19,16 @@ public class LevelGeneration : MonoBehaviour
 
     struct RoomSpawn
     {
+        //type of room (based on given available rooms {rooms})
         public int type;
+        //location of room
         public Vector2 location;
-        public int roomSize;
-        public List<Vector2> doorsLoc;
-        public List<DoorDescriber> doorsDesc;
-        public List<int> connections;
-    }
-
-    struct Hall
-    {
-        public Vector2 location;
-        public int type;
+        //representation of dimensions of the room (using x, y, width, height for each Vector4)
+        public List<Vector4> roomSize;
+        //List of all doors attached to the room
+        public List<DoorDescriber> doors;
+        //GameObject of the room
+        public GameObject obj;
     }
 
 
@@ -41,6 +39,9 @@ public class LevelGeneration : MonoBehaviour
         GenerateLevel();
     }
 
+    /// <summary>
+    /// Main method to generate everything (basically start point for level generation)
+    /// </summary>
     private void GenerateLevel()
     {
         //spawn rooms
@@ -49,89 +50,256 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
-        Debug.Log("Instatiating rooms...");
-        InstantiateRooms(roomSpawns);
-
+        //This for loop is just to instatiate the tester circles to visualize where the open doors are
+        //this should be removed when done testing
+        for (int i = 0; i < roomSpawns.Count; i++)
+        {
+            for (int j = 0; j < roomSpawns[i].doors.Count; j++)
+            {
+                if (roomSpawns[i].doors[j].doorOpen)
+                {
+                    GameObject testDoor = Instantiate(tester);
+                    testDoor.transform.position = roomSpawns[i].location + roomSpawns[i].doors[j].location;
+                }
+            }
+        }
 
         Debug.Log("Finished!");
     }
 
-    //generates the locations to spawn preset rooms
+    /// <summary>
+    /// Generates a level based on a given number of rooms
+    /// </summary>
+    /// <param name="numRooms"></param>
+    /// <returns></returns>
     private List<RoomSpawn> SpawnRooms(int numRooms)
     {
         List<RoomSpawn> roomSpawns = new List<RoomSpawn>();
 
-        //spawn first room
+        //spawn in random first room at (0,0)
         roomSpawns.Add(GenerateRoom(0, 0));
+        roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
+        //this var keeps track of how many times a single room has had to redo its process
+        int retryCount = 0;
+
+        //* numRooms - 1 because the first room was already spawned in 
         for (int i = 0; i < numRooms - 1; i++)
         {
-            bool roomSpawnSuccess = true;
-            int loopCount = 0;
-            RoomSpawn roomSpawn;
+            RoomSpawn roomSpawn; // this will be the variable for the room spawned in
+            List<int> usedDoors = new List<int>();
+            bool validRoom = true;
+            bool forceFinish = false;
+            
+            //pick a random valid room that already exists and generate the room with location based off randomly picked room
+            int roomPick = GetRandomValidRoom(roomSpawns);
+            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
+
             do
             {
-                //pick room that already exists
-                int roomPick = Random.Range(0, roomSpawns.Count);
-                int doorPick = Random.Range(0, roomSpawns[roomPick].doorsLoc.Count);
+                //pick a random open door from randomly picked room
+                int doorPick = GetRandomValidDoor(roomSpawns[roomPick], usedDoors);
 
-                Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
-
-                //find door of new room
-                roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
-                Vector2 roomMove = Vector2.zero;
-                for (int j = 0; j < roomSpawn.doorsLoc.Count; j++)
+                //if no available doors, destroy generated room and restart process
+                if (doorPick == -1)
                 {
-                    Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
-                    if (IsDoorInverse(doorPositionAdjust, doorAdjust))
+                    Destroy(roomSpawn.obj);
+                    forceFinish = true;
+                    validRoom = true;
+                }
+                else
+                {
+                    Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
+
+                    //find appropriate door on spawned room to the randomly picked room
+                    for (int j = 0; j < roomSpawn.doors.Count; j++)
                     {
-                        Vector2 doorLoc = new Vector2(
-                            roomSpawn.location.x + roomSpawn.doorsLoc[j].x,
-                            roomSpawn.location.y + roomSpawn.doorsLoc[j].y);
-                        Vector2 matchLoc = new Vector2(
-                            roomSpawns[roomPick].location.x + roomSpawns[roomPick].doorsLoc[doorPick].x + doorPositionAdjust.x,
-                            roomSpawns[roomPick].location.y + roomSpawns[roomPick].doorsLoc[doorPick].y + doorPositionAdjust.y);
-                        Debug.Log($"matchLoc: {matchLoc}, doorLoc: {doorLoc}");
-                        roomMove = matchLoc - doorLoc;
+                        Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
+                        if (IsDoorInverse(doorPositionAdjust, doorAdjust))
+                        {
+                            //move room to correct location based off picked door
+                            Vector2 doorLoc = new Vector2(
+                                roomSpawn.location.x + roomSpawn.doors[j].location.x,
+                                roomSpawn.location.y + roomSpawn.doors[j].location.y);
+                            Vector2 matchLoc = new Vector2(
+                                roomSpawns[roomPick].location.x + roomSpawns[roomPick].doors[doorPick].location.x + doorPositionAdjust.x,
+                                roomSpawns[roomPick].location.y + roomSpawns[roomPick].doors[doorPick].location.y + doorPositionAdjust.y);
 
-                        //remove used doors
-                        roomSpawns[roomPick].doorsLoc.RemoveAt(doorPick);
-                        roomSpawns[roomPick].doorsDesc.RemoveAt(doorPick);
+                            roomSpawn.location += (matchLoc - doorLoc);
+                            roomSpawn.obj.transform.position = roomSpawn.location;
 
-                        roomSpawn.doorsLoc.RemoveAt(j);
-                        roomSpawn.doorsDesc.RemoveAt(j);
-
-                        break;
+                            //check for any intersecting rooms (try a different door if this room intersects with something)
+                            bool intersecting = CheckRoomIntersections(roomSpawns, roomSpawn);
+                            if (intersecting)
+                            {
+                                usedDoors.Add(doorPick);
+                                validRoom = false;
+                            }
+                            else
+                            {
+                                //valid room! remove used doors
+                                roomSpawns[roomPick].doors[doorPick].doorOpen = false;
+                                roomSpawn.doors[j].doorOpen = false;
+                                validRoom = true;
+                            }
+                            break;
+                        }
                     }
                 }
+            } while (!validRoom);
 
-                roomSpawn.location += roomMove;
-                //update door locations
-                for (int j = 0; j < roomSpawn.doorsLoc.Count; j++)
-                {
-                    roomSpawn.doorsLoc[j] += roomMove;
-                }
-
-                //Debug.Log($"New room spawned moving it: {roomMove} ");
-                Debug.Log($"Spawning room at loc: {roomSpawn.location} of type [{roomSpawn.type}] from room {roomPick}");
-
-                loopCount++;
-                if (loopCount >= 10)
-                {
-                    //force room spawn success as too many loops have occurred
-                    roomSpawnSuccess = true;
-                }
-            } while (!roomSpawnSuccess);
-
-            if (roomSpawn.type != -1)
+            if (validRoom && !forceFinish)
             {
+                //add room to list of existing rooms and update doors if any doors are now connected to existing rooms
                 roomSpawns.Add(roomSpawn);
+                CheckOverlapDoors(roomSpawns);
+                retryCount = 0;
+            }
+            else
+            {
+                i--;
+                retryCount++;
+                Debug.Log($"Retrying room - unable to place room down anywhere | retry count: {retryCount}");
+                if (retryCount > 10)
+                {
+                    Debug.LogWarning($"Retry count getting high - if this continues we may need to make a change to prevent further loops | retry Count: {retryCount}");
+                }
             }
         }
 
+        //return full list of generated rooms
         return roomSpawns;
     }
 
+    /// <summary>
+    /// Check to see if a given room {roomCheck} is colliding with any existing rooms {roomSpawns}
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    /// <param name="roomCheck"></param>
+    /// <returns></returns>
+    private bool CheckRoomIntersections(List<RoomSpawn> roomSpawns, RoomSpawn roomCheck)
+    {
+        List<Vector4> sizesCheck = roomCheck.roomSize;
+
+        foreach (RoomSpawn room in roomSpawns)
+        {
+            List<Vector4> sizes = room.roomSize;
+            foreach (Vector4 sizeCheck in sizesCheck)
+            {
+                foreach (Vector4 size in sizes)
+                {
+                    bool check = helper.AABBTest(new Vector2(sizeCheck.x + roomCheck.location.x, sizeCheck.y + roomCheck.location.y), new Vector2(sizeCheck.z, sizeCheck.w),
+                                                 new Vector2(size.x + room.location.x, size.y + room.location.y), new Vector2(size.z, size.w));
+                    if (check)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Check existing rooms to see if any doors are overlapping, i.e two doors are next to each other that are open but shouldn't be
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    private void CheckOverlapDoors(List<RoomSpawn> roomSpawns)
+    {
+        //room loop
+        foreach (RoomSpawn room1 in roomSpawns)
+        {
+            foreach (RoomSpawn room2 in roomSpawns)
+            {
+                if (!room1.Equals(room2))
+                {
+                    //room1 loop through doors
+                    for (int i1 = 0; i1 < room1.doors.Count; i1++)
+                    {
+                        for (int i2 = 0; i2 < room2.doors.Count; i2++)
+                        {
+                            float distance = helper.getDistance(room1.doors[i1].location + room1.location, room2.doors[i2].location + room2.location);
+                            if (distance <= 1)
+                            {
+                                room1.doors[i1].doorOpen = false;
+                                room2.doors[i2].doorOpen = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Return the integer of a random OPEN door from a given room
+    /// </summary>
+    /// <param name="roomSpawn"></param>
+    /// <param name="usedDoors"></param>
+    /// <returns></returns>
+    private int GetRandomValidDoor(RoomSpawn roomSpawn, List<int> usedDoors)
+    {
+        List<int> validDoors = new List<int>();
+
+        for (int i = 0; i < roomSpawn.doors.Count; i++)
+        {
+            bool valid = true;
+            for (int j = 0; j < usedDoors.Count; j++)
+            {
+                if (i == usedDoors[j])
+                    valid = false;
+            }
+
+            if (valid && roomSpawn.doors[i].doorOpen)
+            {
+                validDoors.Add(i);
+            }
+        }
+
+        if (validDoors.Count == 0)
+        {
+            return -1;
+        }
+
+        return validDoors[Random.Range(0, validDoors.Count - 1)];
+    }
+
+    /// <summary>
+    /// Return a random VALID room from a given list (this means a room that has at least 1 valid/open door)
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    /// <returns></returns>
+    private int GetRandomValidRoom(List<RoomSpawn> roomSpawns)
+    {
+        List<int> validRooms = new List<int>();
+
+        for (int i = 0; i < roomSpawns.Count; i++)
+        {
+            int validDoors = 0;
+            for (int j = 0; j < roomSpawns[i].doors.Count; j++)
+            {
+                if (roomSpawns[i].doors[j].doorOpen)
+                {
+                    validDoors++;
+                }
+            }
+
+            if (validDoors != 0)
+            {
+                validRooms.Add(i);
+            }
+        }
+
+        return validRooms[Random.Range(0, validRooms.Count - 1)];
+    }
+
+    /// <summary>
+    /// Return true if the two doors are inverses of eachother (ie. one is north and one is south / one east and one west)
+    /// </summary>
+    /// <param name="door"></param>
+    /// <param name="door2"></param>
+    /// <returns></returns>
     private bool IsDoorInverse(Vector2 door, Vector2 door2)
     {
         if (door.x == 0)
@@ -144,9 +312,15 @@ public class LevelGeneration : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Find adjustment of door based on door's location (ex. north door should adjust up one space)
+    /// </summary>
+    /// <param name="room"></param>
+    /// <param name="door"></param>
+    /// <returns></returns>
     private Vector2 GetDoorAdjust(RoomSpawn room, int door)
     {
-        DoorDescriber doorDescriber = room.doorsDesc[door];
+        DoorDescriber doorDescriber = room.doors[door];
         switch (doorDescriber.doorLocation)
         {
             case DoorDescriber.DoorLocation.North:
@@ -162,177 +336,47 @@ public class LevelGeneration : MonoBehaviour
         return Vector2.zero;
     }
 
-    //generates a random room with a given location to pass back to room spawning method
+    /// <summary>
+    /// Generate a random room based on {rooms} at a given position
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     private RoomSpawn GenerateRoom(int x, int y)
     {
         RoomSpawn roomSpawn = new RoomSpawn();
 
         int roomPick = Random.Range(0, rooms.Count);
 
-        RoomDescriber describer = rooms[roomPick].GetComponent<RoomDescriber>();
+        GameObject roomObj = InstantiateRoom(roomPick);
+        RoomDescriber describer = roomObj.GetComponent<RoomDescriber>();
 
         roomSpawn.type = roomPick;
-        roomSpawn.roomSize = describer.size;
+        roomSpawn.roomSize = describer.roomSize;
         roomSpawn.location = new Vector2(x, y);
-        roomSpawn.connections = new List<int>();
+        roomSpawn.obj = roomObj;
 
         //add each doorway
-        List<Vector2> doors = new List<Vector2>();
-        List<DoorDescriber> doorsDesc = new List<DoorDescriber>();
+        List<DoorDescriber> doors = new List<DoorDescriber>();
         for (int i = 0; i < describer.doorways.Count; i++)
         {
-            doors.Add(new Vector2(
-                describer.doorways[i].transform.position.x + x, 
-                describer.doorways[i].transform.position.y + y));
-            doorsDesc.Add(describer.doorways[i].GetComponent<DoorDescriber>());
+            doors.Add(describer.doorways[i].GetComponent<DoorDescriber>());
+            doors[i].location = new Vector2(
+                describer.doorways[i].transform.position.x, 
+                describer.doorways[i].transform.position.y);
+            doors[i].doorOpen = true;
         }
-        roomSpawn.doorsLoc = doors;
-        roomSpawn.doorsDesc = doorsDesc;
+        roomSpawn.doors = doors;
         return roomSpawn;
     }
 
-    private void InstantiateRooms(List<RoomSpawn> roomSpawns)
+    /// <summary>
+    /// Instatiate a given room type
+    /// </summary>
+    /// <param name="roomPick"></param>
+    /// <returns></returns>
+    private GameObject InstantiateRoom(int roomPick)
     {
-        foreach (RoomSpawn roomSpawn in roomSpawns)
-        {
-            GameObject room = Instantiate(rooms[roomSpawn.type], mapTransform);
-            room.transform.position = roomSpawn.location;
-
-            for (int i = 0; i < roomSpawn.doorsLoc.Count; i++)
-            {
-                GameObject door = Instantiate(tester);
-                door.transform.position = roomSpawn.doorsLoc[i];
-            }
-        }
-        Debug.Log("FINISH");
+        return Instantiate(rooms[roomPick], mapTransform);
     }
-    /*
-    private List<Hall> GenerateHalls(List<RoomSpawn> roomSpawns)
-    {
-        List<Hall> halls = new List<Hall>();
-        for (int i = 0; i < roomSpawns.Count; i++)
-        {
-            int closestRoom = FindClosestRoom(roomSpawns, i);
-            Debug.Log($"Found room {closestRoom} as closest room to {i}");
-            int closestDoorStartRoom = FindClosestDoor(roomSpawns[i], roomSpawns[closestRoom]);
-            int closestDoorCloseRoom = FindClosestDoor(roomSpawns[closestRoom], roomSpawns[i]);
-
-            List<Hall> newHalls = CreateHalls(roomSpawns[i].doors[closestDoorStartRoom], roomSpawns[closestRoom].doors[closestDoorCloseRoom]);
-            halls.AddRange(newHalls);
-
-            roomSpawns[i].doors.RemoveAt(closestDoorStartRoom);
-            roomSpawns[closestRoom].doors.RemoveAt(closestDoorCloseRoom);
-            roomSpawns[i].connections.Add(closestRoom);
-            roomSpawns[closestRoom].connections.Add(i);
-        }
-
-        return halls;
-    }
-
-    private List<Hall> CreateHalls(Vector2 start, Vector2 end)
-    {
-        List<Hall> halls = new List<Hall>();
-        bool finish = false;
-
-        Vector2 cur = start;
-
-        do
-        {
-
-            if (cur.x != end.x)
-            {
-                if (cur.x < end.x)
-                {
-                    cur.x += 1;
-                }
-                else
-                {
-                    cur.x -= 1;
-                }
-            }
-            else if (cur.y != end.y)
-            {
-                if (cur.y < end.y)
-                {
-                    cur.y += 1;
-                }
-                else
-                {
-                    cur.y -= 1;
-                }
-            }
-
-            Hall newHall = new Hall();
-            newHall.type = 0;
-            newHall.location = cur;
-            halls.Add(newHall);
-
-            if (cur.Equals(end))
-            {
-                finish = true;
-            }
-
-        } while (!finish);
-
-        return halls;
-    }
-
-    private bool IsConnected(List<int> connections, int roomNum)
-    {
-        for (int i = 0; i < connections.Count; i++)
-        {
-            if (connections[i] == roomNum)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private int FindClosestRoom(List<RoomSpawn> roomSpawns, int roomNum)
-    {
-        //find nearest room
-        int nearestRoom = -1;
-        float closestDistance = -1;
-        for (int j = 0; j < roomSpawns.Count; j++)
-        {
-            if ((roomSpawns[j].location - roomSpawns[roomNum].location).magnitude < closestDistance || nearestRoom == -1)
-            {
-                if (j != roomNum && !IsConnected(roomSpawns[roomNum].connections, roomNum))
-                { 
-                    nearestRoom = j;
-                    closestDistance = (roomSpawns[j].location - roomSpawns[roomNum].location).magnitude;
-                }
-            }
-        }
-        return nearestRoom;
-    }
-
-    private int FindClosestDoor(RoomSpawn doorRoom, RoomSpawn toRoom)
-    {
-        int closest = -1;
-        float closestDistance = -1;
-        for (int i = 0; i < doorRoom.doors.Count; i++)
-        {
-            if ((doorRoom.doors[i] - toRoom.location).magnitude < closestDistance || closest == -1)
-            {
-                closest = i;
-                closestDistance = (doorRoom.doors[i] - toRoom.location).magnitude;
-            }
-        }
-
-        return closest;
-    }
-
-
-    private void InstantiateHalls(List<Hall> halls)
-    {
-        foreach (Hall hall in halls)
-        {
-            GameObject room = Instantiate(hallways[hall.type], mapTransform);
-            room.transform.position = hall.location;
-        }
-        Debug.Log("FINISH");
-    }
-    */
 }
