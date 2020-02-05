@@ -246,8 +246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec86868d5789e594180b4543c22eedd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRoomSpawns: 20
-  maxRoomSpawns: 20
+  minRoomSpawns: 1000
+  maxRoomSpawns: 1000
   rooms:
   - {fileID: 1932620637698431790, guid: c5d88c014927d134d8b80e1749855bf9, type: 3}
   mapTransform: {fileID: 1918115911}

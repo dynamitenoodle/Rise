@@ -15,4 +15,9 @@ public class Helper
         return (a > b) ? a : b;
     }
 
+    public float getDistance(Vector2 v1, Vector2 v2)
+    {
+        return (v1 - v2).magnitude;
+    }
+
 }

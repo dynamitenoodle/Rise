@@ -103,29 +103,14 @@ public class LevelGeneration : MonoBehaviour
                         roomMove = matchLoc - doorLoc;
 
                         //remove used doors
-                        test(roomSpawns[roomPick]);
                         roomSpawns[roomPick].doors[doorPick].doorOpen = false;
-                        test(roomSpawns[roomPick]);
-                        Debug.Log("----------");
-                        test(roomSpawn);
                         roomSpawn.doors[j].doorOpen = false;
-                        test(roomSpawn);
 
-                        Debug.Log($"closing door on new room spawn @ door {j}");
                         
                         break;
                     }
                 }
 
-                int countTest = 0;
-                for (int a = 0; a < roomSpawn.doors.Count; a++)
-                {
-                    if (!roomSpawn.doors[a].doorOpen)
-                    {
-                        countTest++;
-                    }
-                }
-                Debug.Log($"New room spawn has {countTest} closed doors");
                 roomSpawn.location += roomMove;
                 roomSpawn.obj.transform.position = roomSpawn.location;
 
@@ -143,17 +128,37 @@ public class LevelGeneration : MonoBehaviour
             if (roomSpawn.type != -1)
             {
                 roomSpawns.Add(roomSpawn);
+                CheckOverlapDoors(roomSpawns);
             }
         }
 
         return roomSpawns;
     }
 
-    private void test(RoomSpawn room)
+    private void CheckOverlapDoors(List<RoomSpawn> roomSpawns)
     {
-        for (int a = 0; a < room.doors.Count; a++)
+        //room loop
+        foreach (RoomSpawn room1 in roomSpawns)
         {
-            Debug.Log($"door {a}: {room.doors[a].doorOpen}");
+            foreach (RoomSpawn room2 in roomSpawns)
+            {
+                if (!room1.Equals(room2))
+                {
+                    //room1 loop through doors
+                    for (int i1 = 0; i1 < room1.doors.Count; i1++)
+                    {
+                        for (int i2 = 0; i2 < room2.doors.Count; i2++)
+                        {
+                            float distance = helper.getDistance(room1.doors[i1].location + room1.location, room2.doors[i2].location + room2.location);
+                            if (distance <= 1)
+                            {
+                                room1.doors[i1].doorOpen = false;
+                                room2.doors[i2].doorOpen = false;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
