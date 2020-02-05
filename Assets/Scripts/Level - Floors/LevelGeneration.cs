@@ -19,19 +19,17 @@ public class LevelGeneration : MonoBehaviour
 
     struct RoomSpawn
     {
+        //type of room (based on given available rooms {rooms})
         public int type;
+        //location of room
         public Vector2 location;
+        //representation of dimensions of the room (using x, y, width, height for each Vector4)
         public List<Vector4> roomSize;
+        //List of all doors attached to the room
         public List<DoorDescriber> doors;
+        //GameObject of the room
         public GameObject obj;
     }
-
-    struct Hall
-    {
-        public Vector2 location;
-        public int type;
-    }
-
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +38,9 @@ public class LevelGeneration : MonoBehaviour
         GenerateLevel();
     }
 
+    /// <summary>
+    /// Main method to generate everything (basically start point for level generation)
+    /// </summary>
     private void GenerateLevel()
     {
         //spawn rooms
@@ -48,6 +49,8 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
+        //This for loop is just to instatiate the tester circles to visualize where the open doors are
+        //this should be removed when done testing
         for (int i = 0; i < roomSpawns.Count; i++)
         {
             for (int j = 0; j < roomSpawns[i].doors.Count; j++)
@@ -63,32 +66,40 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log("Finished!");
     }
 
-    //generates the locations to spawn preset rooms
+    /// <summary>
+    /// Generates a level based on a given number of rooms
+    /// </summary>
+    /// <param name="numRooms"></param>
+    /// <returns></returns>
     private List<RoomSpawn> SpawnRooms(int numRooms)
     {
         List<RoomSpawn> roomSpawns = new List<RoomSpawn>();
 
-        //spawn first room
+        //spawn in random first room at (0,0)
         roomSpawns.Add(GenerateRoom(0, 0));
         roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
+        //this var keeps track of how many times a single room has had to redo its process
         int retryCount = 0;
 
+        //* numRooms - 1 because the first room was already spawned in 
         for (int i = 0; i < numRooms - 1; i++)
         {
-            RoomSpawn roomSpawn;
+            RoomSpawn roomSpawn; // this will be the variable for the room spawned in
             List<int> usedDoors = new List<int>();
             bool validRoom = true;
             bool forceFinish = false;
             
-            //pick room that already exists
+            //pick a random valid room that already exists and generate the room with location based off randomly picked room
             int roomPick = GetRandomValidRoom(roomSpawns);
             roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
 
             do
             {
+                //pick a random open door from randomly picked room
                 int doorPick = GetRandomValidDoor(roomSpawns[roomPick], usedDoors);
 
+                //if no available doors, destroy generated room and restart process
                 if (doorPick == -1)
                 {
                     Destroy(roomSpawn.obj);
@@ -99,11 +110,13 @@ public class LevelGeneration : MonoBehaviour
                 {
                     Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
 
+                    //find appropriate door on spawned room to the randomly picked room
                     for (int j = 0; j < roomSpawn.doors.Count; j++)
                     {
                         Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
                         if (IsDoorInverse(doorPositionAdjust, doorAdjust))
                         {
+                            //move room to correct location based off picked door
                             Vector2 doorLoc = new Vector2(
                                 roomSpawn.location.x + roomSpawn.doors[j].location.x,
                                 roomSpawn.location.y + roomSpawn.doors[j].location.y);
@@ -114,7 +127,7 @@ public class LevelGeneration : MonoBehaviour
                             roomSpawn.location += (matchLoc - doorLoc);
                             roomSpawn.obj.transform.position = roomSpawn.location;
 
-                            //check for intersecting rooms
+                            //check for any intersecting rooms (try a different door if this room intersects with something)
                             bool intersecting = CheckRoomIntersections(roomSpawns, roomSpawn);
                             if (intersecting)
                             {
@@ -123,7 +136,7 @@ public class LevelGeneration : MonoBehaviour
                             }
                             else
                             {
-                                //remove used doors
+                                //valid room! remove used doors
                                 roomSpawns[roomPick].doors[doorPick].doorOpen = false;
                                 roomSpawn.doors[j].doorOpen = false;
                                 validRoom = true;
@@ -136,6 +149,7 @@ public class LevelGeneration : MonoBehaviour
 
             if (validRoom && !forceFinish)
             {
+                //add room to list of existing rooms and update doors if any doors are now connected to existing rooms
                 roomSpawns.Add(roomSpawn);
                 CheckOverlapDoors(roomSpawns);
                 retryCount = 0;
@@ -152,9 +166,16 @@ public class LevelGeneration : MonoBehaviour
             }
         }
 
+        //return full list of generated rooms
         return roomSpawns;
     }
 
+    /// <summary>
+    /// Check to see if a given room {roomCheck} is colliding with any existing rooms {roomSpawns}
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    /// <param name="roomCheck"></param>
+    /// <returns></returns>
     private bool CheckRoomIntersections(List<RoomSpawn> roomSpawns, RoomSpawn roomCheck)
     {
         List<Vector4> sizesCheck = roomCheck.roomSize;
@@ -179,6 +200,10 @@ public class LevelGeneration : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Check existing rooms to see if any doors are overlapping, i.e two doors are next to each other that are open but shouldn't be
+    /// </summary>
+    /// <param name="roomSpawns"></param>
     private void CheckOverlapDoors(List<RoomSpawn> roomSpawns)
     {
         //room loop
@@ -206,6 +231,12 @@ public class LevelGeneration : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Return the integer of a random OPEN door from a given room
+    /// </summary>
+    /// <param name="roomSpawn"></param>
+    /// <param name="usedDoors"></param>
+    /// <returns></returns>
     private int GetRandomValidDoor(RoomSpawn roomSpawn, List<int> usedDoors)
     {
         List<int> validDoors = new List<int>();
@@ -233,6 +264,11 @@ public class LevelGeneration : MonoBehaviour
         return validDoors[Random.Range(0, validDoors.Count - 1)];
     }
 
+    /// <summary>
+    /// Return a random VALID room from a given list (this means a room that has at least 1 valid/open door)
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    /// <returns></returns>
     private int GetRandomValidRoom(List<RoomSpawn> roomSpawns)
     {
         List<int> validRooms = new List<int>();
@@ -257,6 +293,12 @@ public class LevelGeneration : MonoBehaviour
         return validRooms[Random.Range(0, validRooms.Count - 1)];
     }
 
+    /// <summary>
+    /// Return true if the two doors are inverses of eachother (ie. one is north and one is south / one east and one west)
+    /// </summary>
+    /// <param name="door"></param>
+    /// <param name="door2"></param>
+    /// <returns></returns>
     private bool IsDoorInverse(Vector2 door, Vector2 door2)
     {
         if (door.x == 0)
@@ -269,6 +311,12 @@ public class LevelGeneration : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Find adjustment of door based on door's location (ex. north door should adjust up one space)
+    /// </summary>
+    /// <param name="room"></param>
+    /// <param name="door"></param>
+    /// <returns></returns>
     private Vector2 GetDoorAdjust(RoomSpawn room, int door)
     {
         DoorDescriber doorDescriber = room.doors[door];
@@ -287,7 +335,12 @@ public class LevelGeneration : MonoBehaviour
         return Vector2.zero;
     }
 
-    //generates a random room with a given location to pass back to room spawning method
+    /// <summary>
+    /// Generate a random room based on {rooms} at a given position
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     private RoomSpawn GenerateRoom(int x, int y)
     {
         RoomSpawn roomSpawn = new RoomSpawn();
@@ -316,6 +369,11 @@ public class LevelGeneration : MonoBehaviour
         return roomSpawn;
     }
 
+    /// <summary>
+    /// Instatiate a given room type
+    /// </summary>
+    /// <param name="roomPick"></param>
+    /// <returns></returns>
     private GameObject InstantiateRoom(int roomPick)
     {
         return Instantiate(rooms[roomPick], mapTransform);
