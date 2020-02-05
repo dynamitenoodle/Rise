@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Boss - Shock
   m_EditorClassIdentifier: 
   attackRange: 3.25
-  attackTimerMax: 3
+  attackTimerMax: 4
   attackDelay: 0.75
   attackSpacing: 0
   attackPrefab: {fileID: 978165682433616991, guid: 1d943ca0c1cea4443b64b9dc18825f0e,
@@ -22,5 +22,6 @@ MonoBehaviour:
   isMelee: 1
   bulletSpeed: 0.2
   shotNumMax: 1
+  increasedDelay: 1
   speen: 1
-  speenSpeed: 15
+  speenSpeed: 30

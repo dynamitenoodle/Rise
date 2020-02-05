@@ -82,12 +82,9 @@ public class EnemyScript : MonoBehaviour
             if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
             {
                 direction = (player.transform.position - transform.position).normalized;
-                if (!attacking && attackRoll != -1 && (attacks.Count != 1 || !attacks[0].isMelee))
-                {
-                    float cannonAngle = (Mathf.Atan2((player.transform.position - transform.position).normalized.y, (player.transform.position - transform.position).normalized.x) * Mathf.Rad2Deg) - 90f;
-                    gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
-                }
+                CannonSet(direction);
             }
+
             // Attacking stuff
             if (attacking)
             {
@@ -102,7 +99,9 @@ public class EnemyScript : MonoBehaviour
                         attackGO.transform.Rotate(Vector3.back * attacks[attackRoll].speenSpeed * Time.deltaTime);
                 }
 
-                // Create the attackGO when it is time            THIS NEEDS TO BE SIMPLIFIED / MADE IT'S OWN METHOD LOL
+                CannonSet(attackDir);
+                
+                // Create the attackGO when it is time
                 if (CanAttackCheck())
                 {
                     Attack();
@@ -145,8 +144,9 @@ public class EnemyScript : MonoBehaviour
             velocity *= friction;
 
         velocity += (direction * speed);
-
-        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+		
+		if (attackRoll != -1 && attacks[attackRoll].kickBack < 5)
+			velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
         // Carry out the math
         transform.position += velocity;
@@ -159,9 +159,6 @@ public class EnemyScript : MonoBehaviour
                 player.GetComponent<PlayerScript>().GetHit();
             }
         }
-
-        
-
 
         if (invul)
         {
@@ -203,6 +200,7 @@ public class EnemyScript : MonoBehaviour
         return false;
     }
 
+	// Executing the attack
     void Attack()
     {
         if (attacks[attackRoll].isMelee)
@@ -291,4 +289,13 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    // Sets the cannon angle
+    void CannonSet(Vector3 dir)
+    {
+        if (attackRoll != -1 && (attacks.Count != 1 || !attacks[0].isMelee))
+        {
+            float cannonAngle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg) - 90f;
+            gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
+        }
+    }
 }

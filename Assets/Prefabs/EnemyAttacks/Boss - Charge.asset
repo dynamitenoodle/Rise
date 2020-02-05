@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 328ee1d7f6c6d564fa9201de6db77cd3, type: 3}
-  m_Name: Boss - Triple Tap
+  m_Name: Boss - Charge
   m_EditorClassIdentifier: 
-  attackRange: 10
-  attackTimerMax: 0.125
-  attackDelay: 0.05
-  attackSpacing: 2
-  attackPrefab: {fileID: 7932270264175950735, guid: f43710649f21ecc488a61b389eb4db1f,
+  attackRange: 15
+  attackTimerMax: 3
+  attackDelay: 1
+  attackSpacing: 0
+  attackPrefab: {fileID: 2592537362949441743, guid: 79a344c2c65f6864bb641bab9d503352,
     type: 3}
-  kickBack: 0
-  isMelee: 0
-  bulletSpeed: 0.125
-  shotNumMax: 3
-  increasedDelay: 1
+  kickBack: 150
+  isMelee: 1
+  bulletSpeed: 0.2
+  shotNumMax: 1
+  increasedDelay: 0
   speen: 0
-  speenSpeed: 15
+  speenSpeed: 30
