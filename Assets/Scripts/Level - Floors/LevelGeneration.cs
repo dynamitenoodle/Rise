@@ -21,7 +21,7 @@ public class LevelGeneration : MonoBehaviour
     {
         public int type;
         public Vector2 location;
-        public int roomSize;
+        public List<Vector4> roomSize;
         public List<DoorDescriber> doors;
         public GameObject obj;
     }
@@ -72,67 +72,111 @@ public class LevelGeneration : MonoBehaviour
         roomSpawns.Add(GenerateRoom(0, 0));
         roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
+        int retryCount = 0;
+
         for (int i = 0; i < numRooms - 1; i++)
         {
-            bool roomSpawnSuccess = true;
-            int loopCount = 0;
             RoomSpawn roomSpawn;
+            List<int> usedDoors = new List<int>();
+            bool validRoom = true;
+            bool forceFinish = false;
+            
+            //pick room that already exists
+            int roomPick = GetRandomValidRoom(roomSpawns);
+            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
+
             do
             {
-                //pick room that already exists
-                int roomPick = GetRandomValidRoom(roomSpawns);
-                int doorPick = GetRandomValidDoor(roomSpawns[roomPick]);
+                int doorPick = GetRandomValidDoor(roomSpawns[roomPick], usedDoors);
 
-                Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
-
-                //find door of new room
-                roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
-                Vector2 roomMove = Vector2.zero;
-                for (int j = 0; j < roomSpawn.doors.Count; j++)
+                if (doorPick == -1)
                 {
-                    Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
-                    if (IsDoorInverse(doorPositionAdjust, doorAdjust))
+                    Destroy(roomSpawn.obj);
+                    forceFinish = true;
+                    validRoom = true;
+                }
+                else
+                {
+                    Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
+
+                    for (int j = 0; j < roomSpawn.doors.Count; j++)
                     {
-                        Vector2 doorLoc = new Vector2(
-                            roomSpawn.location.x + roomSpawn.doors[j].location.x,
-                            roomSpawn.location.y + roomSpawn.doors[j].location.y);
-                        Vector2 matchLoc = new Vector2(
-                            roomSpawns[roomPick].location.x + roomSpawns[roomPick].doors[doorPick].location.x + doorPositionAdjust.x,
-                            roomSpawns[roomPick].location.y + roomSpawns[roomPick].doors[doorPick].location.y + doorPositionAdjust.y);
-                        Debug.Log($"matchLoc: {matchLoc}, doorLoc: {doorLoc}");
-                        roomMove = matchLoc - doorLoc;
+                        Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
+                        if (IsDoorInverse(doorPositionAdjust, doorAdjust))
+                        {
+                            Vector2 doorLoc = new Vector2(
+                                roomSpawn.location.x + roomSpawn.doors[j].location.x,
+                                roomSpawn.location.y + roomSpawn.doors[j].location.y);
+                            Vector2 matchLoc = new Vector2(
+                                roomSpawns[roomPick].location.x + roomSpawns[roomPick].doors[doorPick].location.x + doorPositionAdjust.x,
+                                roomSpawns[roomPick].location.y + roomSpawns[roomPick].doors[doorPick].location.y + doorPositionAdjust.y);
 
-                        //remove used doors
-                        roomSpawns[roomPick].doors[doorPick].doorOpen = false;
-                        roomSpawn.doors[j].doorOpen = false;
+                            roomSpawn.location += (matchLoc - doorLoc);
+                            roomSpawn.obj.transform.position = roomSpawn.location;
 
-                        
-                        break;
+                            //check for intersecting rooms
+                            bool intersecting = CheckRoomIntersections(roomSpawns, roomSpawn);
+                            if (intersecting)
+                            {
+                                usedDoors.Add(doorPick);
+                                validRoom = false;
+                            }
+                            else
+                            {
+                                //remove used doors
+                                roomSpawns[roomPick].doors[doorPick].doorOpen = false;
+                                roomSpawn.doors[j].doorOpen = false;
+                                validRoom = true;
+                            }
+                            break;
+                        }
                     }
                 }
+            } while (!validRoom);
 
-                roomSpawn.location += roomMove;
-                roomSpawn.obj.transform.position = roomSpawn.location;
-
-                //Debug.Log($"New room spawned moving it: {roomMove} ");
-                Debug.Log($"Spawning room at loc: {roomSpawn.location} of type [{roomSpawn.type}] from room {roomPick}");
-
-                loopCount++;
-                if (loopCount >= 10)
-                {
-                    //force room spawn success as too many loops have occurred
-                    roomSpawnSuccess = true;
-                }
-            } while (!roomSpawnSuccess);
-
-            if (roomSpawn.type != -1)
+            if (validRoom && !forceFinish)
             {
                 roomSpawns.Add(roomSpawn);
                 CheckOverlapDoors(roomSpawns);
+                retryCount = 0;
+            }
+            else
+            {
+                i--;
+                retryCount++;
+                Debug.Log($"Retrying room - unable to place room down anywhere | retry count: {retryCount}");
+                if (retryCount > 10)
+                {
+                    Debug.LogWarning($"Retry count getting high - if this continues we may need to make a change to prevent further loops | retry Count: {retryCount}");
+                }
             }
         }
 
         return roomSpawns;
+    }
+
+    private bool CheckRoomIntersections(List<RoomSpawn> roomSpawns, RoomSpawn roomCheck)
+    {
+        List<Vector4> sizesCheck = roomCheck.roomSize;
+
+        foreach (RoomSpawn room in roomSpawns)
+        {
+            List<Vector4> sizes = room.roomSize;
+            foreach (Vector4 sizeCheck in sizesCheck)
+            {
+                foreach (Vector4 size in sizes)
+                {
+                    bool check = helper.AABBTest(new Vector2(sizeCheck.x + roomCheck.location.x, sizeCheck.y + roomCheck.location.y), new Vector2(sizeCheck.z, sizeCheck.w),
+                                                 new Vector2(size.x + room.location.x, size.y + room.location.y), new Vector2(size.z, size.w));
+                    if (check)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private void CheckOverlapDoors(List<RoomSpawn> roomSpawns)
@@ -162,16 +206,28 @@ public class LevelGeneration : MonoBehaviour
         }
     }
 
-    private int GetRandomValidDoor(RoomSpawn roomSpawn)
+    private int GetRandomValidDoor(RoomSpawn roomSpawn, List<int> usedDoors)
     {
         List<int> validDoors = new List<int>();
 
         for (int i = 0; i < roomSpawn.doors.Count; i++)
         {
-            if (roomSpawn.doors[i].doorOpen)
+            bool valid = true;
+            for (int j = 0; j < usedDoors.Count; j++)
+            {
+                if (i == usedDoors[j])
+                    valid = false;
+            }
+
+            if (valid && roomSpawn.doors[i].doorOpen)
             {
                 validDoors.Add(i);
             }
+        }
+
+        if (validDoors.Count == 0)
+        {
+            return -1;
         }
 
         return validDoors[Random.Range(0, validDoors.Count - 1)];
@@ -242,7 +298,7 @@ public class LevelGeneration : MonoBehaviour
         RoomDescriber describer = roomObj.GetComponent<RoomDescriber>();
 
         roomSpawn.type = roomPick;
-        roomSpawn.roomSize = describer.size;
+        roomSpawn.roomSize = describer.roomSize;
         roomSpawn.location = new Vector2(x, y);
         roomSpawn.obj = roomObj;
 
