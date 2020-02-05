@@ -35,5 +35,4 @@ public class Helper
 
         return (xMin1 < xMax2 && xMax1 > xMin2 && yMin1 < yMax2 && yMax1 > yMin2);
     }
-
 }
