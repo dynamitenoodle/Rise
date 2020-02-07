@@ -68,7 +68,6 @@ public class LevelGeneration : MonoBehaviour
             {
                 if (roomSpawn.doors[i].doorOpen)
                 {
-                    Debug.Log("instatiate room");
                     Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawn.doors[i]);
 
                     GameObject elevator = Instantiate(elevatorPrefab, mapTransform);
@@ -90,9 +89,21 @@ public class LevelGeneration : MonoBehaviour
                         {
                             Vector2 roomMove = MatchDoorRoomAdjust(roomSpawn.location, doors[j].location, roomSpawn.location, roomSpawn.doors[i].location, doorPositionAdjust);
 
-                            Debug.Log($"doorPosAdjust: {doorPositionAdjust}, roomPos: {roomSpawn.location}, roomDoor {i} location: {roomSpawn.doors[i].location}, elevator position: {elevator.transform.position}, elevator door pos: {doors[j].location}");
+                            //Debug.Log($"doorPosAdjust: {doorPositionAdjust}, roomPos: {roomSpawn.location}, roomDoor {i} location: {roomSpawn.doors[i].location}, elevator position: {elevator.transform.position}, elevator door pos: {doors[j].location}");
 
                             elevator.transform.position += new Vector3(roomMove.x + roomSpawn.location.x, roomMove.y + roomSpawn.location.y, 0);
+
+                            RoomSpawn elevatorRoom = new RoomSpawn();
+                            elevatorRoom.obj = elevator;
+                            elevatorRoom.roomSize = elevator.GetComponent<RoomDescriber>().roomSize;
+                            elevatorRoom.location = elevator.transform.position;
+                            bool intersecting = CheckRoomIntersections(roomSpawns, elevatorRoom);
+                            if (intersecting)
+                            {
+                                Debug.Log("Cant place elevator here");
+                                Destroy(elevator);
+                                break;
+                            }
                             elevators.Add(elevator);
                         }
                         else
