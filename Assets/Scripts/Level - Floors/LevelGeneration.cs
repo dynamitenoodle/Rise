@@ -9,6 +9,8 @@ public class LevelGeneration : MonoBehaviour
     public int maxRoomSpawns;
 
     public List<GameObject> rooms;
+    public GameObject elevatorPrefab;
+    public GameObject elevatorWallPrefab;
 
     public Transform mapTransform;
 
@@ -49,21 +51,61 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
-        //This for loop is just to instatiate the tester circles to visualize where the open doors are
-        //this should be removed when done testing
-        for (int i = 0; i < roomSpawns.Count; i++)
+        Debug.Log("Spawning elevators...");
+        List<GameObject> elevators = SpawnElevators(roomSpawns);
+
+        Debug.Log("...Finished!");
+    }
+
+    private List<GameObject> SpawnElevators(List<RoomSpawn> roomSpawns)
+    {
+        List<GameObject> elevators = new List<GameObject>();
+
+        foreach (RoomSpawn roomSpawn in roomSpawns)
         {
-            for (int j = 0; j < roomSpawns[i].doors.Count; j++)
+            for (int i = 0; i < roomSpawn.doors.Count; i++)
             {
-                if (roomSpawns[i].doors[j].doorOpen)
+                if (roomSpawn.doors[i].doorOpen)
                 {
-                    GameObject testDoor = Instantiate(tester);
-                    testDoor.transform.position = roomSpawns[i].location + roomSpawns[i].doors[j].location;
+                    Debug.Log("instatiate room");
+                    Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawn.doors[i]);
+
+                    GameObject elevator = Instantiate(elevatorPrefab, mapTransform);
+                    elevator.transform.position = roomSpawn.location;
+                    RoomDescriber roomDescriber = elevator.GetComponent<RoomDescriber>();
+                    List<DoorDescriber> doors = new List<DoorDescriber>();
+                    //setup doors
+                    foreach (GameObject door in roomDescriber.doorways)
+                    {
+                        doors.Add(door.GetComponent<DoorDescriber>());
+                        doors[doors.Count - 1].location = door.transform.position;
+                    }
+
+                    //do thing
+                    for (int j = 0; j < doors.Count; j++)
+                    {
+                        Vector2 elevatorAdjust = GetDoorAdjust(doors[j]);
+                        if (IsDoorInverse(doorPositionAdjust, elevatorAdjust))
+                        {
+                            Vector2 roomMove = MatchDoorRoomAdjust(roomSpawn.location, doors[j].location, roomSpawn.location, roomSpawn.doors[i].location, doorPositionAdjust);
+
+                            Debug.Log($"doorPosAdjust: {doorPositionAdjust}, roomPos: {roomSpawn.location}, roomDoor {i} location: {roomSpawn.doors[i].location}, elevator position: {elevator.transform.position}, elevator door pos: {doors[j].location}");
+
+                            elevator.transform.position += new Vector3(roomMove.x + roomSpawn.location.x, roomMove.y + roomSpawn.location.y, 0);
+                            elevators.Add(elevator);
+                        }
+                        else
+                        {
+                            GameObject doorObj = doors[j].gameObject;
+                            Instantiate(elevatorWallPrefab, doorObj.transform.position, doorObj.transform.rotation, doorObj.transform.parent);
+                            Destroy(doorObj);
+                        }
+                    }
                 }
             }
         }
 
-        Debug.Log("Finished!");
+        return elevators;
     }
 
     /// <summary>
@@ -108,23 +150,18 @@ public class LevelGeneration : MonoBehaviour
                 }
                 else
                 {
-                    Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick], doorPick);
+                    Vector2 doorPositionAdjust = GetDoorAdjust(roomSpawns[roomPick].doors[doorPick]);
 
                     //find appropriate door on spawned room to the randomly picked room
                     for (int j = 0; j < roomSpawn.doors.Count; j++)
                     {
-                        Vector2 doorAdjust = GetDoorAdjust(roomSpawn, j);
+                        Vector2 doorAdjust = GetDoorAdjust(roomSpawn.doors[j]);
                         if (IsDoorInverse(doorPositionAdjust, doorAdjust))
                         {
                             //move room to correct location based off picked door
-                            Vector2 doorLoc = new Vector2(
-                                roomSpawn.location.x + roomSpawn.doors[j].location.x,
-                                roomSpawn.location.y + roomSpawn.doors[j].location.y);
-                            Vector2 matchLoc = new Vector2(
-                                roomSpawns[roomPick].location.x + roomSpawns[roomPick].doors[doorPick].location.x + doorPositionAdjust.x,
-                                roomSpawns[roomPick].location.y + roomSpawns[roomPick].doors[doorPick].location.y + doorPositionAdjust.y);
+                            Vector2 roomMove = MatchDoorRoomAdjust(roomSpawn.location, roomSpawn.doors[j].location, roomSpawns[roomPick].location, roomSpawns[roomPick].doors[doorPick].location, doorPositionAdjust);
 
-                            roomSpawn.location += (matchLoc - doorLoc);
+                            roomSpawn.location += roomMove;
                             roomSpawn.obj.transform.position = roomSpawn.location;
 
                             //check for any intersecting rooms (try a different door if this room intersects with something)
@@ -168,6 +205,14 @@ public class LevelGeneration : MonoBehaviour
 
         //return full list of generated rooms
         return roomSpawns;
+    }
+
+    private Vector2 MatchDoorRoomAdjust(Vector2 room1Loc, Vector2 room1DoorLoc, Vector2 room2Loc, Vector2 room2DoorLoc, Vector2 doorAdjust)
+    {
+        Vector2 doorLoc = room1Loc + room1DoorLoc;
+        Vector2 matchLoc = room2Loc + room2DoorLoc + doorAdjust;
+
+        return (matchLoc - doorLoc);
     }
 
     /// <summary>
@@ -317,9 +362,8 @@ public class LevelGeneration : MonoBehaviour
     /// <param name="room"></param>
     /// <param name="door"></param>
     /// <returns></returns>
-    private Vector2 GetDoorAdjust(RoomSpawn room, int door)
+    private Vector2 GetDoorAdjust(DoorDescriber doorDescriber)
     {
-        DoorDescriber doorDescriber = room.doors[door];
         switch (doorDescriber.doorLocation)
         {
             case DoorDescriber.DoorLocation.North:
