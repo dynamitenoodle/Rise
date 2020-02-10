@@ -16,6 +16,8 @@ public class LevelGeneration : MonoBehaviour
 
     public GameObject tester;
 
+    
+
     //class vars
     Helper helper;
 
@@ -55,9 +57,39 @@ public class LevelGeneration : MonoBehaviour
         Debug.Log("Spawning elevators...");
         List<GameObject> elevators = SpawnElevators(roomSpawns);
 
+        UpdateDoors(roomSpawns);
+
         Debug.Log("...Finished!");
     }
 
+    /// <summary>
+    /// Updates all doors for the level, removing open unused doors
+    /// In the future this will also widen the valid doors between rooms (not elevators)
+    /// and more?
+    /// </summary>
+    private void UpdateDoors(List<RoomSpawn> roomSpawns)
+    {
+        foreach (RoomSpawn room in roomSpawns)
+        {
+            for (int i = 0; i < room.doors.Count; i++)
+            {
+                if (room.doors[i].doorOpen && !room.doors[i].elevatorDoor)
+                {
+                    Instantiate(elevatorWallPrefab, room.doors[i].transform.position, room.doors[i].transform.rotation, room.doors[i].transform.parent);
+
+                    Destroy(room.doors[i].gameObject);
+                    room.doors.RemoveAt(i);
+
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Spawns in elevators to then pass to wave generation
+    /// </summary>
+    /// <param name="roomSpawns"></param>
+    /// <returns></returns>
     private List<GameObject> SpawnElevators(List<RoomSpawn> roomSpawns)
     {
         List<GameObject> elevators = new List<GameObject>();
@@ -93,6 +125,7 @@ public class LevelGeneration : MonoBehaviour
 
                             elevator.transform.position += new Vector3(roomMove.x + roomSpawn.location.x, roomMove.y + roomSpawn.location.y, 0);
 
+
                             RoomSpawn elevatorRoom = new RoomSpawn();
                             elevatorRoom.obj = elevator;
                             elevatorRoom.roomSize = elevator.GetComponent<RoomDescriber>().roomSize;
@@ -100,11 +133,11 @@ public class LevelGeneration : MonoBehaviour
                             bool intersecting = CheckRoomIntersections(roomSpawns, elevatorRoom);
                             if (intersecting)
                             {
-                                Debug.Log("Cant place elevator here");
                                 Destroy(elevator);
                                 break;
                             }
                             elevators.Add(elevator);
+                            roomSpawn.doors[i].elevatorDoor = true;
                         }
                         else
                         {
@@ -148,8 +181,11 @@ public class LevelGeneration : MonoBehaviour
             int roomPick = GetRandomValidRoom(roomSpawns);
             roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
 
+            int runCount = 0;
+
             do
             {
+                runCount++;
                 //pick a random open door from randomly picked room
                 int doorPick = GetRandomValidDoor(roomSpawns[roomPick], usedDoors);
 
@@ -194,6 +230,15 @@ public class LevelGeneration : MonoBehaviour
                         }
                     }
                 }
+
+                if (runCount >= Constants.LEVELGEN_MAX_ROOM_LOOPS)
+                {
+                    Debug.LogWarning("Hit max room check loops - forcing finish");
+                    Destroy(roomSpawn.obj);
+                    forceFinish = true;
+                    validRoom = true;
+                }
+
             } while (!validRoom);
 
             if (validRoom && !forceFinish)
@@ -420,6 +465,7 @@ public class LevelGeneration : MonoBehaviour
                 describer.doorways[i].transform.position.x, 
                 describer.doorways[i].transform.position.y);
             doors[i].doorOpen = true;
+            doors[i].elevatorDoor = false;
         }
         roomSpawn.doors = doors;
         return roomSpawn;
