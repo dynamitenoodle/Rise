@@ -781,6 +781,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: door (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1627186438711920107, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c58cba1e2eed26141a9b0ff63cb34a4b, type: 3}
 --- !u!1 &278474399772449247 stripped
@@ -1086,6 +1091,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: door (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1627186438711920107, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c58cba1e2eed26141a9b0ff63cb34a4b, type: 3}
@@ -1697,6 +1707,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: door (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1627186438711920107, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c58cba1e2eed26141a9b0ff63cb34a4b, type: 3}
@@ -3059,6 +3074,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: door
       objectReference: {fileID: 0}
+    - target: {fileID: 1627186438711920107, guid: c58cba1e2eed26141a9b0ff63cb34a4b,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c58cba1e2eed26141a9b0ff63cb34a4b, type: 3}
 --- !u!1 &6919074308388128273 stripped
@@ -3298,4 +3318,3 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 9210498718429275838}
   m_PrefabAsset: {fileID: 0}
-

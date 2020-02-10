@@ -246,13 +246,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec86868d5789e594180b4543c22eedd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRoomSpawns: 10
-  maxRoomSpawns: 10
+  minRoomSpawns: 50
+  maxRoomSpawns: 50
   rooms:
   - {fileID: 777969233379233814, guid: c5d88c014927d134d8b80e1749855bf9, type: 3}
   - {fileID: 7073112540764344033, guid: 6fe1cab7ea4bbc247b2f27b9612f279d, type: 3}
   - {fileID: 7598386088287687137, guid: 006e500dfa1de914ea42fcbfce1bd8cd, type: 3}
   - {fileID: 7598386088287687137, guid: e3133347057d8c643ab9958e3bbbec34, type: 3}
+  - {fileID: 8409268062744175899, guid: b1ce5e730cc43e643a62810a0f32186a, type: 3}
+  elevatorPrefab: {fileID: 4702182630266006499, guid: 6c907f1f7b808f748a1580414a3d003e,
+    type: 3}
+  elevatorWallPrefab: {fileID: 7109147777226009931, guid: dadcb8b2f5017e34db8cf16689f52d7c,
+    type: 3}
   mapTransform: {fileID: 1918115911}
   tester: {fileID: 3499360050317166254, guid: b21a9bae959031b4fa611ffd3975d5c6, type: 3}
 --- !u!1 &1918115910
