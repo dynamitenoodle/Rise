@@ -10,6 +10,6 @@ public class ElevatorDescriber : MonoBehaviour
     {
         Gizmos.color = Color.red;
         foreach (Transform point in spawnPoints)
-            Gizmos.DrawSphere(point.position, 0.2f);
+            Gizmos.DrawSphere(point.position, 0.25f);
     }
 }
