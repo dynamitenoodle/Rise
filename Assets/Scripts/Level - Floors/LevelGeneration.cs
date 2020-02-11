@@ -60,6 +60,10 @@ public class LevelGeneration : MonoBehaviour
         UpdateDoors(roomSpawns);
 
         Debug.Log("...Finished!");
+
+        //send elevator info to wave manager
+        WaveManager waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
+        waveManager.SetupElevators(elevators);
     }
 
     /// <summary>
