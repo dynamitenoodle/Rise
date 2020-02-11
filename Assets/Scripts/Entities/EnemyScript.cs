@@ -145,8 +145,13 @@ public class EnemyScript : MonoBehaviour
 
         velocity += (direction * speed);
 		
-		if (attackRoll != -1 && attacks[attackRoll].kickBack < 5)
-			velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+		if (attackRoll != -1)
+        {
+            if(attacks[attackRoll].kickBack < 5)
+			    velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+            else
+                velocity = Vector3.ClampMagnitude(velocity, maxSpeed * attacks[attackRoll].kickBack);
+        }
 
         // Carry out the math
         transform.position += velocity;
@@ -235,7 +240,8 @@ public class EnemyScript : MonoBehaviour
             invul = true;
             health--;
 
-            velocity += knockback * knockbackAmt;
+            velocity -= knockback * knockbackAmt;
+			velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
             if (health - 1 < 0)
             {
