@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyScript : MonoBehaviour
 {
     // attributes
+    public enum EnemySpawnType { common, uncommon, rare, special}
+    public EnemySpawnType enemySpawnType;
     [SerializeField] float maxSpeed = .1f;
     [SerializeField] float speed = .02f;
     [SerializeField] float friction = .9f;

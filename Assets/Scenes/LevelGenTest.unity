@@ -170,7 +170,7 @@ PrefabInstance:
     - target: {fileID: 612161522938625948, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 612161522938625948, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e,
         type: 3}
@@ -285,6 +285,99 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1da70b32705e2b478c61a5bfeb1a4a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &898909566
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 898909568}
+  - component: {fileID: 898909567}
+  m_Layer: 0
+  m_Name: WaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &898909567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898909566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d989452426463c47b816a66f664e607, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1356483199}
+  enemyTransform: {fileID: 1814831423}
+  enemyPrefabs:
+  - {fileID: 1202682115124967237, guid: cb92b3cdbf0b4d64aa6be7ff71453db4, type: 3}
+  - {fileID: 3856345244267791272, guid: ed37f00900ed78c449f3483235cc4b59, type: 3}
+  enemyQueue: []
+  maxEnemiesForWave: 50
+  minEnemiesForWave: 25
+  commonSpawnChance: 1
+  uncommonSpawnChance: 0.3
+  rareSpawnChance: 0.1
+  specialSpawnChance: 0.05
+  maxEnemyGroupSpawn: 10
+  maxEnemiesOut: 30
+--- !u!4 &898909568
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898909566}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.106134, y: 1.1474648, z: -4302.59}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1356483199 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 612161522938625922, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e,
+    type: 3}
+  m_PrefabInstance: {fileID: 178839541}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1814831422
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1814831423}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1814831423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1814831422}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.8707552, y: 1.5713032, z: -4413.8438}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1846472529
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,8 +421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec86868d5789e594180b4543c22eedd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minRoomSpawns: 40
-  maxRoomSpawns: 40
+  minRoomSpawns: 20
+  maxRoomSpawns: 20
   rooms:
   - {fileID: 777969233379233814, guid: c5d88c014927d134d8b80e1749855bf9, type: 3}
   - {fileID: 7073112540764344033, guid: 6fe1cab7ea4bbc247b2f27b9612f279d, type: 3}
@@ -370,5 +463,5 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
