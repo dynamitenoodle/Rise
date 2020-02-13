@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5279360536510053873}
   m_Layer: 0
   m_Name: pathPoint (2)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 1183319662159298669}
   m_Layer: 0
   m_Name: pathPoint (14)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 5889325323578763967}
   m_Layer: 0
   m_Name: pathPoint
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4053777187131988761}
   m_Layer: 0
   m_Name: pathPoint (3)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 1866970746650294981}
   m_Layer: 0
   m_Name: pathPoint (5)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 7680265282273329480}
   m_Layer: 0
   m_Name: pathPoint (13)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -191,7 +191,7 @@ GameObject:
   - component: {fileID: 5843745447536021405}
   m_Layer: 0
   m_Name: pathPoint (7)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 6517587602461469974}
   m_Layer: 0
   m_Name: pathPoint (15)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 5262586230083490285}
   m_Layer: 0
   m_Name: pathPoint (10)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -421,7 +421,7 @@ GameObject:
   - component: {fileID: 4752059833792086042}
   m_Layer: 0
   m_Name: pathPoint (16)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 8496505757959652598}
   m_Layer: 0
   m_Name: pathPoint (6)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -481,7 +481,7 @@ GameObject:
   - component: {fileID: 6136661887856438009}
   m_Layer: 0
   m_Name: pathPoint (8)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -511,7 +511,7 @@ GameObject:
   - component: {fileID: 6079398849396095020}
   m_Layer: 0
   m_Name: pathPoint (4)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 3216647189275790396}
   m_Layer: 0
   m_Name: pathPoint (1)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -571,7 +571,7 @@ GameObject:
   - component: {fileID: 8792561684228306680}
   m_Layer: 0
   m_Name: pathPoint (18)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -601,7 +601,7 @@ GameObject:
   - component: {fileID: 7908232726488884140}
   m_Layer: 0
   m_Name: pathPoint (17)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -711,7 +711,7 @@ GameObject:
   - component: {fileID: 7228549212425881476}
   m_Layer: 0
   m_Name: pathPoint (19)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -779,7 +779,7 @@ GameObject:
   - component: {fileID: 6699215994131882426}
   m_Layer: 0
   m_Name: pathPoint (11)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -809,7 +809,7 @@ GameObject:
   - component: {fileID: 8113935606505252248}
   m_Layer: 0
   m_Name: pathPoint (12)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -889,7 +889,7 @@ GameObject:
   - component: {fileID: 4636159843464060521}
   m_Layer: 0
   m_Name: pathPoint (9)
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

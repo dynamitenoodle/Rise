@@ -16,7 +16,7 @@ public class LevelGeneration : MonoBehaviour
 
     public GameObject tester;
 
-    
+    Graph graph;
 
     //class vars
     Helper helper;
@@ -40,7 +40,9 @@ public class LevelGeneration : MonoBehaviour
     void Start()
     {
         helper = new Helper();
+        graph = GameObject.Find("Graph").GetComponent<Graph>();
         GenerateLevel();
+        graph.SetGraph();
     }
 
     /// <summary>
@@ -167,7 +169,7 @@ public class LevelGeneration : MonoBehaviour
         List<RoomSpawn> roomSpawns = new List<RoomSpawn>();
 
         //spawn in random first room at (0,0)
-        roomSpawns.Add(GenerateRoom(0, 0));
+        roomSpawns.Add(GenerateRoom(0, 0, roomSpawns.Count));
         roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
         //this var keeps track of how many times a single room has had to redo its process
@@ -183,7 +185,7 @@ public class LevelGeneration : MonoBehaviour
             
             //pick a random valid room that already exists and generate the room with location based off randomly picked room
             int roomPick = GetRandomValidRoom(roomSpawns);
-            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
+            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y, roomSpawns.Count);
 
             int runCount = 0;
 
@@ -446,7 +448,7 @@ public class LevelGeneration : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private RoomSpawn GenerateRoom(int x, int y)
+    private RoomSpawn GenerateRoom(int x, int y, int roomCount)
     {
         RoomSpawn roomSpawn = new RoomSpawn();
 
@@ -472,6 +474,10 @@ public class LevelGeneration : MonoBehaviour
             doors[i].elevatorDoor = false;
         }
         roomSpawn.doors = doors;
+
+        // Add to graph
+        graph.AddNodes(roomObj.GetComponent<RoomDescriber>().enemyPathPoints, roomCount);
+
         return roomSpawn;
     }
 
