@@ -14,6 +14,7 @@ public class Node : MonoBehaviour
     bool current;
     bool previous;
     */
+    public bool doorNode;
     public int roomNum;
     public List<Node> nearby;
 

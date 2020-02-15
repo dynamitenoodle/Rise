@@ -5,6 +5,7 @@ using UnityEngine;
 public class Graph : MonoBehaviour
 {
     [HideInInspector] public List<Node> nodes;
+    Vector3 PlayerPosition { get { return GameObject.FindGameObjectWithTag("Player").transform.position; } }
     float nodeDis = 6f;
     float doorDis = 3f;
 
@@ -20,9 +21,21 @@ public class Graph : MonoBehaviour
         // set the door nodes
         foreach(Node node in nodes)
         {
-            
+            if (!node.doorNode)
+            {
+                foreach (Node otherNode in nodes)
+                {
+                    if (!otherNode.doorNode && otherNode.roomNum != node.roomNum && Vector3.Distance(otherNode.pos, node.pos) <= doorDis)
+                    {
+                        otherNode.nearby.Add(node);
+                        node.nearby.Add(otherNode);
+                        otherNode.doorNode = true;
+                        node.doorNode = true;
+                        break;
+                    }
+                }
+            }
         }
-
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -57,8 +70,39 @@ public class Graph : MonoBehaviour
     }
 
     // Enemy calls this method
-    Node GetNextNode()
+    Node GetNextNode(Vector3 enemyPosition)
     {
+        Node nextNode;
+        // figure out which node the player is closest to
+        Node playerNode = nodes[0];
+        foreach (Node node in nodes)
+        {
+            if (Vector3.Distance(playerNode.pos, PlayerPosition) < Vector3.Distance(node.pos, PlayerPosition))
+            {
+                playerNode = node;
+            }
+        }
+        LowestCostSetup(playerNode);
+        HeuristicSetup(playerNode);
 
+        return null;
+    }
+
+    // Calculate lowest cost
+    void LowestCostSetup(Node playerNode)
+    {
+        foreach (Node node in nodes)
+        {
+
+        }
+    }
+
+    // Calculate Heuristic
+    void HeuristicSetup(Node playerNode)
+    {
+        foreach (Node node in nodes)
+        {
+
+        }
     }
 }
