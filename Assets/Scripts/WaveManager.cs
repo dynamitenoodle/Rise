@@ -11,6 +11,8 @@ public class WaveManager : MonoBehaviour
 
     [HideInInspector]
     public List<GameObject> enemyQueue = null;
+    [HideInInspector]
+    public List<GameObject> enemies;
 
     //enemy count vars
     public int maxEnemiesForWave;
@@ -48,6 +50,7 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
+        enemies = new List<GameObject>();
         commonEnemyPrefabs = new List<GameObject>();
         uncommonEnemyPrefabs = new List<GameObject>();
         rareEnemyPrefabs = new List<GameObject>();
@@ -88,6 +91,27 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    public void DestroyEnemy(GameObject enemy)
+    {
+        int index = -1;
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i].Equals(enemy))
+            {
+                index = i;
+                break;
+            }
+        }
+
+        if (index != -1)
+        {
+            enemies.RemoveAt(index);
+        }
+        else
+        {
+            Debug.LogError("Unable to find enemy to remove from enemies list?");
+        }
+    }
 
     IEnumerator SpawnWave()
     {
@@ -97,16 +121,20 @@ public class WaveManager : MonoBehaviour
             {
                 if (enemyQueue.Count == 0 && spawnWave)
                 {
-                    enemiesOut = 0;
                     GenerateEnemyQueue();
+                    spawnWave = false;
+                }
+                else if (enemyQueue.Count == 0 && !spawnWave && enemies.Count == 0)
+                {
+                    spawnWave = true;
                 }
                 else
                 {
                     int spawnNum = maxEnemyGroupSpawn;
 
-                    if (maxEnemyGroupSpawn + enemiesOut > maxEnemiesOut)
+                    if (maxEnemyGroupSpawn + enemies.Count > maxEnemiesOut)
                     {
-                        spawnNum = (maxEnemyGroupSpawn + enemiesOut) - maxEnemiesOut;
+                        spawnNum = (maxEnemyGroupSpawn + enemies.Count) - maxEnemiesOut;
                     }
                     if (spawnNum > enemyQueue.Count)
                     {
@@ -136,7 +164,7 @@ public class WaveManager : MonoBehaviour
             GameObject enemySpawn = Instantiate(enemyQueue[0], enemyTransform);
             enemySpawn.transform.position = spawnPoint;
             enemyQueue.RemoveAt(0);
-            enemiesOut++;
+            enemies.Add(enemySpawn);
 
             usedElevators.Add(elevatorSpawn);
         }

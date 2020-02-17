@@ -18,6 +18,16 @@ public class CameraScript : MonoBehaviour
         // Where is PLAYER
         Vector3 playerPos = player.transform.position;
         playerPos.z = transform.position.z;
-        transform.position = playerPos;
+
+        //where is mouse
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = 0;
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        Vector3 moveDiff = (playerPos - mouseWorldPos) / 4;
+
+        moveDiff = Vector3.ClampMagnitude(moveDiff, Constants.CAMERA_MAX_MOVE_DISTANCE);
+
+        transform.position = playerPos - moveDiff;
     }
 }

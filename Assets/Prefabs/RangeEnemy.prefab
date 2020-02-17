@@ -99,7 +99,7 @@ MonoBehaviour:
   maxSpeed: 0.04
   speed: 0.005
   friction: 0.9
-  detectionDistance: 12
+  detectionDistance: 5000
   attacks:
   - {fileID: 11400000, guid: cf4c314bf310d2542b2dbbbbd7a3b808, type: 2}
   minTimeBtwnAttacks: 2

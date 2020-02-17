@@ -175,15 +175,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3db81bcd18a6544995aa0b2bda80f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemySpawnType: 0
   maxSpeed: 0.04
   speed: 0.005
   friction: 0.9
-  detectionDistance: 18
+  detectionDistance: 5000
   attacks:
   - {fileID: 11400000, guid: baa2230cbe75e934ba7d1fffedc993f5, type: 2}
   - {fileID: 11400000, guid: d9fe3ff418ad6a34f8b1da06fb7f60b8, type: 2}
   minTimeBtwnAttacks: 2
   healthMax: 10
+  hitTimerMax: 2
 --- !u!61 &23301839095255921
 BoxCollider2D:
   m_ObjectHideFlags: 0

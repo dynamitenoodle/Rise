@@ -155,7 +155,7 @@ public class PlayerScript : MonoBehaviour
             health--;
 
             if (health - 1 < 0)
-                Destroy(gameObject);
+                Application.Quit();
         }
     }
 
@@ -296,7 +296,7 @@ public class PlayerScript : MonoBehaviour
             dashTimer = 0;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && attackTimer > globalAttackTimer && attackGO == null)
+        if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
         {
             Attack();
             attackTimer = 0;

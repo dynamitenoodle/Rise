@@ -10,7 +10,7 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] float maxSpeed = .1f;
     [SerializeField] float speed = .02f;
     [SerializeField] float friction = .9f;
-    [SerializeField] float detectionDistance = 10f;
+    [SerializeField] float detectionDistance = 10.0f; //change this to reasonable number
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
@@ -35,10 +35,13 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] float hitTimerMax = 2;
     float hitTimer;
 
+    WaveManager waveManager;
+
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        waveManager = GameObject.Find("WaveManager").GetComponent<WaveManager>();
         velocity = Vector3.zero;
         health = healthMax;
 
@@ -250,6 +253,7 @@ public class EnemyScript : MonoBehaviour
                 if (attackGO != null)
                     Destroy(attackGO);
 
+                waveManager.DestroyEnemy(this.gameObject);
                 Destroy(gameObject);
             }
         }

@@ -16,7 +16,8 @@ public class Constants
     //wave gen
     public const float WAVEGEN_SAFE_ZONE = 15f;
     public const float WAVEGEN_SPAWN_ZONE = 30f; // this needs to be higher than the WAVEGEN_SAFE_ZONE number
-    
 
+    //camera
+    public const float CAMERA_MAX_MOVE_DISTANCE = 1.5f;
 
 }
