@@ -9,6 +9,9 @@ public class Constants
     public const string GAMEOBJECT_NAME_WAVEMANAGER = "WaveManager";
 
 
+    //tags
+    public const string TAG_PLAYER = "Player";
+
     //Level Gen 
     public const int LEVELGENERATION_MIN_ROOM_DISTANCE = 5;
     public const int LEVELGEN_MAX_ROOM_LOOPS = 25;
@@ -20,4 +23,8 @@ public class Constants
     //camera
     public const float CAMERA_MAX_MOVE_DISTANCE = 1.5f;
 
+
+    //ability constants
+
+    public const float ABILITY_RANGED_ATTACK_DEFAULT = 0.1f;
 }

@@ -40,6 +40,9 @@ public class PlayerScript : MonoBehaviour
     bool speenDir = false;
     Vector3 lastDir;
 
+    //list of abilities
+    Ability[] abilities = new Ability[5];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -56,6 +59,7 @@ public class PlayerScript : MonoBehaviour
 
         dashTimer = dashCooldown;
         attackTimer = globalAttackTimer;
+        abilities[0] = gameObject.AddComponent<MagicBlast>();
     }
 
     // Update is called once per frame
@@ -298,11 +302,13 @@ public class PlayerScript : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
         {
-            Attack();
+            //Attack();
+            abilities[0].Action();
             attackTimer = 0;
         }
     }
 
+    /*
     // Player Attack Method
     void Attack()
     {
@@ -314,4 +320,5 @@ public class PlayerScript : MonoBehaviour
         velocity = attackDir * (speed * melee.kickBack);
         attacking = true;
     }
+    */
 }

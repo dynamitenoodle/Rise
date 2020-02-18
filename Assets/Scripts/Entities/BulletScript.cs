@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletScript : MonoBehaviour
 {
     //attributes
-    [HideInInspector] public Vector3 direction;
+    [HideInInspector] public Vector2 direction;
     [HideInInspector] public float speed;
     GameObject player;
 
@@ -20,7 +20,7 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += (direction * speed);
+        transform.position += (Vector3)(direction * speed);
 
         // Checking if player gets hit
         if (gameObject.tag == "EnemyAttack" && player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
@@ -33,31 +33,25 @@ public class BulletScript : MonoBehaviour
         {
             if (gameObject.tag == "PlayerAttack" && enemy.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
-                enemy.GetComponent<EnemyScript>().GetHit(Vector3.zero, 1);
+                enemy.GetComponent<EnemyScript>().GetHit(Vector2.zero, 1);
                 Destroy(gameObject);
             }
         }
-        CollisionCheck();
     }
 
-    public void SetAttributes(Vector3 dir, float spd)
+    public void SetAttributes(Vector2 dir, float spd)
     {
         direction = dir;
         speed = spd;
     }
 
-    void CollisionCheck()
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        foreach (Collider2D col in FindObjectsOfType<Collider2D>())
+        Debug.Log("test");
+        // if the col isn't this object
+        if (col.gameObject.tag == "Wall")
         {
-            // if the col isn't this object
-            if (col.gameObject != gameObject && col.gameObject.tag == "Wall")
-            {
-                if (col.bounds.Intersects(GetComponent<Collider2D>().bounds))
-                {
-                    Destroy(gameObject);
-                }
-            }
+            Destroy(gameObject);
         }
     }
 }
