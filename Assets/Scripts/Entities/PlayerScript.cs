@@ -59,7 +59,7 @@ public class PlayerScript : MonoBehaviour
 
         dashTimer = dashCooldown;
         attackTimer = globalAttackTimer;
-        abilities[0] = gameObject.AddComponent<MagicBlast>();
+        abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
     }
 
     // Update is called once per frame

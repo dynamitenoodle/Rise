@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MagicBlast : Ability
+public class Ability_MagicBlast : Ability
 {
     public GameObject attackPrefab;
 
@@ -12,6 +12,7 @@ public class MagicBlast : Ability
     public override void Setup()
     {
         coolDown = 2.0f;
+        AddModifier(gameObject.AddComponent<Modifier_FlameRune>());
     }
 
     public override void Action()
@@ -36,8 +37,10 @@ public class MagicBlast : Ability
         Vector2[] points = new Vector2[1];
         points[0] = attackObj.transform.position;
 
-        modifierInfo.radius = 2;
+        modifierInfo.radius = 2f;
         modifierInfo.points = points;
+
+        Debug.Log("finish attack| modifiers added: " + modifiers.Count);
 
         foreach (Modifier modifier in modifiers)
         {

@@ -7,6 +7,7 @@ public class Constants
 
     //Scene GameObject names
     public const string GAMEOBJECT_NAME_WAVEMANAGER = "WaveManager";
+    public const string GAMEOBJECT_NAME_ENVIRONMENTMANAGER = "EnvironmentManager";
 
 
     //tags
@@ -29,4 +30,8 @@ public class Constants
     //ability constants
 
     public const float ABILITY_RANGED_ATTACK_DEFAULT = 0.1f;
+
+    //environment constants
+    public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;
+    public const float ENVIRONMENT_UPDATE_TIME = 0.2f;
 }
