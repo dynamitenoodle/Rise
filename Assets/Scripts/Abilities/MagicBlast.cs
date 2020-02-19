@@ -5,32 +5,43 @@ using UnityEngine;
 public class MagicBlast : Ability
 {
     public GameObject attackPrefab;
-    List<GameObject> attacks = new List<GameObject>();
-    List<GameObject> prevAttacks = new List<GameObject>();
-    List<Vector2> attackPositions = new List<Vector2>();
 
     public float speed = Constants.ABILITY_RANGED_ATTACK_DEFAULT;
+    public float lifeSpan = 2.0f;
+
+    public override void Setup()
+    {
+        coolDown = 2.0f;
+    }
 
     public override void Action()
     {
         attackPrefab = Resources.Load<GameObject>("Abilities/magicBlast");
-        attacks.Add(Instantiate(attackPrefab, player.transform.position, player.transform.rotation));
-        BulletScript bulletScript = attacks[attacks.Count-1].GetComponent<BulletScript>();
+        GameObject attack = Instantiate(attackPrefab, player.transform.position, player.transform.rotation);
+        BulletScript bulletScript = attack.GetComponent<BulletScript>();
 
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         Vector2 direction = Vector3.Normalize(mousePosition - (Vector2)player.transform.position);
 
         bulletScript.SetAttributes(direction, speed);
-
-        attackPositions.Add(player.transform.position);
+        bulletScript.SetTimeout(lifeSpan, true, true);
+        bulletScript.SetCallback(FinishAttack);
     }
 
-    IEnumerator WatchAttacks()
+    public void FinishAttack(GameObject attackObj)
     {
-        for(;;)
+        ModifierInfo modifierInfo = new ModifierInfo(player);
+
+        Vector2[] points = new Vector2[1];
+        points[0] = attackObj.transform.position;
+
+        modifierInfo.radius = 2;
+        modifierInfo.points = points;
+
+        foreach (Modifier modifier in modifiers)
         {
-            if  (attacks.Count <= 0)
+            modifier.Action(modifierInfo);
         }
     }
 }

@@ -23,6 +23,8 @@ public class Constants
     //camera
     public const float CAMERA_MAX_MOVE_DISTANCE = 1.5f;
 
+    //BulletScript.cs constants
+    public const float BULLET_DEFAULT_MIN_SCALE = 0.2f;
 
     //ability constants
 

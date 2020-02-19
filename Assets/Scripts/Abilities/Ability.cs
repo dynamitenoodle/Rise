@@ -7,13 +7,16 @@ public abstract class Ability : MonoBehaviour
 
     protected GameObject player;
     protected List<Modifier> modifiers;
+    protected float coolDown;
 
     private void Start()
     {
         player = GameObject.FindWithTag(Constants.TAG_PLAYER);
+        modifiers = new List<Modifier>();
     }
 
     public abstract void Action();
+    public abstract void Setup();
     public void AddModifier(Modifier modifier)
     {
         //check for modifier combinations

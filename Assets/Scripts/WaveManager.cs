@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour
 {
@@ -24,12 +25,12 @@ public class WaveManager : MonoBehaviour
     public float rareSpawnChance;
     public float specialSpawnChance;
 
+    public Text enemyText;
+
     //max enemy spawns vars
     //maxEnemyGroupSpawn is the number of enemies that can be spawned in a given group spawn (how many are spawned in at once)
     public int maxEnemyGroupSpawn;
     public int maxEnemiesOut;
-
-    private int enemiesOut;
 
     private List<GameObject> commonEnemyPrefabs;
     private List<GameObject> uncommonEnemyPrefabs;
@@ -132,9 +133,10 @@ public class WaveManager : MonoBehaviour
                 {
                     int spawnNum = maxEnemyGroupSpawn;
 
-                    if (maxEnemyGroupSpawn + enemies.Count > maxEnemiesOut)
+                    if (spawnNum + enemies.Count > maxEnemiesOut)
                     {
-                        spawnNum = (maxEnemyGroupSpawn + enemies.Count) - maxEnemiesOut;
+                        Debug.Log($"spawnNum: {spawnNum}, enemies: {enemies.Count}, maxEnemiesOut: {maxEnemiesOut}");
+                        spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
                     }
                     if (spawnNum > enemyQueue.Count)
                     {
@@ -142,9 +144,11 @@ public class WaveManager : MonoBehaviour
                     }
 
                     SpawnEnemyGroup(spawnNum);
+                    enemyText.text = $"Enemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
                     yield return new WaitForSeconds(10f);
                 }
             }
+            enemyText.text = $"Enemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Spawned: {enemies.Count}";
             yield return new WaitForSeconds(2f);
         }
     }
@@ -152,7 +156,7 @@ public class WaveManager : MonoBehaviour
     private void SpawnEnemyGroup(int enemyCount)
     {
         List<ElevatorDescriber> usedElevators = new List<ElevatorDescriber>();
-        Debug.Log($"Spawning enemy group | Count: {enemyCount}   -   enemyQueue count: {enemyQueue.Count}");
+        Debug.Log($"Spawning enemy group | Count: {enemyCount}   -   enemyQueue count: {enemyQueue.Count - enemyCount}");
         for (int i = 0; i < enemyCount; i++)
         {
             ElevatorDescriber elevatorSpawn = GetElevatorSpawn(usedElevators);
