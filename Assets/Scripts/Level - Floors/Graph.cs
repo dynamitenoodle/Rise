@@ -5,7 +5,7 @@ using UnityEngine;
 public class Graph : MonoBehaviour
 {
     [HideInInspector] public List<Node> nodes;
-    Vector3 PlayerPosition { get { return GameObject.FindGameObjectWithTag("Player").transform.position; } }
+    GameObject player;
     float nodeDis = 6f;
     float doorDis = 3f;
 
@@ -13,6 +13,7 @@ public class Graph : MonoBehaviour
     void Start()
     {
         nodes = new List<Node>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Setup the graph
@@ -36,6 +37,8 @@ public class Graph : MonoBehaviour
                 }
             }
         }
+
+        player.GetComponent<PlayerScript>().RoomNum = FirstRoomCheck(player);
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -73,15 +76,19 @@ public class Graph : MonoBehaviour
     Node GetNextNode(Vector3 enemyPosition)
     {
         Node nextNode;
+
         // figure out which node the player is closest to
         Node playerNode = nodes[0];
         foreach (Node node in nodes)
         {
-            if (Vector3.Distance(playerNode.pos, PlayerPosition) < Vector3.Distance(node.pos, PlayerPosition))
+            if (Vector3.Distance(playerNode.pos, player.transform.position) < Vector3.Distance(node.pos, player.transform.position))
             {
                 playerNode = node;
+                player.GetComponent<PlayerScript>().SetRoom(playerNode.roomNum);
             }
         }
+
+
         LowestCostSetup(playerNode);
         HeuristicSetup(playerNode);
 
@@ -104,5 +111,23 @@ public class Graph : MonoBehaviour
         {
 
         }
+    }
+
+    public int FirstRoomCheck(GameObject entity)
+    {
+        Node nearestNode = nodes[0];
+
+        foreach (Node node in nodes)
+        {
+            if (node != nearestNode)
+            {
+                if (Vector3.Distance(nearestNode.pos, entity.transform.position) < Vector3.Distance(node.pos, entity.transform.position))
+                {
+                    nearestNode = node;
+                }
+            }
+        }
+
+        return nearestNode.roomNum;
     }
 }

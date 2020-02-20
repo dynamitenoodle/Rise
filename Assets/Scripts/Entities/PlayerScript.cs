@@ -21,13 +21,6 @@ public class PlayerScript : MonoBehaviour
     // Wall collisions
     List<GameObject> walls;
 
-    // Dash
-    bool dashing;
-    [SerializeField] float dashSpeed = 2.0f;
-    [SerializeField] float dashCooldown = 3.0f;
-    float dashTimer;
-    [SerializeField] float dashTimerMax = 1.0f;
-
     // ATTACK STUFF
     public Attack melee;
     bool attacking;
@@ -43,6 +36,10 @@ public class PlayerScript : MonoBehaviour
     //list of abilities
     Ability[] abilities = new Ability[5];
 
+    // room stuff
+    int roomNum;
+    public int RoomNum { get { return roomNum; } set { if (roomNum == -1) { roomNum = value; } } }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,18 +49,16 @@ public class PlayerScript : MonoBehaviour
 
         walls = new List<GameObject>();
 
-        dashTimer = dashCooldown;
         attackTimer = globalAttackTimer;
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
+        roomNum = -1;
     }
 
     // Update is called once per frame
     void Update()
     {
         InputCheck();
-        VelocityManipulation();
         WallCheck();
-        Dash();
         ApplyVelocity();
         Flicker();
         Attack();
@@ -227,13 +222,6 @@ public class PlayerScript : MonoBehaviour
         if (!Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A))
             direction.x = 0;
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !dashing && dashTimer > dashCooldown)
-        {
-            dashing = true;
-            velocity = (direction * speed * dashSpeed);
-            dashTimer = 0;
-        }
-
         // If the player attacks
         if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
         {
@@ -243,8 +231,8 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    // Applies friction and other variables to velocity based on certain checks
-    void VelocityManipulation()
+    // Applies the velocity to the position
+    void ApplyVelocity()
     {
         // Slowdown if nothing
         if (direction == Vector3.zero)
@@ -256,11 +244,10 @@ public class PlayerScript : MonoBehaviour
 
         if (velocity.magnitude < 0.008f)
             velocity = Vector3.zero;
-    }
 
-    // Applies the velocity to the position
-    void ApplyVelocity()
-    {
+        velocity += (direction * speed);
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
         transform.position += velocity;
 
         if (direction != Vector3.zero)
@@ -268,27 +255,6 @@ public class PlayerScript : MonoBehaviour
             lastDir = direction;
             direction = Vector3.zero;
         }
-    }
-
-    // Checks if the player is dashing and deals with timer/velocity tuning
-    private void Dash()
-    {
-        if (!dashing)
-        {
-            velocity += (direction * speed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-        }
-        else
-        {
-            velocity += (direction * speed * dashSpeed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed * dashSpeed);
-        }
-
-        if (dashTimer > dashTimerMax && dashing)
-            dashing = false;
-
-        if (dashTimer <= dashCooldown)
-            dashTimer += Time.deltaTime;
     }
 
     // Checks if the player should be attacking
@@ -320,5 +286,11 @@ public class PlayerScript : MonoBehaviour
         {
             walls.Add(wall);
         }
+    }
+
+    // Sets the room the player is in
+    public void SetRoom(int room)
+    {
+        roomNum = room;
     }
 }
