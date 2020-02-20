@@ -38,7 +38,13 @@ public class Graph : MonoBehaviour
             }
         }
 
-        player.GetComponent<PlayerScript>().RoomNum = FirstRoomCheck(player);
+        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
+        Debug.Log("Player: " + player.GetComponent<PlayerScript>().Node.roomNum);
+
+        player.GetComponent<PlayerScript>().Node.heuristic = 0;
+        player.GetComponent<PlayerScript>().Node.isEnd = true;
+        Heuristic(player.GetComponent<PlayerScript>().Node);
+        player.GetComponent<PlayerScript>().Node.isEnd = false;
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -73,30 +79,32 @@ public class Graph : MonoBehaviour
     }
 
     // Enemy calls this method
-    Node GetNextNode(Vector3 enemyPosition)
+    public Node GetNextNode(Node node)
     {
         Node nextNode;
 
         // figure out which node the player is closest to
-        Node playerNode = nodes[0];
-        foreach (Node node in nodes)
+        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
+        Node playerNode = player.GetComponent<PlayerScript>().Node;
+
+        node.lowestCost = 0;
+        node.isStart = true;
+        //LowestCost(playerNode);
+        node.isStart = false;
+
+        nextNode = node.nearby[0];
+
+        foreach (Node n in node.nearby)
         {
-            if (Vector3.Distance(playerNode.pos, player.transform.position) < Vector3.Distance(node.pos, player.transform.position))
-            {
-                playerNode = node;
-                player.GetComponent<PlayerScript>().SetRoom(playerNode.roomNum);
-            }
+            if (n.heuristic < nextNode.heuristic)
+                nextNode = n;
         }
 
-
-        LowestCostSetup(playerNode);
-        HeuristicSetup(playerNode);
-
-        return null;
+        return nextNode;
     }
 
     // Calculate lowest cost
-    void LowestCostSetup(Node playerNode)
+    void LowestCost(Node enemyNode)
     {
         foreach (Node node in nodes)
         {
@@ -105,15 +113,22 @@ public class Graph : MonoBehaviour
     }
 
     // Calculate Heuristic
-    void HeuristicSetup(Node playerNode)
+    void Heuristic(Node currentNode)
     {
-        foreach (Node node in nodes)
+        foreach (Node node in currentNode.nearby)
         {
-
+            float dis = Vector3.Distance(node.pos, currentNode.pos);
+            float newHeuristic = dis + currentNode.heuristic;
+            if (!node.isEnd && (node.heuristic == 0 || node.heuristic > newHeuristic))
+            {
+                node.heuristic = newHeuristic;
+                Heuristic(node);
+            }
         }
+        
     }
 
-    public int FirstRoomCheck(GameObject entity)
+    public Node FirstRoomCheck(Vector3 position)
     {
         Node nearestNode = nodes[0];
 
@@ -121,13 +136,13 @@ public class Graph : MonoBehaviour
         {
             if (node != nearestNode)
             {
-                if (Vector3.Distance(nearestNode.pos, entity.transform.position) < Vector3.Distance(node.pos, entity.transform.position))
+                if (Vector3.Distance(node.pos, position) < Vector3.Distance(nearestNode.pos, position))
                 {
                     nearestNode = node;
                 }
             }
         }
 
-        return nearestNode.roomNum;
+        return nearestNode;
     }
 }

@@ -33,6 +33,8 @@ public class LevelGeneration : MonoBehaviour
         public List<DoorDescriber> doors;
         //GameObject of the room
         public GameObject obj;
+        // Enemy locations
+        public List<Transform> enemyPathPoints;
     }
 
 
@@ -51,17 +53,17 @@ public class LevelGeneration : MonoBehaviour
     private void GenerateLevel()
     {
         //spawn rooms
-        Debug.Log("Generating rooms...");
+        //Debug.Log("Generating rooms...");
         int numRooms = Random.Range(minRoomSpawns, maxRoomSpawns);
-        Debug.Log($"NumRooms: {numRooms}");
+        //Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
-        Debug.Log("Spawning elevators...");
+        //Debug.Log("Spawning elevators...");
         List<GameObject> elevators = SpawnElevators(roomSpawns);
 
         UpdateDoors(roomSpawns);
 
-        Debug.Log("...Finished!");
+        //Debug.Log("...Finished!");
 
         //send elevator info to wave manager
         WaveManager waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
@@ -171,7 +173,9 @@ public class LevelGeneration : MonoBehaviour
         List<RoomSpawn> roomSpawns = new List<RoomSpawn>();
 
         //spawn in random first room at (0,0)
-        roomSpawns.Add(GenerateRoom(0, 0, roomSpawns.Count));
+        roomSpawns.Add(GenerateRoom(0, 0));
+        graph.AddNodes(roomSpawns[0].obj.GetComponent<RoomDescriber>().enemyPathPoints, 0);
+
         roomSpawns[0].obj.transform.position = roomSpawns[0].location;
 
         //this var keeps track of how many times a single room has had to redo its process
@@ -187,7 +191,7 @@ public class LevelGeneration : MonoBehaviour
             
             //pick a random valid room that already exists and generate the room with location based off randomly picked room
             int roomPick = GetRandomValidRoom(roomSpawns);
-            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y, roomSpawns.Count);
+            roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
 
             int runCount = 0;
 
@@ -253,6 +257,8 @@ public class LevelGeneration : MonoBehaviour
             {
                 //add room to list of existing rooms and update doors if any doors are now connected to existing rooms
                 roomSpawns.Add(roomSpawn);
+                // Add to graph
+                graph.AddNodes(roomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, i+1);
                 CheckOverlapDoors(roomSpawns);
                 retryCount = 0;
             }
@@ -260,7 +266,7 @@ public class LevelGeneration : MonoBehaviour
             {
                 i--;
                 retryCount++;
-                Debug.Log($"Retrying room - unable to place room down anywhere | retry count: {retryCount}");
+                //Debug.Log($"Retrying room - unable to place room down anywhere | retry count: {retryCount}");
                 if (retryCount > 10)
                 {
                     Debug.LogWarning($"Retry count getting high - if this continues we may need to make a change to prevent further loops | retry Count: {retryCount}");
@@ -450,7 +456,7 @@ public class LevelGeneration : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    private RoomSpawn GenerateRoom(int x, int y, int roomCount)
+    private RoomSpawn GenerateRoom(int x, int y)
     {
         RoomSpawn roomSpawn = new RoomSpawn();
 
@@ -476,9 +482,6 @@ public class LevelGeneration : MonoBehaviour
             doors[i].elevatorDoor = false;
         }
         roomSpawn.doors = doors;
-
-        // Add to graph
-        graph.AddNodes(roomObj.GetComponent<RoomDescriber>().enemyPathPoints, roomCount);
 
         return roomSpawn;
     }

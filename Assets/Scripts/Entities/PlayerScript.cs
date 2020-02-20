@@ -37,8 +37,8 @@ public class PlayerScript : MonoBehaviour
     Ability[] abilities = new Ability[5];
 
     // room stuff
-    int roomNum;
-    public int RoomNum { get { return roomNum; } set { if (roomNum == -1) { roomNum = value; } } }
+    Node node;
+    public Node Node { get { return node; } }
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +51,6 @@ public class PlayerScript : MonoBehaviour
 
         attackTimer = globalAttackTimer;
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
-        roomNum = -1;
     }
 
     // Update is called once per frame
@@ -288,9 +287,9 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    // Sets the room the player is in
-    public void SetRoom(int room)
+    // Sets the player node
+    public void SetNode(Node nd)
     {
-        roomNum = room;
+        node = nd;
     }
 }

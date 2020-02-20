@@ -37,9 +37,9 @@ public class EnemyScript : MonoBehaviour
 
     WaveManager waveManager;
 
+    // Graph stuff
     Graph graph;
-    int roomNum;
-
+    Node node;
     // Start is called before the first frame update
     void Start()
     {
@@ -51,8 +51,8 @@ public class EnemyScript : MonoBehaviour
 
         attackRoll = -1;
         shotNum = 0;
-        roomNum = graph.FirstRoomCheck(gameObject);
-        Debug.Log("Enemy: " + roomNum);
+        node = graph.FirstRoomCheck(transform.position);
+        Debug.Log("Enemy: " + node.roomNum);
     }
 
     // Update is called once per frame
@@ -61,8 +61,24 @@ public class EnemyScript : MonoBehaviour
         if (player == null)
             Destroy(gameObject);
 
-        if (roomNum == player.GetComponent<PlayerScript>().RoomNum)
-            AttackUpdate();
+        // If we don't have an attack selected
+        if (attackRoll == -1)
+        {
+            PickAttack();
+        }
+        else
+        {
+            if (node.roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
+                AttackUpdate();
+            else
+            {
+                if (Vector3.Distance(node.pos, transform.position) < .1f)
+                    node = graph.GetNextNode(node);
+
+                direction = Vector3.Normalize(node.pos - transform.position);
+            }
+        }
+
         ApplyVelocity();
         PlayerHit();
         Flicker();
@@ -73,68 +89,59 @@ public class EnemyScript : MonoBehaviour
     // Enemy AttackUpdate
     void AttackUpdate()
     {
-        // If we don't have an attack selected
-        if (attackRoll == -1)
+        float playerDis = (player.transform.position - transform.position).magnitude;
+
+        // Where is PLAYER
+        if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
         {
-            PickAttack();
+            direction = (player.transform.position - transform.position).normalized;
+            CannonSet(direction);
         }
 
-        else
+        // Attacking stuff
+        if (attacking)
         {
-            float playerDis = (player.transform.position - transform.position).magnitude;
+            attackTimer += Time.deltaTime;
 
-            // Where is PLAYER
-            if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
+            // SPEEEEN calculation
+            if (attackGO != null && attacks[attackRoll].speen)
             {
-                direction = (player.transform.position - transform.position).normalized;
-                CannonSet(direction);
+                if (speenDir)
+                    attackGO.transform.Rotate(Vector3.forward * attacks[attackRoll].speenSpeed * Time.deltaTime);
+                else
+                    attackGO.transform.Rotate(Vector3.back * attacks[attackRoll].speenSpeed * Time.deltaTime);
             }
 
-            // Attacking stuff
-            if (attacking)
+            CannonSet(attackDir);
+
+            // Create the attackGO when it is time
+            if (CanAttackCheck())
             {
-                attackTimer += Time.deltaTime;
+                Attack();
+            }
 
-                // SPEEEEN calculation
-                if (attackGO != null && attacks[attackRoll].speen)
+            // Reset the attack timer
+            if (attackTimer >= attacks[attackRoll].attackTimerMax &&
+                ((attacks[attackRoll].shotNumMax == 1 || shotNum >= attacks[attackRoll].shotNumMax)
+                || attackTimer >= attacks[attackRoll].attackTimerMax + attacks[attackRoll].attackDelay))
+            {
+                if (attacks[attackRoll].isMelee)
+                    Destroy(attackGO);
+
+                else
+                    fired = false;
+
+                attackTimer = 0;
+
+                // Checks if we should shoot more
+                if (shotNum < attacks[attackRoll].shotNumMax && attacks[attackRoll].shotNumMax != 1)
+                    shotNum++;
+
+                else
                 {
-                    if (speenDir)
-                        attackGO.transform.Rotate(Vector3.forward * attacks[attackRoll].speenSpeed * Time.deltaTime);
-                    else
-                        attackGO.transform.Rotate(Vector3.back * attacks[attackRoll].speenSpeed * Time.deltaTime);
-                }
-
-                CannonSet(attackDir);
-
-                // Create the attackGO when it is time
-                if (CanAttackCheck())
-                {
-                    Attack();
-                }
-
-                // Reset the attack timer
-                if (attackTimer >= attacks[attackRoll].attackTimerMax &&
-                    ((attacks[attackRoll].shotNumMax == 1 || shotNum >= attacks[attackRoll].shotNumMax)
-                    || attackTimer >= attacks[attackRoll].attackTimerMax + attacks[attackRoll].attackDelay))
-                {
-                    if (attacks[attackRoll].isMelee)
-                        Destroy(attackGO);
-
-                    else
-                        fired = false;
-
-                    attackTimer = 0;
-
-                    // Checks if we should shoot more
-                    if (shotNum < attacks[attackRoll].shotNumMax && attacks[attackRoll].shotNumMax != 1)
-                        shotNum++;
-
-                    else
-                    {
-                        attacking = false;
-                        shotNum = 0;
-                        attackRoll = -1;
-                    }
+                    attacking = false;
+                    shotNum = 0;
+                    attackRoll = -1;
                 }
             }
         }
@@ -343,9 +350,9 @@ public class EnemyScript : MonoBehaviour
     }
 
 
-    // Sets the room the enemy is in
-    public void SetRoom(int room)
+    // Sets the enemy node
+    public void SetNode(Node nd)
     {
-        roomNum = room;
+        node = nd;
     }
 }

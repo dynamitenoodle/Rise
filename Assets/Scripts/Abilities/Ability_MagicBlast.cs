@@ -40,7 +40,7 @@ public class Ability_MagicBlast : Ability
         modifierInfo.radius = 2f;
         modifierInfo.points = points;
 
-        Debug.Log("finish attack| modifiers added: " + modifiers.Count);
+        //Debug.Log("finish attack| modifiers added: " + modifiers.Count);
 
         foreach (Modifier modifier in modifiers)
         {

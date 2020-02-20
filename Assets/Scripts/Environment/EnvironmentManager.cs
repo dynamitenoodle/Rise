@@ -17,7 +17,7 @@ public class EnvironmentManager : MonoBehaviour
 
     public void AddFire(Vector2 position, float radius)
     {
-        Debug.Log("Add fire to position: " + position);
+        //Debug.Log("Add fire to position: " + position);
         GameObject fire = Instantiate(environmentFire, position, Quaternion.identity, this.gameObject.transform);
         fire.transform.localScale = new Vector2(radius, radius);
 

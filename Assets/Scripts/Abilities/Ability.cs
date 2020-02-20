@@ -21,7 +21,7 @@ public abstract class Ability : MonoBehaviour
     public abstract void Setup();
     public void AddModifier(Modifier modifier)
     {
-        Debug.Log("adding modifier!");
+        //Debug.Log("adding modifier!");
         //check for modifier combinations
 
         //add to list

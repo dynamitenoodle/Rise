@@ -241,9 +241,9 @@ public class WaveManager : MonoBehaviour
 
     private void GenerateEnemyQueue()
     {
-        Debug.Log("Generating Enemy Queue");
+        //Debug.Log("Generating Enemy Queue");
         int enemySpawns = Random.Range(minEnemiesForWave, maxEnemiesForWave);
-        Debug.Log($"Spawning {enemySpawns} enemies for wave");
+        //Debug.Log($"Spawning {enemySpawns} enemies for wave");
         enemyQueue = new List<GameObject>();
 
         for (int i = 0; i < enemySpawns; i++)
