@@ -52,11 +52,6 @@ public class PlayerScript : MonoBehaviour
 
         walls = new List<GameObject>();
 
-        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Wall"))
-        {
-            walls.Add(wall);
-        }
-
         dashTimer = dashCooldown;
         attackTimer = globalAttackTimer;
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
@@ -66,88 +61,13 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         InputCheck();
-
-        // Slowdown if nothing
-        if (direction == Vector3.zero)
-            velocity *= friction;
-        else if (direction.x == 0)
-            velocity.x *= friction;
-        else if (direction.y == 0)
-            velocity.y *= friction;
-
-        if (velocity.magnitude < 0.008f)
-            velocity = Vector3.zero;
-
+        VelocityManipulation();
         WallCheck();
-
-        if (!dashing)
-        {
-            velocity += (direction * speed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-        }
-        else
-        {
-            velocity += (direction * speed * dashSpeed);
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed * dashSpeed);
-        }
-
-
-        if (dashTimer > dashTimerMax && dashing)
-            dashing = false;
-
-        if (dashTimer <= dashCooldown)
-            dashTimer += Time.deltaTime;
-
-        // Carry out the math
-        transform.position += velocity;
-
-        if (direction != Vector3.zero)
-        {
-            lastDir = direction;
-            direction = Vector3.zero;
-        }
-
-        if (invul)
-        {
-            Flicker();
-        }
-
-        // Timers
-        attackTimer += Time.deltaTime;
-
-        // Reset the attack timer
-        if (attackTimer >= melee.attackTimerMax)
-        {
-            if (melee.isMelee)
-                Destroy(attackGO);
-
-            else
-                fired = false;
-
-            attackTimer = 0;
-            attacking = false;
-        }
-
-        // If attack exists
-        if (attackGO != null)
-        {
-            // Checking if enemy gets hit
-            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
-            {
-                if (enemy.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                    enemy.GetComponent<EnemyScript>().GetHit(Vector3.Normalize(transform.position - enemy.transform.position), 3);
-            }
-
-            foreach (GameObject bullet in GameObject.FindGameObjectsWithTag("EnemyAttack"))
-            {
-                if (bullet.GetComponent<BulletScript>() != null)
-                    if (bullet.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                    {
-                        bullet.GetComponent<BulletScript>().direction = -bullet.GetComponent<BulletScript>().direction;
-                        bullet.tag = "PlayerAttack";
-                    }
-            }
-        }
+        Dash();
+        ApplyVelocity();
+        Flicker();
+        Attack();
+        
     }
 
     // Called by other scripts to hit the player
@@ -166,109 +86,123 @@ public class PlayerScript : MonoBehaviour
     // Flickering if hit
     public void Flicker()
     {
-        hitTimer += Time.deltaTime;
-
-        //Flicker effect
-        Color tempColor = GetComponent<SpriteRenderer>().color;
-
-        if ((hitTimer * 100) % 20 > 10)
-            tempColor.a = .6f;
-        else
-            tempColor.a = 1f;
-
-        GetComponent<SpriteRenderer>().color = tempColor;
-
-        if (hitTimer > hitTimerMax)
+        if (invul)
         {
-            hitTimer = 0;
-            invul = false;
-            tempColor.a = 1f;
+            hitTimer += Time.deltaTime;
+
+            //Flicker effect
+            Color tempColor = GetComponent<SpriteRenderer>().color;
+
+            if ((hitTimer * 100) % 20 > 10)
+                tempColor.a = .6f;
+            else
+                tempColor.a = 1f;
+
             GetComponent<SpriteRenderer>().color = tempColor;
+
+            if (hitTimer > hitTimerMax)
+            {
+                hitTimer = 0;
+                invul = false;
+                tempColor.a = 1f;
+                GetComponent<SpriteRenderer>().color = tempColor;
+            }
         }
     }
 
     // Checks if the player is colliding with walls
     void WallCheck()
     {
-        // Checking all the wall collisions
-        foreach (GameObject wall in walls)
+        if (walls != null)
         {
-            if (GetComponent<Collider2D>().bounds.Intersects(wall.GetComponent<Collider2D>().bounds))
+            // Checking all the wall collisions
+            foreach (GameObject wall in walls)
             {
-                // Make an easier variable
-                Vector3 wallPos = wall.transform.position;
-
-                // Calculate the bounding boxes of the player and the wall
-                float playerRight = transform.position.x + GetComponent<Collider2D>().bounds.extents.x;
-                float playerLeft = transform.position.x - GetComponent<Collider2D>().bounds.extents.x;
-                float playerTop = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
-                float playerBot = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
-
-                float wallRight = wallPos.x + wall.GetComponent<Collider2D>().bounds.extents.x;
-                float wallLeft = wallPos.x - wall.GetComponent<Collider2D>().bounds.extents.x;
-                float wallTop = wallPos.y + wall.GetComponent<Collider2D>().bounds.extents.y;
-                float wallBot = wallPos.y - wall.GetComponent<Collider2D>().bounds.extents.y;
-
-                // Set a distance to check walls (the number here works well with 1x1 boxes)
-                float dis = .08f;
-
-                /* 
-                 * Checking which side to stop the player
-                 * The fist check looks to see if the bounding boxes sides are within a certain distance.
-                 * The second check looks to see if the wall is on the correct side to check
-                */
-
-                Vector3 fixedPos = transform.position;
-
-                Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
-                Vector3 right = new Vector3(1, 0);
-                float angle = Vector3.Angle(playerToWall, right);
-
-                // Right
-                if (Mathf.Abs(playerRight - wallLeft) < dis && (angle >= 0 && angle <= 45f))
+                if (wall != null)
                 {
-                    if (direction.x > 0)
-                        direction.x = 0;
-                    if (velocity.x > 0)
-                        velocity.x = 0;
+                    if (GetComponent<Collider2D>().bounds.Intersects(wall.GetComponent<Collider2D>().bounds))
+                    {
+                        // Make an easier variable
+                        Vector3 wallPos = wall.transform.position;
 
-                    fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
+                        // Calculate the bounding boxes of the player and the wall
+                        float playerRight = transform.position.x + GetComponent<Collider2D>().bounds.extents.x;
+                        float playerLeft = transform.position.x - GetComponent<Collider2D>().bounds.extents.x;
+                        float playerTop = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
+                        float playerBot = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
+
+                        float wallRight = wallPos.x + wall.GetComponent<Collider2D>().bounds.extents.x;
+                        float wallLeft = wallPos.x - wall.GetComponent<Collider2D>().bounds.extents.x;
+                        float wallTop = wallPos.y + wall.GetComponent<Collider2D>().bounds.extents.y;
+                        float wallBot = wallPos.y - wall.GetComponent<Collider2D>().bounds.extents.y;
+
+                        // Set a distance to check walls (the number here works well with 1x1 boxes)
+                        float dis = .08f;
+
+                        /* 
+                         * Checking which side to stop the player
+                         * The fist check looks to see if the bounding boxes sides are within a certain distance.
+                         * The second check looks to see if the wall is on the correct side to check
+                        */
+
+                        Vector3 fixedPos = transform.position;
+
+                        Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
+                        Vector3 right = new Vector3(1, 0);
+                        float angle = Vector3.Angle(playerToWall, right);
+
+                        // Right
+                        if (Mathf.Abs(playerRight - wallLeft) < dis && (angle >= 0 && angle <= 45f))
+                        {
+                            if (direction.x > 0)
+                                direction.x = 0;
+                            if (velocity.x > 0)
+                                velocity.x = 0;
+
+                            fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
+                        }
+
+                        // Left
+                        if (Mathf.Abs(playerLeft - wallRight) < dis && (angle >= 135f && angle <= 225f))
+                        {
+                            if (direction.x < 0)
+                                direction.x = 0;
+                            if (velocity.x < 0)
+                                velocity.x = 0;
+
+                            fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
+                        }
+
+                        // Up
+                        if (Mathf.Abs(playerTop - wallBot) < dis && (angle >= 45f && angle <= 135f))
+                        {
+                            if (direction.y > 0)
+                                direction.y = 0;
+                            if (velocity.y > 0)
+                                velocity.y = 0;
+
+                            fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
+                        }
+
+                        // Down
+                        if (Mathf.Abs(playerBot - wallTop) < dis && (angle >= 45f && angle <= 135f))
+                        {
+                            if (direction.y < 0)
+                                direction.y = 0;
+                            if (velocity.y < 0)
+                                velocity.y = 0;
+
+                            fixedPos.y = fixedPos.y + (Mathf.Abs(playerBot - wallTop));
+                        }
+
+                        transform.position = fixedPos;
+                    }
                 }
-
-                // Left
-                if (Mathf.Abs(playerLeft - wallRight) < dis && (angle >= 135f && angle <= 225f))
+                else
                 {
-                    if (direction.x < 0)
-                        direction.x = 0;
-                    if (velocity.x < 0)
-                        velocity.x = 0;
-
-                    fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
+                    SetWalls();
+                    break;
                 }
-
-                // Up
-                if (Mathf.Abs(playerTop - wallBot) < dis && (angle >= 45f && angle <= 135f))
-                {
-                    if (direction.y > 0)
-                        direction.y = 0;
-                    if (velocity.y > 0)
-                        velocity.y = 0;
-
-                    fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
-                }
-
-                // Down
-                if (Mathf.Abs(playerBot - wallTop) < dis && (angle >= 45f && angle <= 135f))
-                {
-                    if (direction.y < 0)
-                        direction.y = 0;
-                    if (velocity.y < 0)
-                        velocity.y = 0;
-
-                    fixedPos.y = fixedPos.y + (Mathf.Abs(playerBot - wallTop));
-                }
-
-                transform.position = fixedPos;
             }
         }
     }
@@ -300,6 +234,7 @@ public class PlayerScript : MonoBehaviour
             dashTimer = 0;
         }
 
+        // If the player attacks
         if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
         {
             //Attack();
@@ -308,17 +243,82 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    /*
-    // Player Attack Method
+    // Applies friction and other variables to velocity based on certain checks
+    void VelocityManipulation()
+    {
+        // Slowdown if nothing
+        if (direction == Vector3.zero)
+            velocity *= friction;
+        else if (direction.x == 0)
+            velocity.x *= friction;
+        else if (direction.y == 0)
+            velocity.y *= friction;
+
+        if (velocity.magnitude < 0.008f)
+            velocity = Vector3.zero;
+    }
+
+    // Applies the velocity to the position
+    void ApplyVelocity()
+    {
+        transform.position += velocity;
+
+        if (direction != Vector3.zero)
+        {
+            lastDir = direction;
+            direction = Vector3.zero;
+        }
+    }
+
+    // Checks if the player is dashing and deals with timer/velocity tuning
+    private void Dash()
+    {
+        if (!dashing)
+        {
+            velocity += (direction * speed);
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+        }
+        else
+        {
+            velocity += (direction * speed * dashSpeed);
+            velocity = Vector3.ClampMagnitude(velocity, maxSpeed * dashSpeed);
+        }
+
+        if (dashTimer > dashTimerMax && dashing)
+            dashing = false;
+
+        if (dashTimer <= dashCooldown)
+            dashTimer += Time.deltaTime;
+    }
+
+    // Checks if the player should be attacking
     void Attack()
     {
-        // Melee Attack
-        attackGO = Instantiate(melee.attackPrefab);
-        attackGO.transform.position = transform.position + (lastDir * melee.attackSpacing);
-        attackGO.transform.right = lastDir;
+        // Timers
+        attackTimer += Time.deltaTime;
 
-        velocity = attackDir * (speed * melee.kickBack);
-        attacking = true;
+        // Reset the attack timer
+        if (attackTimer >= melee.attackTimerMax)
+        {
+            if (melee.isMelee)
+                Destroy(attackGO);
+
+            else
+                fired = false;
+
+            attackTimer = 0;
+            attacking = false;
+        }
+
+        
     }
-    */
+
+    // Sets the walls for the player to use for collision after they are generated
+    public void SetWalls()
+    {
+        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Wall"))
+        {
+            walls.Add(wall);
+        }
+    }
 }

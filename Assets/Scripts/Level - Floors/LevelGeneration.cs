@@ -66,6 +66,8 @@ public class LevelGeneration : MonoBehaviour
         //send elevator info to wave manager
         WaveManager waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
         waveManager.SetupElevators(elevators);
+
+        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().SetWalls();
     }
 
     /// <summary>
