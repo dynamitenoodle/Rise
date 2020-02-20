@@ -42,5 +42,4 @@ public class EnvironmentFire : EnvironmentElement
             yield return new WaitForSeconds(Constants.ENVIRONMENT_UPDATE_TIME);
         }
     }
-
 }

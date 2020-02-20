@@ -12,7 +12,6 @@ public class Ability_MagicBlast : Ability
     public override void Setup()
     {
         coolDown = 2.0f;
-        AddModifier(gameObject.AddComponent<Modifier_FlameRune>());
     }
 
     public override void Action()
@@ -39,8 +38,6 @@ public class Ability_MagicBlast : Ability
 
         modifierInfo.radius = 2f;
         modifierInfo.points = points;
-
-        Debug.Log("finish attack| modifiers added: " + modifiers.Count);
 
         foreach (Modifier modifier in modifiers)
         {

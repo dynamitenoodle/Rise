@@ -570,6 +570,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   environmentFire: {fileID: 3589028069193442107, guid: 3752641d214e79647a9c39c68d199808,
     type: 3}
+  environmentWater: {fileID: 3589028069193442107, guid: 26739991d593af74ebfb189be8e4e65b,
+    type: 3}
+  environmentSteam: {fileID: 3589028069193442107, guid: 7536ac4912e6cd24cb213650878bed6b,
+    type: 3}
 --- !u!4 &1765587785
 Transform:
   m_ObjectHideFlags: 0
