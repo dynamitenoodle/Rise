@@ -19,6 +19,7 @@ public class Constants
     //Level Gen 
     public const int LEVELGENERATION_MIN_ROOM_DISTANCE = 5;
     public const int LEVELGEN_MAX_ROOM_LOOPS = 25;
+    public const int LEVELGEN_BOSS_ROOM_MAX_LOOPS = 1000;
 
     //wave gen
     public const float WAVEGEN_SAFE_ZONE = 15f;

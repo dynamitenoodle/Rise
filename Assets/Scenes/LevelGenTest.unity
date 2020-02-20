@@ -304,8 +304,8 @@ Camera:
   m_GameObject: {fileID: 320726563}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -669,6 +669,11 @@ MonoBehaviour:
   - {fileID: 7598386088287687137, guid: 006e500dfa1de914ea42fcbfce1bd8cd, type: 3}
   - {fileID: 7598386088287687137, guid: e3133347057d8c643ab9958e3bbbec34, type: 3}
   - {fileID: 8409268062744175899, guid: b1ce5e730cc43e643a62810a0f32186a, type: 3}
+  floorBosses:
+  - bossRooms:
+    - boss: {fileID: 23301839095255922, guid: e48678ffc4dcc8e48828dfee2dbcea9b, type: 3}
+      bossRoom: {fileID: 5928557137708911906, guid: baf374bf30a00a6449d75ae7034aab9c,
+        type: 3}
   elevatorPrefab: {fileID: 4702182630266006499, guid: 6c907f1f7b808f748a1580414a3d003e,
     type: 3}
   elevatorWallPrefab: {fileID: 7109147777226009931, guid: dadcb8b2f5017e34db8cf16689f52d7c,
