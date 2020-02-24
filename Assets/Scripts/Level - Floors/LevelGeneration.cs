@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class BossInfo
+{
+    public List<BossRoom> bossRooms;
+}
+
+[System.Serializable]
+public class BossRoom
+{
+    public GameObject boss;
+    public GameObject bossRoom;
+}
 public class LevelGeneration : MonoBehaviour
 {
     //public vars for adjustments
@@ -9,6 +21,7 @@ public class LevelGeneration : MonoBehaviour
     public int maxRoomSpawns;
 
     public List<GameObject> rooms;
+    public BossInfo[] floorBosses;
     public GameObject elevatorPrefab;
     public GameObject elevatorWallPrefab;
 
@@ -20,6 +33,7 @@ public class LevelGeneration : MonoBehaviour
 
     //class vars
     Helper helper;
+    WaveManager waveManager;
 
     struct RoomSpawn
     {
@@ -42,15 +56,16 @@ public class LevelGeneration : MonoBehaviour
     void Start()
     {
         helper = new Helper();
+        waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
         graph = GameObject.Find("Graph").GetComponent<Graph>();
-        GenerateLevel();
+        GenerateLevel(0);
         graph.SetGraph();
     }
 
     /// <summary>
     /// Main method to generate everything (basically start point for level generation)
     /// </summary>
-    private void GenerateLevel()
+    private void GenerateLevel(int floor)
     {
         //spawn rooms
         //Debug.Log("Generating rooms...");
@@ -59,14 +74,17 @@ public class LevelGeneration : MonoBehaviour
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
 
         //Debug.Log("Spawning elevators...");
+        //Debug.Log($"Spawning boss room...");
+        roomSpawns = SpawnBossRoom(roomSpawns, floor);
+
+        //Debug.Log("Spawning elevators...");
         List<GameObject> elevators = SpawnElevators(roomSpawns);
 
         UpdateDoors(roomSpawns);
 
-        //Debug.Log("...Finished!");
+        //Debug.Log($"...Finished!");
 
         //send elevator info to wave manager
-        WaveManager waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
         waveManager.SetupElevators(elevators);
 
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().SetWalls();
@@ -93,6 +111,105 @@ public class LevelGeneration : MonoBehaviour
                 }
             }
         }
+    }
+
+    private List<RoomSpawn> SpawnBossRoom(List<RoomSpawn> roomSpawns, int floor)
+    {
+        //pick random boss from floor list
+        BossRoom bossRoom = floorBosses[floor].bossRooms[Random.Range(0, floorBosses[floor].bossRooms.Count - 1)];
+
+        //setup RoomSpawn for boss room
+        RoomSpawn bossRoomSpawn = new RoomSpawn();
+        RoomDescriber bossRoomDescriber = bossRoom.bossRoom.GetComponent<RoomDescriber>();
+        //add doors
+        List<DoorDescriber> doors = new List<DoorDescriber>();
+        for (int i = 0; i < bossRoomDescriber.doorways.Count; i++)
+        {
+            doors.Add(bossRoomDescriber.doorways[i].GetComponent<DoorDescriber>());
+            doors[i].location = new Vector2(
+                bossRoomDescriber.doorways[i].transform.position.x,
+                bossRoomDescriber.doorways[i].transform.position.y);
+            doors[i].doorOpen = true;
+            doors[i].elevatorDoor = false;
+        }
+
+        bossRoomSpawn.roomSize = bossRoomDescriber.roomSize;
+        bossRoomSpawn.doors = doors;
+
+        List<Vector2> bossRoomDoorAdjusts = new List<Vector2>();
+        foreach (DoorDescriber door in bossRoomSpawn.doors)
+        {
+            bossRoomDoorAdjusts.Add(GetDoorAdjust(door));
+        }
+
+        List<RoomSpawn> validRooms = new List<RoomSpawn>();
+        //find all VALID rooms for this particular boss room
+        foreach (RoomSpawn room in roomSpawns)
+        {
+            foreach (DoorDescriber door in room.doors)
+            {
+                bool found = false;
+                foreach (Vector2 bossRoomAdjust in bossRoomDoorAdjusts)
+                {
+                    if (IsDoorInverse(GetDoorAdjust(door), bossRoomAdjust))
+                    {
+                        validRooms.Add(room);
+                        break;
+                    }
+                }
+                if (found)
+                    break;
+            }
+        }
+
+        bool finished = false;
+        int maxLoops = Constants.LEVELGEN_BOSS_ROOM_MAX_LOOPS;
+        do
+        {
+            //pick random valid room, then pick random valid door
+            int randomRoom = Random.Range(0, validRooms.Count - 1);
+            int bossDoorPick = -1;
+            int roomDoorPick = -1;
+            for (int i = 0; i < validRooms[randomRoom].doors.Count; i++)
+            {
+                for (int j = 0; j < bossRoomDoorAdjusts.Count; j++)
+                {
+                    if (IsDoorInverse(GetDoorAdjust(validRooms[randomRoom].doors[i]), bossRoomDoorAdjusts[j]))
+                    {
+                        bossDoorPick = j;
+                        roomDoorPick = i;
+                    }
+                }
+            }
+
+            //spawn boss room
+            Vector2 roomMove = MatchDoorRoomAdjust(
+                bossRoomSpawn.location,
+                bossRoomSpawn.doors[bossDoorPick].location,
+                validRooms[randomRoom].location,
+                validRooms[randomRoom].doors[roomDoorPick].location,
+                GetDoorAdjust(validRooms[randomRoom].doors[roomDoorPick]));
+
+            bossRoomSpawn.location += roomMove;
+            if (!CheckRoomIntersections(roomSpawns, bossRoomSpawn))
+            {
+                GameObject bossRoomObj = Instantiate(bossRoom.bossRoom, mapTransform);
+                bossRoomObj.transform.position = bossRoomSpawn.location;
+                bossRoomSpawn.obj = bossRoomObj;
+
+                bossRoomSpawn.doors[bossDoorPick].doorOpen = false;
+                validRooms[randomRoom].doors[roomDoorPick].doorOpen = false;
+
+                roomSpawns.Add(bossRoomSpawn);
+                finished = true;
+            }
+            maxLoops--;
+        } while (maxLoops > 0 && !finished);
+        if (maxLoops == 0)
+        {
+            Debug.LogError("Boss room failed to spawn, 20 iterations passed, do{}while force stopped");
+        }
+        return roomSpawns;
     }
 
     /// <summary>

@@ -9,6 +9,9 @@ TagManager:
   - Wall
   - PlayerAttack
   - Node
+  - Environment_Water
+  - Environment_Fire
+  - Environment_Steam
   layers:
   - Default
   - TransparentFX
