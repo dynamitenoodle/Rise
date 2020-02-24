@@ -206,7 +206,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (!attacking)
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.W))
                 direction.y += 1;
             if (Input.GetKey(KeyCode.S))
                 direction.y -= 1;

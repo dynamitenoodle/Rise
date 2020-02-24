@@ -40,6 +40,7 @@ public class EnemyScript : MonoBehaviour
     // Graph stuff
     Graph graph;
     Node node;
+    int roomNum;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,6 +53,7 @@ public class EnemyScript : MonoBehaviour
         attackRoll = -1;
         shotNum = 0;
         node = graph.FirstRoomCheck(transform.position);
+        roomNum = node.roomNum;
         Debug.Log("Enemy: " + node.roomNum);
     }
 
@@ -68,15 +70,26 @@ public class EnemyScript : MonoBehaviour
         }
         else
         {
-            if (node.roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
-                AttackUpdate();
-            else
+            // Checks to see if we are in the same room as the player, and that our distance from them is within the range
+            if (roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
             {
-                if (Vector3.Distance(node.pos, transform.position) < .1f)
-                    node = graph.GetNextNode(node);
-
-                direction = Vector3.Normalize(node.pos - transform.position);
+                bool hitPlayer = false;
+                foreach (RaycastHit2D hit in Physics2D.RaycastAll(transform.position, (node.pos - transform.position), detectionDistance))
+                {
+                    if (hit.collider.gameObject.tag == "Player")
+                    {
+                        AttackUpdate();
+                        node = player.GetComponent<PlayerScript>().Node;
+                        hitPlayer = true;
+                    }
+                }
+                if (!hitPlayer)
+                {
+                    FollowNode();
+                }
             }
+            else
+                FollowNode();
         }
 
         ApplyVelocity();
@@ -92,7 +105,7 @@ public class EnemyScript : MonoBehaviour
         float playerDis = (player.transform.position - transform.position).magnitude;
 
         // Where is PLAYER
-        if (playerDis < detectionDistance && !AttackDisCheck(playerDis) && !attacking)
+        if (!AttackDisCheck(playerDis) && !attacking)
         {
             direction = (player.transform.position - transform.position).normalized;
             CannonSet(direction);
@@ -354,5 +367,32 @@ public class EnemyScript : MonoBehaviour
     public void SetNode(Node nd)
     {
         node = nd;
+    }
+
+    // Following the nodes
+    void FollowNode()
+    {
+        if (Vector3.Distance(node.pos, transform.position) < .1f)
+        {
+            roomNum = node.roomNum;
+            node = graph.GetNextNode(node);
+        }
+
+        direction = Vector3.Normalize(node.pos - transform.position);
+    }
+    
+    // Drawing the gizmos
+    void OnDrawGizmos()
+    {
+        if (player.GetComponent<PlayerScript>().Node.roomNum != roomNum)
+        {
+            Gizmos.color = new Color(50, 150, 50, 0.5f);
+            Gizmos.DrawLine(transform.position, node.pos);
+        }
+        else
+        {
+            Gizmos.color = new Color(150, 50, 50, 0.5f);
+            Gizmos.DrawLine(transform.position, player.transform.position);
+        }
     }
 }
