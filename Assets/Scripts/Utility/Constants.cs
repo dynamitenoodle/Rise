@@ -8,6 +8,7 @@ public class Constants
     //Scene GameObject names
     public const string GAMEOBJECT_NAME_WAVEMANAGER = "WaveManager";
     public const string GAMEOBJECT_NAME_ENVIRONMENTMANAGER = "EnvironmentManager";
+    public const string GAMEOBJECT_NAME_CANVAS = "Canvas";
 
 
     //tags
@@ -39,4 +40,7 @@ public class Constants
     public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;
     public const float ENVIRONMENT_STEAM_CREATE_RADIUS_MULTIPLIER = 2f;
     public const float ENVIRONMENT_UPDATE_TIME = 0.2f;
+
+    //UI constants
+    public const float UI_ABILITY_COOLDOWN_UPDATE_TIME = 0.1f;
 }

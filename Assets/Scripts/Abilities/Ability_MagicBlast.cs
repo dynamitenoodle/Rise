@@ -11,11 +11,17 @@ public class Ability_MagicBlast : Ability
 
     public override void Setup()
     {
-        coolDown = 2.0f;
+        lastUseTime = Time.time;
+        coolDown = 0.25f;
+        modifiers.Add(gameObject.AddComponent<Modifier_WaterRune>());
+        modifiers.Add(gameObject.AddComponent<Modifier_FlameRune>());
     }
 
     public override void Action()
     {
+        //prevent action on cooldown not finished
+        if (Time.time - lastUseTime < coolDown) { return; }
+
         attackPrefab = Resources.Load<GameObject>("Abilities/magicBlast");
         GameObject attack = Instantiate(attackPrefab, player.transform.position, player.transform.rotation);
         BulletScript bulletScript = attack.GetComponent<BulletScript>();
@@ -27,6 +33,13 @@ public class Ability_MagicBlast : Ability
         bulletScript.SetAttributes(direction, speed);
         bulletScript.SetTimeout(lifeSpan, true, true);
         bulletScript.SetCallback(FinishAttack);
+        SetCooldown();
+    }
+
+    public override void SetCooldown()
+    {
+        lastUseTime = Time.time;
+        abilityUIManager.SetAbilityCooldown(0, coolDown);
     }
 
     public void FinishAttack(GameObject attackObj)
