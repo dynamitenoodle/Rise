@@ -6,6 +6,7 @@ public class Graph : MonoBehaviour
 {
     [HideInInspector] public List<Node> nodes;
     GameObject player;
+    int playerRoomNum;
     float nodeDis = 6f;
     float doorDis = 3f;
 
@@ -39,7 +40,6 @@ public class Graph : MonoBehaviour
         }
 
         player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
-        Debug.Log("Player: " + player.GetComponent<PlayerScript>().Node.roomNum);
 
         player.GetComponent<PlayerScript>().Node.heuristic = 0;
         player.GetComponent<PlayerScript>().Node.isEnd = true;
@@ -87,10 +87,21 @@ public class Graph : MonoBehaviour
         player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
         Node playerNode = player.GetComponent<PlayerScript>().Node;
 
+        /* if we need to do lowest cost for pathfinding, the code is here
         node.lowestCost = 0;
         node.isStart = true;
-        //LowestCost(playerNode);
+        LowestCost(playerNode);
         node.isStart = false;
+        */
+
+        if (player.GetComponent<PlayerScript>().Node.roomNum != playerRoomNum)
+        {
+            player.GetComponent<PlayerScript>().Node.heuristic = 0;
+            player.GetComponent<PlayerScript>().Node.isEnd = true;
+            Heuristic(player.GetComponent<PlayerScript>().Node);
+            player.GetComponent<PlayerScript>().Node.isEnd = false;
+            playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+        }
 
         nextNode = node.nearby[0];
 

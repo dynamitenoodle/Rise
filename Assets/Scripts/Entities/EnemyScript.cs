@@ -54,7 +54,7 @@ public class EnemyScript : MonoBehaviour
         shotNum = 0;
         node = graph.FirstRoomCheck(transform.position);
         roomNum = node.roomNum;
-        Debug.Log("Enemy: " + node.roomNum);
+
     }
 
     // Update is called once per frame
@@ -73,19 +73,19 @@ public class EnemyScript : MonoBehaviour
             // Checks to see if we are in the same room as the player, and that our distance from them is within the range
             if (roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
             {
-                bool hitPlayer = false;
-                foreach (RaycastHit2D hit in Physics2D.RaycastAll(transform.position, (node.pos - transform.position), detectionDistance))
+                //bool hitPlayer = false;
+                //foreach (RaycastHit2D hit in Physics2D.RaycastAll(transform.position, (node.pos - transform.position), detectionDistance))
                 {
-                    if (hit.collider.gameObject.tag == "Player")
+                    //if (hit.collider.gameObject.tag == "Player")
                     {
                         AttackUpdate();
                         node = player.GetComponent<PlayerScript>().Node;
-                        hitPlayer = true;
+                        //hitPlayer = true;
                     }
                 }
-                if (!hitPlayer)
+                //if (!hitPlayer)
                 {
-                    FollowNode();
+                    //FollowNode();
                 }
             }
             else

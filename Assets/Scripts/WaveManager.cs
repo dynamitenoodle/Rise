@@ -135,7 +135,6 @@ public class WaveManager : MonoBehaviour
 
                     if (spawnNum + enemies.Count > maxEnemiesOut)
                     {
-                        Debug.Log($"spawnNum: {spawnNum}, enemies: {enemies.Count}, maxEnemiesOut: {maxEnemiesOut}");
                         spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
                     }
                     if (spawnNum > enemyQueue.Count)
@@ -156,7 +155,7 @@ public class WaveManager : MonoBehaviour
     private void SpawnEnemyGroup(int enemyCount)
     {
         List<ElevatorDescriber> usedElevators = new List<ElevatorDescriber>();
-        Debug.Log($"Spawning enemy group | Count: {enemyCount}   -   enemyQueue count: {enemyQueue.Count - enemyCount}");
+
         for (int i = 0; i < enemyCount; i++)
         {
             ElevatorDescriber elevatorSpawn = GetElevatorSpawn(usedElevators);

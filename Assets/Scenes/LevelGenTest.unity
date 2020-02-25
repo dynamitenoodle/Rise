@@ -339,6 +339,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 612161522938625949, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e,
+        type: 3}
+      propertyPath: melee
+      value: 
+      objectReference: {fileID: 11400000, guid: 44bac2626ccc8274985339087e425b5f,
+        type: 2}
+    - target: {fileID: 612161522938625949, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e,
+        type: 3}
+      propertyPath: maxSpeed
+      value: 0.06
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e1302dd0fdf5d440bd40c06cc44fb7e, type: 3}
 --- !u!1 &320726563
