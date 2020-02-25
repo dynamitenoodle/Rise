@@ -39,7 +39,7 @@ public class Graph : MonoBehaviour
             }
         }
 
-        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
+        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
 
         player.GetComponent<PlayerScript>().Node.heuristic = 0;
         player.GetComponent<PlayerScript>().Node.isEnd = true;
@@ -79,12 +79,12 @@ public class Graph : MonoBehaviour
     }
 
     // Enemy calls this method
-    public Node GetNextNode(Node node)
+    public Node GetNextNode(Node node, Node prevNode)
     {
         Node nextNode;
 
         // figure out which node the player is closest to
-        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
+        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
         Node playerNode = player.GetComponent<PlayerScript>().Node;
 
         /* if we need to do lowest cost for pathfinding, the code is here
@@ -94,20 +94,18 @@ public class Graph : MonoBehaviour
         node.isStart = false;
         */
 
-        if (player.GetComponent<PlayerScript>().Node.roomNum != playerRoomNum)
-        {
-            player.GetComponent<PlayerScript>().Node.heuristic = 0;
-            player.GetComponent<PlayerScript>().Node.isEnd = true;
-            Heuristic(player.GetComponent<PlayerScript>().Node);
-            player.GetComponent<PlayerScript>().Node.isEnd = false;
-            playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
-        }
+        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
+        player.GetComponent<PlayerScript>().Node.heuristic = 0;
+        player.GetComponent<PlayerScript>().Node.isEnd = true;
+        Heuristic(player.GetComponent<PlayerScript>().Node);
+        player.GetComponent<PlayerScript>().Node.isEnd = false;
+        playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
 
         nextNode = node.nearby[0];
 
         foreach (Node n in node.nearby)
         {
-            if (n.heuristic < nextNode.heuristic)
+            if (n.heuristic < nextNode.heuristic && n != prevNode)
                 nextNode = n;
         }
 
@@ -139,7 +137,7 @@ public class Graph : MonoBehaviour
         
     }
 
-    public Node FirstRoomCheck(Vector3 position)
+    public Node NearestNode(Vector3 position)
     {
         Node nearestNode = nodes[0];
 

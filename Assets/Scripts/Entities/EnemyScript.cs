@@ -40,6 +40,7 @@ public class EnemyScript : MonoBehaviour
     // Graph stuff
     Graph graph;
     Node node;
+    Node prevNode;
     int roomNum;
     // Start is called before the first frame update
     void Start()
@@ -52,7 +53,7 @@ public class EnemyScript : MonoBehaviour
 
         attackRoll = -1;
         shotNum = 0;
-        node = graph.FirstRoomCheck(transform.position);
+        node = graph.NearestNode(transform.position);
         roomNum = node.roomNum;
 
     }
@@ -375,7 +376,9 @@ public class EnemyScript : MonoBehaviour
         if (Vector3.Distance(node.pos, transform.position) < .1f)
         {
             roomNum = node.roomNum;
-            node = graph.GetNextNode(node);
+            Node tempNode = node;
+            node = graph.GetNextNode(node, prevNode);
+            prevNode = tempNode;
         }
 
         direction = Vector3.Normalize(node.pos - transform.position);
