@@ -45,6 +45,7 @@ public class Graph : MonoBehaviour
         player.GetComponent<PlayerScript>().Node.isEnd = true;
         Heuristic(player.GetComponent<PlayerScript>().Node);
         player.GetComponent<PlayerScript>().Node.isEnd = false;
+        playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -85,21 +86,25 @@ public class Graph : MonoBehaviour
 
         // figure out which node the player is closest to
         player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
-        Node playerNode = player.GetComponent<PlayerScript>().Node;
 
-        /* if we need to do lowest cost for pathfinding, the code is here
+        /* 
+        //if we need to do lowest cost for pathfinding, the code is here
         node.lowestCost = 0;
         node.isStart = true;
         LowestCost(playerNode);
         node.isStart = false;
         */
 
-        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
-        player.GetComponent<PlayerScript>().Node.heuristic = 0;
-        player.GetComponent<PlayerScript>().Node.isEnd = true;
-        Heuristic(player.GetComponent<PlayerScript>().Node);
-        player.GetComponent<PlayerScript>().Node.isEnd = false;
-        playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+        if (player.GetComponent<PlayerScript>().node.roomNum != playerRoomNum)
+        {
+            foreach (Node n in nodes)
+                n.heuristic = 0;
+            player.GetComponent<PlayerScript>().Node.heuristic = 0;
+            player.GetComponent<PlayerScript>().Node.isEnd = true;
+            Heuristic(player.GetComponent<PlayerScript>().Node);
+            player.GetComponent<PlayerScript>().Node.isEnd = false;
+            playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+        }
 
         nextNode = node.nearby[0];
 
@@ -134,7 +139,6 @@ public class Graph : MonoBehaviour
                 Heuristic(node);
             }
         }
-        
     }
 
     public Node NearestNode(Vector3 position)

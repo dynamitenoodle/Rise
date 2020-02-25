@@ -42,6 +42,8 @@ public class EnemyScript : MonoBehaviour
     Node node;
     Node prevNode;
     int roomNum;
+    bool chasingPlayer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -55,7 +57,7 @@ public class EnemyScript : MonoBehaviour
         shotNum = 0;
         node = graph.NearestNode(transform.position);
         roomNum = node.roomNum;
-
+        chasingPlayer = false;
     }
 
     // Update is called once per frame
@@ -74,19 +76,16 @@ public class EnemyScript : MonoBehaviour
             // Checks to see if we are in the same room as the player, and that our distance from them is within the range
             if (roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
             {
-                //bool hitPlayer = false;
-                //foreach (RaycastHit2D hit in Physics2D.RaycastAll(transform.position, (node.pos - transform.position), detectionDistance))
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.transform.position - transform.position), detectionDistance);
+
+                if (hit.collider != null && hit.collider.gameObject.tag == "Player")
                 {
-                    //if (hit.collider.gameObject.tag == "Player")
-                    {
-                        AttackUpdate();
-                        node = player.GetComponent<PlayerScript>().Node;
-                        //hitPlayer = true;
-                    }
+                    AttackUpdate();
+                    node = graph.NearestNode(transform.position);
                 }
-                //if (!hitPlayer)
+                else
                 {
-                    //FollowNode();
+                    FollowNode();
                 }
             }
             else
@@ -103,6 +102,7 @@ public class EnemyScript : MonoBehaviour
     // Enemy AttackUpdate
     void AttackUpdate()
     {
+        chasingPlayer = true;
         float playerDis = (player.transform.position - transform.position).magnitude;
 
         // Where is PLAYER
@@ -363,7 +363,6 @@ public class EnemyScript : MonoBehaviour
         direction = Vector3.zero;
     }
 
-
     // Sets the enemy node
     public void SetNode(Node nd)
     {
@@ -382,12 +381,15 @@ public class EnemyScript : MonoBehaviour
         }
 
         direction = Vector3.Normalize(node.pos - transform.position);
+        CannonSet(direction);
+        chasingPlayer = false;
+
     }
-    
+
     // Drawing the gizmos
     void OnDrawGizmos()
     {
-        if (player.GetComponent<PlayerScript>().Node.roomNum != roomNum)
+        if (!chasingPlayer)
         {
             Gizmos.color = new Color(50, 150, 50, 0.5f);
             Gizmos.DrawLine(transform.position, node.pos);

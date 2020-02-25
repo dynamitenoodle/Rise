@@ -37,7 +37,7 @@ public class PlayerScript : MonoBehaviour
     Ability[] abilities = new Ability[5];
 
     // room stuff
-    Node node;
+    public Node node;
     public Node Node { get { return node; } }
 
     // Start is called before the first frame update
