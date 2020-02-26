@@ -83,12 +83,12 @@ public class EnemyScript : MonoBehaviour
                     AttackUpdate();
                     node = graph.NearestNode(transform.position);
                 }
-                else
+                else if (!attacking)
                 {
                     FollowNode();
                 }
             }
-            else
+            else if (!attacking)
                 FollowNode();
         }
 

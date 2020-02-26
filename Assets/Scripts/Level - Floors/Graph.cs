@@ -6,8 +6,8 @@ public class Graph : MonoBehaviour
 {
     [HideInInspector] public List<Node> nodes;
     GameObject player;
-    int playerRoomNum;
-    float nodeDis = 6f;
+    Node playerNode;
+    float nodeDis = 8f;
     float doorDis = 3f;
 
     // Start is called before the first frame update
@@ -43,9 +43,9 @@ public class Graph : MonoBehaviour
 
         player.GetComponent<PlayerScript>().Node.heuristic = 0;
         player.GetComponent<PlayerScript>().Node.isEnd = true;
-        Heuristic(player.GetComponent<PlayerScript>().Node);
+        Heuristic(player.GetComponent<PlayerScript>().Node, true);
         player.GetComponent<PlayerScript>().Node.isEnd = false;
-        playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+        playerNode = player.GetComponent<PlayerScript>().Node;
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -95,15 +95,13 @@ public class Graph : MonoBehaviour
         node.isStart = false;
         */
 
-        if (player.GetComponent<PlayerScript>().node.roomNum != playerRoomNum)
+        if (player.GetComponent<PlayerScript>().node != playerNode)
         {
-            foreach (Node n in nodes)
-                n.heuristic = 0;
             player.GetComponent<PlayerScript>().Node.heuristic = 0;
             player.GetComponent<PlayerScript>().Node.isEnd = true;
-            Heuristic(player.GetComponent<PlayerScript>().Node);
+            Heuristic(player.GetComponent<PlayerScript>().Node, true);
             player.GetComponent<PlayerScript>().Node.isEnd = false;
-            playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+            playerNode = player.GetComponent<PlayerScript>().Node;
         }
 
         nextNode = node.nearby[0];
@@ -127,8 +125,12 @@ public class Graph : MonoBehaviour
     }
 
     // Calculate Heuristic
-    void Heuristic(Node currentNode)
+    void Heuristic(Node currentNode, bool reset)
     {
+        if (reset)
+            foreach (Node n in nodes)
+                n.heuristic = 0;
+
         foreach (Node node in currentNode.nearby)
         {
             float dis = Vector3.Distance(node.pos, currentNode.pos);
@@ -136,7 +138,7 @@ public class Graph : MonoBehaviour
             if (!node.isEnd && (node.heuristic == 0 || node.heuristic > newHeuristic))
             {
                 node.heuristic = newHeuristic;
-                Heuristic(node);
+                Heuristic(node, false);
             }
         }
     }

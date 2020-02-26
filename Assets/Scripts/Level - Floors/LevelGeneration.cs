@@ -201,6 +201,7 @@ public class LevelGeneration : MonoBehaviour
                 validRooms[randomRoom].doors[roomDoorPick].doorOpen = false;
 
                 roomSpawns.Add(bossRoomSpawn);
+                graph.AddNodes(bossRoomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, 0);
                 finished = true;
             }
             maxLoops--;
@@ -599,6 +600,7 @@ public class LevelGeneration : MonoBehaviour
             doors[i].elevatorDoor = false;
         }
         roomSpawn.doors = doors;
+
 
         return roomSpawn;
     }
