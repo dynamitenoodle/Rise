@@ -95,7 +95,7 @@ public class Graph : MonoBehaviour
         node.isStart = false;
         */
 
-        if (player.GetComponent<PlayerScript>().node != playerNode)
+        if (player.GetComponent<PlayerScript>().Node != playerNode)
         {
             player.GetComponent<PlayerScript>().Node.heuristic = 0;
             player.GetComponent<PlayerScript>().Node.isEnd = true;

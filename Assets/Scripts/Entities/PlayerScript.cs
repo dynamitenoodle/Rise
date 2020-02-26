@@ -22,22 +22,14 @@ public class PlayerScript : MonoBehaviour
     List<GameObject> walls;
 
     // ATTACK STUFF
-    public Attack melee;
-    bool attacking;
-    float attackTimer;
-    GameObject attackGO;
-    bool fired = false;
-    Vector3 attackDir;
     float globalAttackTimer;
     [SerializeField] float minTimeBtwnAttacks = 0.3f;
-    bool speenDir = false;
-    Vector3 lastDir;
 
     //list of abilities
     Ability[] abilities = new Ability[5];
 
     // room stuff
-    public Node node;
+    Node node;
     public Node Node { get { return node; } }
 
     // Start is called before the first frame update
@@ -49,7 +41,6 @@ public class PlayerScript : MonoBehaviour
 
         walls = new List<GameObject>();
 
-        attackTimer = globalAttackTimer;
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
     }
 
@@ -60,8 +51,6 @@ public class PlayerScript : MonoBehaviour
         WallCheck();
         ApplyVelocity();
         Flicker();
-        Attack();
-        
     }
 
     // Called by other scripts to hit the player
@@ -204,17 +193,15 @@ public class PlayerScript : MonoBehaviour
     // Checks the inputs
     void InputCheck()
     {
-        if (!attacking)
-        {
-            if (Input.GetKey(KeyCode.W))
-                direction.y += 1;
-            if (Input.GetKey(KeyCode.S))
-                direction.y -= 1;
-            if (Input.GetKey(KeyCode.D))
-                direction.x += 1;
-            if (Input.GetKey(KeyCode.A))
-                direction.x -= 1;
-        }
+        if (Input.GetKey(KeyCode.W))
+            direction.y += 1;
+        if (Input.GetKey(KeyCode.S))
+            direction.y -= 1;
+        if (Input.GetKey(KeyCode.D))
+            direction.x += 1;
+        if (Input.GetKey(KeyCode.A))
+            direction.x -= 1;
+
         // If nothing is pressed, get rid of the direction
         if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
             direction.y = 0;
@@ -222,11 +209,14 @@ public class PlayerScript : MonoBehaviour
             direction.x = 0;
 
         // If the player attacks
-        if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
+        if (Input.GetMouseButtonDown(0) && globalAttackTimer >= minTimeBtwnAttacks)
         {
-            //Attack();
             abilities[0].Action();
-            attackTimer = 0;
+            globalAttackTimer = 0;
+        }
+        else
+        {
+            globalAttackTimer += Time.deltaTime;
         }
     }
 
@@ -250,32 +240,7 @@ public class PlayerScript : MonoBehaviour
         transform.position += velocity;
 
         if (direction != Vector3.zero)
-        {
-            lastDir = direction;
             direction = Vector3.zero;
-        }
-    }
-
-    // Checks if the player should be attacking
-    void Attack()
-    {
-        // Timers
-        attackTimer += Time.deltaTime;
-
-        // Reset the attack timer
-        if (attackTimer >= melee.attackTimerMax)
-        {
-            if (melee.isMelee)
-                Destroy(attackGO);
-
-            else
-                fired = false;
-
-            attackTimer = 0;
-            attacking = false;
-        }
-
-        
     }
 
     // Sets the walls for the player to use for collision after they are generated

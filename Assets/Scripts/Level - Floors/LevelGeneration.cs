@@ -47,10 +47,7 @@ public class LevelGeneration : MonoBehaviour
         public List<DoorDescriber> doors;
         //GameObject of the room
         public GameObject obj;
-        // Enemy locations
-        public List<Transform> enemyPathPoints;
     }
-
 
     // Start is called before the first frame update
     void Start()
@@ -60,6 +57,7 @@ public class LevelGeneration : MonoBehaviour
         graph = GameObject.Find("Graph").GetComponent<Graph>();
         GenerateLevel(0);
         graph.SetGraph();
+        GameObject.Find("Player").GetComponent<PlayerScript>().SetWalls();
     }
 
     /// <summary>
@@ -86,8 +84,6 @@ public class LevelGeneration : MonoBehaviour
 
         //send elevator info to wave manager
         waveManager.SetupElevators(elevators);
-
-        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().SetWalls();
     }
 
     /// <summary>
