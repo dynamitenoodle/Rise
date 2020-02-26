@@ -6,7 +6,7 @@ public class Ability_MagicBlast : Ability
 {
     public GameObject attackPrefab;
 
-    public float speed = Constants.ABILITY_RANGED_ATTACK_DEFAULT;
+    public float speed = Constants.ABILITY_RANGED_ATTACK_DEFAULT_SPEED;
     public float lifeSpan = 2.0f;
 
     public override void Setup()
@@ -39,7 +39,7 @@ public class Ability_MagicBlast : Ability
     public override void SetCooldown()
     {
         lastUseTime = Time.time;
-        abilityUIManager.SetAbilityCooldown(0, coolDown);
+        abilityUIManager.SetAbilityCooldown(abilitySlot, coolDown);
     }
 
     public void FinishAttack(GameObject attackObj)

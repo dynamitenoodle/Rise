@@ -34,7 +34,7 @@ public class Constants
 
     //ability constants
 
-    public const float ABILITY_RANGED_ATTACK_DEFAULT = 0.1f;
+    public const float ABILITY_RANGED_ATTACK_DEFAULT_SPEED = 0.1f;
 
     //environment constants
     public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;

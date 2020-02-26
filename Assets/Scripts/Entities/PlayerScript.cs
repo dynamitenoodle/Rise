@@ -10,28 +10,17 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float friction = .9f;
     Vector3 velocity;
     Vector3 direction;
+    Vector3 lastDir;
 
     // health stuffs
     [SerializeField] float healthMax = 3;
     float health;
-    bool invul;
+    public bool invulnerable;
     [SerializeField] float hitTimerMax = 2;
     float hitTimer;
 
     // Wall collisions
     List<GameObject> walls;
-
-    // ATTACK STUFF
-    public Attack melee;
-    bool attacking;
-    float attackTimer;
-    GameObject attackGO;
-    bool fired = false;
-    Vector3 attackDir;
-    float globalAttackTimer;
-    [SerializeField] float minTimeBtwnAttacks = 0.3f;
-    bool speenDir = false;
-    Vector3 lastDir;
 
     //list of abilities
     Ability[] abilities = new Ability[5];
@@ -45,12 +34,15 @@ public class PlayerScript : MonoBehaviour
     {
         velocity = Vector3.zero;
         health = healthMax;
-        invul = false;
+        invulnerable = false;
 
         walls = new List<GameObject>();
 
-        attackTimer = globalAttackTimer;
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
+        abilities[0].abilitySlot = 0;
+        abilities[1] = gameObject.AddComponent<Ability_Dash>();
+        abilities[1].abilitySlot = 1;
+
     }
 
     // Update is called once per frame
@@ -59,17 +51,15 @@ public class PlayerScript : MonoBehaviour
         InputCheck();
         WallCheck();
         ApplyVelocity();
-        Flicker();
-        Attack();
-        
+        Flicker();        
     }
 
     // Called by other scripts to hit the player
     public void GetHit()
     {
-        if (!invul)
+        if (!invulnerable)
         {
-            invul = true;
+            invulnerable = true;
             health--;
 
             if (health - 1 < 0)
@@ -80,7 +70,7 @@ public class PlayerScript : MonoBehaviour
     // Flickering if hit
     public void Flicker()
     {
-        if (invul)
+        if (invulnerable)
         {
             hitTimer += Time.deltaTime;
 
@@ -97,7 +87,7 @@ public class PlayerScript : MonoBehaviour
             if (hitTimer > hitTimerMax)
             {
                 hitTimer = 0;
-                invul = false;
+                invulnerable = false;
                 tempColor.a = 1f;
                 GetComponent<SpriteRenderer>().color = tempColor;
             }
@@ -204,17 +194,16 @@ public class PlayerScript : MonoBehaviour
     // Checks the inputs
     void InputCheck()
     {
-        if (!attacking)
-        {
-            if (Input.GetKey(KeyCode.W))
-                direction.y += 1;
-            if (Input.GetKey(KeyCode.S))
-                direction.y -= 1;
-            if (Input.GetKey(KeyCode.D))
-                direction.x += 1;
-            if (Input.GetKey(KeyCode.A))
-                direction.x -= 1;
-        }
+        //movement
+        if (Input.GetKey(KeyCode.W))
+            direction.y += 1;
+        if (Input.GetKey(KeyCode.S))
+            direction.y -= 1;
+        if (Input.GetKey(KeyCode.D))
+            direction.x += 1;
+        if (Input.GetKey(KeyCode.A))
+            direction.x -= 1;
+
         // If nothing is pressed, get rid of the direction
         if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
             direction.y = 0;
@@ -222,11 +211,13 @@ public class PlayerScript : MonoBehaviour
             direction.x = 0;
 
         // If the player attacks
-        if (Input.GetMouseButtonDown(0) && attackTimer > globalAttackTimer && attackGO == null)
+        if (Input.GetMouseButtonDown(0))
         {
-            //Attack();
             abilities[0].Action();
-            attackTimer = 0;
+        }
+        if (Input.GetMouseButtonDown(1))
+        {
+            abilities[1].Action();
         }
     }
 
@@ -254,28 +245,6 @@ public class PlayerScript : MonoBehaviour
             lastDir = direction;
             direction = Vector3.zero;
         }
-    }
-
-    // Checks if the player should be attacking
-    void Attack()
-    {
-        // Timers
-        attackTimer += Time.deltaTime;
-
-        // Reset the attack timer
-        if (attackTimer >= melee.attackTimerMax)
-        {
-            if (melee.isMelee)
-                Destroy(attackGO);
-
-            else
-                fired = false;
-
-            attackTimer = 0;
-            attacking = false;
-        }
-
-        
     }
 
     // Sets the walls for the player to use for collision after they are generated
