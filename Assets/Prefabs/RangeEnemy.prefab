@@ -96,15 +96,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemySpawnType: 1
-  maxSpeed: 0.04
-  speed: 0.005
-  friction: 0.9
-  detectionDistance: 8
+  enemyAttackStyle: 1
   attacks:
   - {fileID: 11400000, guid: cf4c314bf310d2542b2dbbbbd7a3b808, type: 2}
-  minTimeBtwnAttacks: 2
-  healthMax: 3
-  hitTimerMax: 0
 --- !u!61 &3856345244267791273
 BoxCollider2D:
   m_ObjectHideFlags: 0

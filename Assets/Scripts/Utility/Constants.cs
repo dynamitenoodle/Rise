@@ -20,7 +20,7 @@ public class Constants
     //Level Gen 
     public const int LEVELGENERATION_MIN_ROOM_DISTANCE = 5;
     public const int LEVELGEN_MAX_ROOM_LOOPS = 25;
-    public const int LEVELGEN_BOSS_ROOM_MAX_LOOPS = 1000;
+    public const int LEVELGEN_BOSS_ROOM_MAX_LOOPS = 5000;
 
     //wave gen
     public const float WAVEGEN_SAFE_ZONE = 15f;
@@ -43,4 +43,22 @@ public class Constants
 
     //UI constants
     public const float UI_ABILITY_COOLDOWN_UPDATE_TIME = 0.1f;
+
+    // Enemy constants
+    // Melee
+    public const float ENEMY_MELEE_MAXSPEED = .04f;
+    public const float ENEMY_MELEE_SPEED = .005f;
+    public const float ENEMY_MELEE_FRICTION = .9f;
+    public const float ENEMY_MELEE_DETECTION_DISTANCE = 15f;
+    public const float ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
+    public const float ENEMY_MELEE_HEALTH_MAX = 2f;
+    public const float ENEMY_MELEE_HIT_TIMER_MAX = 2f;
+    // Ranged
+    public const float ENEMY_RANGED_MAXSPEED = .035f;
+    public const float ENEMY_RANGED_SPEED = .005f;
+    public const float ENEMY_RANGED_FRICTION = .9f;
+    public const float ENEMY_RANGED_DETECTION_DISTANCE = 15f;
+    public const float ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
+    public const float ENEMY_RANGED_HEALTH_MAX = 3f;
+    public const float ENEMY_RANGED_HIT_TIMER_MAX = 2f;
 }

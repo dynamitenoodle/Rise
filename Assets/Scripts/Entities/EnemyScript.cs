@@ -7,10 +7,12 @@ public class EnemyScript : MonoBehaviour
     // attributes
     public enum EnemySpawnType { common, uncommon, rare, special }
     public EnemySpawnType enemySpawnType;
-    [SerializeField] float maxSpeed = .1f;
-    [SerializeField] float speed = .02f;
-    [SerializeField] float friction = .9f;
-    [SerializeField] float detectionDistance = 10.0f; //change this to reasonable number
+    public enum EnemyAttackStyle { melee, ranged, boss }
+    public EnemyAttackStyle enemyAttackStyle;
+    float maxSpeed;
+    float speed;
+    float friction;
+    float detectionDistance; //change this to reasonable number
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
@@ -25,14 +27,14 @@ public class EnemyScript : MonoBehaviour
     Vector3 attackDir;
     int shotNum;
     float globalAttackTimer;
-    [SerializeField] float minTimeBtwnAttacks = 2.0f;
+    float minTimeBtwnAttacks = 2.0f;
     bool speenDir = false;
 
     // health
-    [SerializeField] float healthMax = 2;
+    float healthMax = 2;
     float health;
     bool invul;
-    [SerializeField] float hitTimerMax = 2;
+    float hitTimerMax = 2;
     float hitTimer;
 
     WaveManager waveManager;
@@ -58,7 +60,10 @@ public class EnemyScript : MonoBehaviour
         node = graph.NearestNode(transform.position);
         roomNum = node.roomNum;
         chasingPlayer = false;
-    }
+
+        // setting constant values
+        SetConstants();
+}
 
     // Update is called once per frame
     void Update()
@@ -94,6 +99,43 @@ public class EnemyScript : MonoBehaviour
 
         ApplyVelocity();
         Flicker();
+    }
+
+    // Setting the variables that are constants
+    void SetConstants()
+    {
+        if (enemyAttackStyle == EnemyAttackStyle.melee)
+        {
+            maxSpeed = Constants.ENEMY_MELEE_MAXSPEED;
+            speed = Constants.ENEMY_MELEE_SPEED;
+            friction = Constants.ENEMY_MELEE_FRICTION;
+            detectionDistance = Constants.ENEMY_MELEE_DETECTION_DISTANCE;
+            minTimeBtwnAttacks = Constants.ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS;
+            healthMax = Constants.ENEMY_MELEE_HEALTH_MAX;
+            hitTimerMax = Constants.ENEMY_MELEE_HIT_TIMER_MAX;
+        }
+
+        else if (enemyAttackStyle == EnemyAttackStyle.ranged)
+        {
+            maxSpeed = Constants.ENEMY_RANGED_MAXSPEED;
+            speed = Constants.ENEMY_RANGED_SPEED;
+            friction = Constants.ENEMY_RANGED_FRICTION;
+            detectionDistance = Constants.ENEMY_RANGED_DETECTION_DISTANCE;
+            minTimeBtwnAttacks = Constants.ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS;
+            healthMax = Constants.ENEMY_RANGED_HEALTH_MAX;
+            hitTimerMax = Constants.ENEMY_RANGED_HIT_TIMER_MAX;
+        }
+
+        else if (enemyAttackStyle == EnemyAttackStyle.boss)
+        {
+            maxSpeed = Constants.ENEMY_RANGED_MAXSPEED;
+            speed = Constants.ENEMY_RANGED_SPEED;
+            friction = Constants.ENEMY_RANGED_FRICTION;
+            detectionDistance = Constants.ENEMY_RANGED_DETECTION_DISTANCE;
+            minTimeBtwnAttacks = Constants.ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS;
+            healthMax = Constants.ENEMY_RANGED_HEALTH_MAX;
+            hitTimerMax = Constants.ENEMY_RANGED_HIT_TIMER_MAX;
+        }
     }
 
     #region Attack

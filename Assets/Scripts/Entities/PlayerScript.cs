@@ -166,7 +166,8 @@ public class PlayerScript : MonoBehaviour
     // Method for collisions
     void CollisionCheck(Collision2D col)
     {
-        Debug.Log(col.gameObject.name + " collided the player");
+        //Debug.Log(col.gameObject.name + " collided the player");
+
         if (col.gameObject.tag == "Wall")
         {
             // Make an easier variable
