@@ -40,7 +40,10 @@ public class EnemyScript : MonoBehaviour
     // Graph stuff
     Graph graph;
     Node node;
+    Node prevNode;
     int roomNum;
+    bool chasingPlayer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -52,9 +55,9 @@ public class EnemyScript : MonoBehaviour
 
         attackRoll = -1;
         shotNum = 0;
-        node = graph.FirstRoomCheck(transform.position);
+        node = graph.NearestNode(transform.position);
         roomNum = node.roomNum;
-
+        chasingPlayer = false;
     }
 
     // Update is called once per frame
@@ -73,35 +76,31 @@ public class EnemyScript : MonoBehaviour
             // Checks to see if we are in the same room as the player, and that our distance from them is within the range
             if (roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
             {
-                //bool hitPlayer = false;
-                //foreach (RaycastHit2D hit in Physics2D.RaycastAll(transform.position, (node.pos - transform.position), detectionDistance))
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.transform.position - transform.position), detectionDistance);
+
+                if (hit.collider != null && hit.collider.gameObject.tag == "Player")
                 {
-                    //if (hit.collider.gameObject.tag == "Player")
-                    {
-                        AttackUpdate();
-                        node = player.GetComponent<PlayerScript>().Node;
-                        //hitPlayer = true;
-                    }
+                    AttackUpdate();
+                    node = graph.NearestNode(transform.position);
                 }
-                //if (!hitPlayer)
+                else if (!attacking)
                 {
-                    //FollowNode();
+                    FollowNode();
                 }
             }
-            else
+            else if (!attacking)
                 FollowNode();
         }
 
         ApplyVelocity();
-        PlayerHit();
         Flicker();
-
     }
 
     #region Attack
     // Enemy AttackUpdate
     void AttackUpdate()
     {
+        chasingPlayer = true;
         float playerDis = (player.transform.position - transform.position).magnitude;
 
         // Where is PLAYER
@@ -254,23 +253,6 @@ public class EnemyScript : MonoBehaviour
             gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
         }
     }
-
-    // Checks if the player was hit
-    void PlayerHit()
-    {
-        // Checking if player gets hit
-        if (attackRoll != -1 && attacks[attackRoll].isMelee && attackGO != null)
-            if (player.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                player.GetComponent<PlayerScript>().GetHit();
-
-        if (Mathf.Abs(Vector3.Magnitude(player.transform.position - transform.position)) <= GetComponent<Collider2D>().bounds.extents.x * 2)
-        {
-            if (player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
-            {
-                player.GetComponent<PlayerScript>().GetHit();
-            }
-        }
-    }
     #endregion
 
     // Called by other scripts to hit the player
@@ -362,7 +344,6 @@ public class EnemyScript : MonoBehaviour
         direction = Vector3.zero;
     }
 
-
     // Sets the enemy node
     public void SetNode(Node nd)
     {
@@ -375,16 +356,21 @@ public class EnemyScript : MonoBehaviour
         if (Vector3.Distance(node.pos, transform.position) < .1f)
         {
             roomNum = node.roomNum;
-            node = graph.GetNextNode(node);
+            Node tempNode = node;
+            node = graph.GetNextNode(node, prevNode);
+            prevNode = tempNode;
         }
 
         direction = Vector3.Normalize(node.pos - transform.position);
+        CannonSet(direction);
+        chasingPlayer = false;
+
     }
-    
+
     // Drawing the gizmos
     void OnDrawGizmos()
     {
-        if (player.GetComponent<PlayerScript>().Node.roomNum != roomNum)
+        if (!chasingPlayer)
         {
             Gizmos.color = new Color(50, 150, 50, 0.5f);
             Gizmos.DrawLine(transform.position, node.pos);

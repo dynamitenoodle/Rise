@@ -47,10 +47,7 @@ public class LevelGeneration : MonoBehaviour
         public List<DoorDescriber> doors;
         //GameObject of the room
         public GameObject obj;
-        // Enemy locations
-        public List<Transform> enemyPathPoints;
     }
-
 
     // Start is called before the first frame update
     void Start()
@@ -86,8 +83,6 @@ public class LevelGeneration : MonoBehaviour
 
         //send elevator info to wave manager
         waveManager.SetupElevators(elevators);
-
-        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>().SetWalls();
     }
 
     /// <summary>
@@ -201,6 +196,7 @@ public class LevelGeneration : MonoBehaviour
                 validRooms[randomRoom].doors[roomDoorPick].doorOpen = false;
 
                 roomSpawns.Add(bossRoomSpawn);
+                graph.AddNodes(bossRoomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, 0);
                 finished = true;
             }
             maxLoops--;
@@ -599,6 +595,7 @@ public class LevelGeneration : MonoBehaviour
             doors[i].elevatorDoor = false;
         }
         roomSpawn.doors = doors;
+
 
         return roomSpawn;
     }

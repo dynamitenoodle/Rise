@@ -49,13 +49,12 @@ public class PlayerScript : MonoBehaviour
     void Update()
     {
         InputCheck();
-        WallCheck();
         ApplyVelocity();
-        Flicker();        
+        Flicker();      
     }
 
     // Called by other scripts to hit the player
-    public void GetHit()
+    void GetHit()
     {
         if (!invulnerable)
         {
@@ -94,103 +93,6 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    // Checks if the player is colliding with walls
-    void WallCheck()
-    {
-        if (walls != null)
-        {
-            // Checking all the wall collisions
-            foreach (GameObject wall in walls)
-            {
-                if (wall != null)
-                {
-                    if (GetComponent<Collider2D>().bounds.Intersects(wall.GetComponent<Collider2D>().bounds))
-                    {
-                        // Make an easier variable
-                        Vector3 wallPos = wall.transform.position;
-
-                        // Calculate the bounding boxes of the player and the wall
-                        float playerRight = transform.position.x + GetComponent<Collider2D>().bounds.extents.x;
-                        float playerLeft = transform.position.x - GetComponent<Collider2D>().bounds.extents.x;
-                        float playerTop = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
-                        float playerBot = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
-
-                        float wallRight = wallPos.x + wall.GetComponent<Collider2D>().bounds.extents.x;
-                        float wallLeft = wallPos.x - wall.GetComponent<Collider2D>().bounds.extents.x;
-                        float wallTop = wallPos.y + wall.GetComponent<Collider2D>().bounds.extents.y;
-                        float wallBot = wallPos.y - wall.GetComponent<Collider2D>().bounds.extents.y;
-
-                        // Set a distance to check walls (the number here works well with 1x1 boxes)
-                        float dis = .08f;
-
-                        /* 
-                         * Checking which side to stop the player
-                         * The fist check looks to see if the bounding boxes sides are within a certain distance.
-                         * The second check looks to see if the wall is on the correct side to check
-                        */
-
-                        Vector3 fixedPos = transform.position;
-
-                        Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
-                        Vector3 right = new Vector3(1, 0);
-                        float angle = Vector3.Angle(playerToWall, right);
-
-                        // Right
-                        if (Mathf.Abs(playerRight - wallLeft) < dis && (angle >= 0 && angle <= 45f))
-                        {
-                            if (direction.x > 0)
-                                direction.x = 0;
-                            if (velocity.x > 0)
-                                velocity.x = 0;
-
-                            fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
-                        }
-
-                        // Left
-                        if (Mathf.Abs(playerLeft - wallRight) < dis && (angle >= 135f && angle <= 225f))
-                        {
-                            if (direction.x < 0)
-                                direction.x = 0;
-                            if (velocity.x < 0)
-                                velocity.x = 0;
-
-                            fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
-                        }
-
-                        // Up
-                        if (Mathf.Abs(playerTop - wallBot) < dis && (angle >= 45f && angle <= 135f))
-                        {
-                            if (direction.y > 0)
-                                direction.y = 0;
-                            if (velocity.y > 0)
-                                velocity.y = 0;
-
-                            fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
-                        }
-
-                        // Down
-                        if (Mathf.Abs(playerBot - wallTop) < dis && (angle >= 45f && angle <= 135f))
-                        {
-                            if (direction.y < 0)
-                                direction.y = 0;
-                            if (velocity.y < 0)
-                                velocity.y = 0;
-
-                            fixedPos.y = fixedPos.y + (Mathf.Abs(playerBot - wallTop));
-                        }
-
-                        transform.position = fixedPos;
-                    }
-                }
-                else
-                {
-                    SetWalls();
-                    break;
-                }
-            }
-        }
-    }
-
     // Checks the inputs
     void InputCheck()
     {
@@ -211,11 +113,11 @@ public class PlayerScript : MonoBehaviour
             direction.x = 0;
 
         // If the player attacks
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             abilities[0].Action();
         }
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButton(1))
         {
             abilities[1].Action();
         }
@@ -241,24 +143,110 @@ public class PlayerScript : MonoBehaviour
         transform.position += velocity;
 
         if (direction != Vector3.zero)
-        {
-            lastDir = direction;
             direction = Vector3.zero;
-        }
-    }
-
-    // Sets the walls for the player to use for collision after they are generated
-    public void SetWalls()
-    {
-        foreach (GameObject wall in GameObject.FindGameObjectsWithTag("Wall"))
-        {
-            walls.Add(wall);
-        }
     }
 
     // Sets the player node
     public void SetNode(Node nd)
     {
         node = nd;
+    }
+
+    // Collisions
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        CollisionCheck(col);
+    }
+
+    // Collisions
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        CollisionCheck(col);
+    }
+
+    // Method for collisions
+    void CollisionCheck(Collision2D col)
+    {
+        Debug.Log(col.gameObject.name + " collided the player");
+        if (col.gameObject.tag == "Wall")
+        {
+            // Make an easier variable
+            Vector3 wallPos = col.transform.position;
+
+            // Calculate the bounding boxes of the player and the wall
+            float playerRight = transform.position.x + GetComponent<Collider2D>().bounds.extents.x;
+            float playerLeft = transform.position.x - GetComponent<Collider2D>().bounds.extents.x;
+            float playerTop = transform.position.y + GetComponent<Collider2D>().bounds.extents.y;
+            float playerBot = transform.position.y - GetComponent<Collider2D>().bounds.extents.y;
+
+            float wallRight = wallPos.x + col.gameObject.GetComponent<Collider2D>().bounds.extents.x;
+            float wallLeft = wallPos.x - col.gameObject.GetComponent<Collider2D>().bounds.extents.x;
+            float wallTop = wallPos.y + col.gameObject.GetComponent<Collider2D>().bounds.extents.y;
+            float wallBot = wallPos.y - col.gameObject.GetComponent<Collider2D>().bounds.extents.y;
+
+            // Set a distance to check walls (the number here works well with 1x1 boxes)
+            float dis = .08f;
+
+            /* 
+             * Checking which side to stop the player
+             * The fist check looks to see if the bounding boxes sides are within a certain distance.
+             * The second check looks to see if the wall is on the correct side to check
+            */
+
+            Vector3 fixedPos = transform.position;
+
+            Vector3 playerToWall = Vector3.Normalize(wallPos - transform.position);
+            Vector3 right = new Vector3(1, 0);
+            float angle = Vector3.Angle(playerToWall, right);
+
+            // Right
+            if (Mathf.Abs(playerRight - wallLeft) < dis && (angle >= 0 && angle <= 45f))
+            {
+                if (direction.x > 0)
+                    direction.x = 0;
+                if (velocity.x > 0)
+                    velocity.x = 0;
+
+                fixedPos.x = fixedPos.x - (Mathf.Abs(playerRight - wallLeft));
+            }
+
+            // Left
+            if (Mathf.Abs(playerLeft - wallRight) < dis && (angle >= 135f && angle <= 225f))
+            {
+                if (direction.x < 0)
+                    direction.x = 0;
+                if (velocity.x < 0)
+                    velocity.x = 0;
+
+                fixedPos.x = fixedPos.x + (Mathf.Abs(playerLeft - wallRight));
+            }
+
+            // Up
+            if (Mathf.Abs(playerTop - wallBot) < dis && (angle >= 45f && angle <= 135f))
+            {
+                if (direction.y > 0)
+                    direction.y = 0;
+                if (velocity.y > 0)
+                    velocity.y = 0;
+
+                fixedPos.y = fixedPos.y - (Mathf.Abs(playerTop - wallBot));
+            }
+
+            // Down
+            if (Mathf.Abs(playerBot - wallTop) < dis && (angle >= 45f && angle <= 135f))
+            {
+                if (direction.y < 0)
+                    direction.y = 0;
+                if (velocity.y < 0)
+                    velocity.y = 0;
+
+                fixedPos.y = fixedPos.y + (Mathf.Abs(playerBot - wallTop));
+            }
+
+            transform.position = fixedPos;
+        }
+
+        else if (col.gameObject.tag == "EnemyAttack" || col.gameObject.tag == "Enemy")
+            GetHit();
     }
 }

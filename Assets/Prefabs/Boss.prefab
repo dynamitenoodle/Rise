@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 23301838527612887}
   - component: {fileID: 23301838527612886}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Tank Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 23301839095255927}
   - component: {fileID: 23301839095255920}
   - component: {fileID: 23301839095255921}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Boss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -221,7 +221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 23301839407691688}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

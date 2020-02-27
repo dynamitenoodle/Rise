@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3856345244267791279}
   - component: {fileID: 3856345244267791278}
   - component: {fileID: 3856345244267791273}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RangeEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ MonoBehaviour:
   maxSpeed: 0.04
   speed: 0.005
   friction: 0.9
-  detectionDistance: 5000
+  detectionDistance: 8
   attacks:
   - {fileID: 11400000, guid: cf4c314bf310d2542b2dbbbbd7a3b808, type: 2}
   minTimeBtwnAttacks: 2
@@ -140,7 +140,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3795638901604651843}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 778510536927485860}
   - component: {fileID: 7061057914003790352}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Tank Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

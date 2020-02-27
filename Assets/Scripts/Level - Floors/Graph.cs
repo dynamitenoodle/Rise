@@ -6,8 +6,8 @@ public class Graph : MonoBehaviour
 {
     [HideInInspector] public List<Node> nodes;
     GameObject player;
-    int playerRoomNum;
-    float nodeDis = 6f;
+    Node playerNode;
+    float nodeDis = 8f;
     float doorDis = 3f;
 
     // Start is called before the first frame update
@@ -39,12 +39,13 @@ public class Graph : MonoBehaviour
             }
         }
 
-        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
+        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
 
         player.GetComponent<PlayerScript>().Node.heuristic = 0;
         player.GetComponent<PlayerScript>().Node.isEnd = true;
-        Heuristic(player.GetComponent<PlayerScript>().Node);
+        Heuristic(player.GetComponent<PlayerScript>().Node, true);
         player.GetComponent<PlayerScript>().Node.isEnd = false;
+        playerNode = player.GetComponent<PlayerScript>().Node;
     }
 
     public void AddNodes(List<Transform> listOfPoints, int rmNum)
@@ -79,35 +80,35 @@ public class Graph : MonoBehaviour
     }
 
     // Enemy calls this method
-    public Node GetNextNode(Node node)
+    public Node GetNextNode(Node node, Node prevNode)
     {
         Node nextNode;
 
         // figure out which node the player is closest to
-        player.GetComponent<PlayerScript>().SetNode(FirstRoomCheck(player.transform.position));
-        Node playerNode = player.GetComponent<PlayerScript>().Node;
+        player.GetComponent<PlayerScript>().SetNode(NearestNode(player.transform.position));
 
-        /* if we need to do lowest cost for pathfinding, the code is here
+        /* 
+        //if we need to do lowest cost for pathfinding, the code is here
         node.lowestCost = 0;
         node.isStart = true;
         LowestCost(playerNode);
         node.isStart = false;
         */
 
-        if (player.GetComponent<PlayerScript>().Node.roomNum != playerRoomNum)
+        if (player.GetComponent<PlayerScript>().Node != playerNode)
         {
             player.GetComponent<PlayerScript>().Node.heuristic = 0;
             player.GetComponent<PlayerScript>().Node.isEnd = true;
-            Heuristic(player.GetComponent<PlayerScript>().Node);
+            Heuristic(player.GetComponent<PlayerScript>().Node, true);
             player.GetComponent<PlayerScript>().Node.isEnd = false;
-            playerRoomNum = player.GetComponent<PlayerScript>().Node.roomNum;
+            playerNode = player.GetComponent<PlayerScript>().Node;
         }
 
         nextNode = node.nearby[0];
 
         foreach (Node n in node.nearby)
         {
-            if (n.heuristic < nextNode.heuristic)
+            if (n.heuristic < nextNode.heuristic && n != prevNode)
                 nextNode = n;
         }
 
@@ -124,8 +125,12 @@ public class Graph : MonoBehaviour
     }
 
     // Calculate Heuristic
-    void Heuristic(Node currentNode)
+    void Heuristic(Node currentNode, bool reset)
     {
+        if (reset)
+            foreach (Node n in nodes)
+                n.heuristic = 0;
+
         foreach (Node node in currentNode.nearby)
         {
             float dis = Vector3.Distance(node.pos, currentNode.pos);
@@ -133,13 +138,12 @@ public class Graph : MonoBehaviour
             if (!node.isEnd && (node.heuristic == 0 || node.heuristic > newHeuristic))
             {
                 node.heuristic = newHeuristic;
-                Heuristic(node);
+                Heuristic(node, false);
             }
         }
-        
     }
 
-    public Node FirstRoomCheck(Vector3 position)
+    public Node NearestNode(Vector3 position)
     {
         Node nearestNode = nodes[0];
 

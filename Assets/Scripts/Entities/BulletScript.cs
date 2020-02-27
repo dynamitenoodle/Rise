@@ -67,19 +67,11 @@ public class BulletScript : MonoBehaviour
 
     private void CheckHit()
     {
-        // Checking if player gets hit
-        if (gameObject.tag == "EnemyAttack" && player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
-        {
-            player.GetComponent<PlayerScript>().GetHit();
-            DestroyBullet();
-        }
-
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             if (gameObject.tag == "PlayerAttack" && enemy.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
                 enemy.GetComponent<EnemyScript>().GetHit(Vector2.zero, 1);
-                DestroyBullet();
             }
         }
     }
@@ -113,9 +105,10 @@ public class BulletScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         // if the col isn't this object
-        if (col.gameObject.tag == "Wall")
-        {
+        if (col.gameObject.tag == "Wall" || (gameObject.tag == "PlayerAttack" && col.gameObject.tag == "Enemy") || (gameObject.tag == "EnemyAttack" && col.gameObject.tag == "Player"))
             DestroyBullet();
-        }
+
+        if (col.gameObject.tag == "Enemy" && gameObject.tag == "PlayerAttack")
+            col.gameObject.GetComponent<EnemyScript>().GetHit(Vector2.zero, 2);
     }
 }
