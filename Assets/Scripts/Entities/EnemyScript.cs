@@ -93,9 +93,7 @@ public class EnemyScript : MonoBehaviour
         }
 
         ApplyVelocity();
-        PlayerHit();
         Flicker();
-
     }
 
     #region Attack
@@ -253,23 +251,6 @@ public class EnemyScript : MonoBehaviour
         {
             float cannonAngle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg) - 90f;
             gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
-        }
-    }
-
-    // Checks if the player was hit
-    void PlayerHit()
-    {
-        // Checking if player gets hit
-        if (attackRoll != -1 && attacks[attackRoll].isMelee && attackGO != null)
-            if (player.GetComponent<Collider2D>().bounds.Intersects(attackGO.GetComponent<Collider2D>().bounds))
-                player.GetComponent<PlayerScript>().GetHit();
-
-        if (Mathf.Abs(Vector3.Magnitude(player.transform.position - transform.position)) <= GetComponent<Collider2D>().bounds.extents.x * 2)
-        {
-            if (player.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
-            {
-                player.GetComponent<PlayerScript>().GetHit();
-            }
         }
     }
     #endregion

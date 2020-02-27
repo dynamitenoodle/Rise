@@ -53,7 +53,7 @@ public class PlayerScript : MonoBehaviour
     }
 
     // Called by other scripts to hit the player
-    public void GetHit()
+    void GetHit()
     {
         if (!invul)
         {
@@ -154,22 +154,19 @@ public class PlayerScript : MonoBehaviour
     // Collisions
     private void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log("HIT " + col.gameObject.name);
-
         CollisionCheck(col);
     }
 
     // Collisions
     private void OnCollisionStay2D(Collision2D col)
     {
-        Debug.Log("HIT " + col.gameObject.name);
-
         CollisionCheck(col);
     }
 
     // Method for collisions
     void CollisionCheck(Collision2D col)
     {
+        Debug.Log(col.gameObject.name + " collided the player");
         if (col.gameObject.tag == "Wall")
         {
             // Make an easier variable
@@ -247,5 +244,8 @@ public class PlayerScript : MonoBehaviour
 
             transform.position = fixedPos;
         }
+
+        else if (col.gameObject.tag == "EnemyAttack" || col.gameObject.tag == "Enemy")
+            GetHit();
     }
 }
