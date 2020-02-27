@@ -128,13 +128,13 @@ public class EnemyScript : MonoBehaviour
 
         else if (enemyAttackStyle == EnemyAttackStyle.boss)
         {
-            maxSpeed = Constants.ENEMY_RANGED_MAXSPEED;
-            speed = Constants.ENEMY_RANGED_SPEED;
-            friction = Constants.ENEMY_RANGED_FRICTION;
-            detectionDistance = Constants.ENEMY_RANGED_DETECTION_DISTANCE;
-            minTimeBtwnAttacks = Constants.ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS;
-            healthMax = Constants.ENEMY_RANGED_HEALTH_MAX;
-            hitTimerMax = Constants.ENEMY_RANGED_HIT_TIMER_MAX;
+            maxSpeed = Constants.ENEMY_BOSS_MAXSPEED;
+            speed = Constants.ENEMY_BOSS_SPEED;
+            friction = Constants.ENEMY_BOSS_FRICTION;
+            detectionDistance = Constants.ENEMY_BOSS_DETECTION_DISTANCE;
+            minTimeBtwnAttacks = Constants.ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS;
+            healthMax = Constants.ENEMY_BOSS_HEALTH_MAX;
+            hitTimerMax = Constants.ENEMY_BOSS_HIT_TIMER_MAX;
         }
     }
 

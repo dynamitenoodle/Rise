@@ -61,4 +61,12 @@ public class Constants
     public const float ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_RANGED_HEALTH_MAX = 3f;
     public const float ENEMY_RANGED_HIT_TIMER_MAX = 2f;
+    // Boss
+    public const float ENEMY_BOSS_MAXSPEED = .025f;
+    public const float ENEMY_BOSS_SPEED = .001f;
+    public const float ENEMY_BOSS_FRICTION = .9f;
+    public const float ENEMY_BOSS_DETECTION_DISTANCE = 30f;
+    public const float ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
+    public const float ENEMY_BOSS_HEALTH_MAX = 10f;
+    public const float ENEMY_BOSS_HIT_TIMER_MAX = 2f;
 }
