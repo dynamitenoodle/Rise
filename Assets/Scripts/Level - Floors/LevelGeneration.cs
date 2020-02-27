@@ -57,7 +57,6 @@ public class LevelGeneration : MonoBehaviour
         graph = GameObject.Find("Graph").GetComponent<Graph>();
         GenerateLevel(0);
         graph.SetGraph();
-        GameObject.Find("Player").GetComponent<PlayerScript>().SetWalls();
     }
 
     /// <summary>
