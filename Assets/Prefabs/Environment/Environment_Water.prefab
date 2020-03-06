@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 3047658489855881176}
   - component: {fileID: 1389775669088282482}
   - component: {fileID: 1434571589849637331}
-  - component: {fileID: 7564017837021779641}
   - component: {fileID: 732066631395800123}
+  - component: {fileID: 9128360914028580351}
   m_Layer: 0
   m_Name: Environment_Water
   m_TagString: Environment_Water
@@ -95,7 +95,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 171d09f3ca306274a80aadd339f7dd78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!50 &7564017837021779641
+--- !u!58 &732066631395800123
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589028069193442107}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.09
+--- !u!50 &9128360914028580351
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -116,19 +132,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &732066631395800123
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3589028069193442107}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.09

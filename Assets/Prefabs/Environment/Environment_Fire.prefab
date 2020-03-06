@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1389775669088282482}
   - component: {fileID: 6948943102246950869}
   - component: {fileID: 3329712996987808326}
-  - component: {fileID: 4117146066216085529}
+  - component: {fileID: 7348914011259820590}
   m_Layer: 0
   m_Name: Environment_Fire
   m_TagString: Environment_Fire
@@ -111,7 +111,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.09
---- !u!50 &4117146066216085529
+--- !u!50 &7348914011259820590
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
