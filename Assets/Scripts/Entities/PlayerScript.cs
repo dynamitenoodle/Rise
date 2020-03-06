@@ -16,6 +16,7 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float healthMax = 3;
     float health;
     public bool invulnerable;
+    public bool canMove;
     [SerializeField] float hitTimerMax = 2;
     float hitTimer;
 
@@ -69,26 +70,36 @@ public class PlayerScript : MonoBehaviour
     // Flickering if hit
     public void Flicker()
     {
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         if (invulnerable)
         {
             hitTimer += Time.deltaTime;
 
             //Flicker effect
-            Color tempColor = GetComponent<SpriteRenderer>().color;
+            Color tempColor = spriteRenderer.color;
 
             if ((hitTimer * 100) % 20 > 10)
                 tempColor.a = .6f;
             else
                 tempColor.a = 1f;
 
-            GetComponent<SpriteRenderer>().color = tempColor;
+            spriteRenderer.color = tempColor;
 
             if (hitTimer > hitTimerMax)
             {
                 hitTimer = 0;
                 invulnerable = false;
                 tempColor.a = 1f;
-                GetComponent<SpriteRenderer>().color = tempColor;
+                spriteRenderer.color = tempColor;
+            }
+        }
+        else
+        {
+            if (spriteRenderer.color.a != 1)
+            {
+                Color color = spriteRenderer.color;
+                color.a = 1f;
+                spriteRenderer.color = color;
             }
         }
     }
@@ -167,7 +178,6 @@ public class PlayerScript : MonoBehaviour
     // Method for collisions
     void CollisionCheck(Collision2D col)
     {
-        Debug.Log(col.gameObject.name + " collided the player");
         if (col.gameObject.tag == "Wall")
         {
             // Make an easier variable

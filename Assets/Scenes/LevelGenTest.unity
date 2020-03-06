@@ -227,8 +227,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 131, y: -29}
-  m_SizeDelta: {x: 250, y: 50}
+  m_AnchoredPosition: {x: 156, y: -52}
+  m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &121853920
 MonoBehaviour:
@@ -261,7 +261,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Enemies Remaining: 0
+  m_Text: 'Wave: 0
+
+    Enemies Remaining: 0
 
     Enemies Spawned: 0'
 --- !u!222 &121853921
@@ -622,7 +624,7 @@ RectTransform:
   m_GameObject: {fileID: 847150068}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4820772, y: 0.4820772, z: 0.4820772}
+  m_LocalScale: {x: 0.84835947, y: 0.84835947, z: 0.84835947}
   m_Children:
   - {fileID: 1750651937}
   - {fileID: 78389756}
@@ -631,7 +633,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -250, y: -187}
+  m_AnchoredPosition: {x: -452, y: -391}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &847150070
@@ -706,15 +708,41 @@ MonoBehaviour:
   - {fileID: 3856345244267791272, guid: ed37f00900ed78c449f3483235cc4b59, type: 3}
   enemyQueue: []
   enemies: []
-  maxEnemiesForWave: 50
-  minEnemiesForWave: 25
-  commonSpawnChance: 1
-  uncommonSpawnChance: 0.3
-  rareSpawnChance: 0.1
-  specialSpawnChance: 0.05
+  maxEnemiesForWave: 14000000190000001e00000032000000
+  minEnemiesForWave: 0a0000000a0000001400000019000000
+  spawnChance:
+    serializedVersion: 2
+    key0: {r: 1, g: 0, b: 0, a: 1}
+    key1: {r: 1, g: 0.46568146, b: 0, a: 1}
+    key2: {r: 1, g: 0.8187932, b: 0, a: 0}
+    key3: {r: 0.14122522, g: 1, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 983
+    ctime1: 9830
+    ctime2: 26214
+    ctime3: 65535
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 1
+    m_NumColorKeys: 4
+    m_NumAlphaKeys: 2
   enemyText: {fileID: 121853920}
   maxEnemyGroupSpawn: 10
   maxEnemiesOut: 20
+  waveTimeToWait: 10
 --- !u!4 &898909568
 Transform:
   m_ObjectHideFlags: 0
@@ -902,7 +930,7 @@ RectTransform:
   m_GameObject: {fileID: 1256932771}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4820772, y: 0.4820772, z: 0.4820772}
+  m_LocalScale: {x: 0.84835947, y: 0.84835947, z: 0.84835947}
   m_Children:
   - {fileID: 913750219}
   - {fileID: 1119769313}
@@ -911,7 +939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -191, y: -187}
+  m_AnchoredPosition: {x: -348.1799, y: -391.00003}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1256932773
@@ -1079,12 +1107,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edc6777a447d6f4c993d701ced9f785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxElements: 10
   environmentFire: {fileID: 3589028069193442107, guid: 3752641d214e79647a9c39c68d199808,
     type: 3}
   environmentWater: {fileID: 3589028069193442107, guid: 26739991d593af74ebfb189be8e4e65b,
     type: 3}
   environmentSteam: {fileID: 3589028069193442107, guid: 7536ac4912e6cd24cb213650878bed6b,
     type: 3}
+  player: {fileID: 1356483199}
 --- !u!4 &1765587785
 Transform:
   m_ObjectHideFlags: 0
