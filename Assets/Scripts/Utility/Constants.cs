@@ -44,4 +44,8 @@ public class Constants
 
     //UI constants
     public const float UI_ABILITY_COOLDOWN_UPDATE_TIME = 0.1f;
+
+    //Resources constants
+    public const string RESOURCES_ABILITIES = "Abilities";
+    public const string RESOURCES_PLAYER = "Entities/Player";
 }

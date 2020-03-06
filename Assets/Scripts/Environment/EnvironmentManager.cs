@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnvironmentManager : MonoBehaviour
 {
-
+    [Range(10, 1000)]
     public int maxElements;
 
     public GameObject environmentFire;

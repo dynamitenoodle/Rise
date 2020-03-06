@@ -22,7 +22,7 @@ public class Ability_MagicBlast : Ability
         //prevent action on cooldown not finished
         if (Time.time - lastUseTime < coolDown) { return; }
 
-        attackPrefab = Resources.Load<GameObject>("Abilities/magicBlast");
+        attackPrefab = Resources.Load<GameObject>($"{Constants.RESOURCES_ABILITIES}/magicBlast");
         GameObject attack = Instantiate(attackPrefab, player.transform.position, player.transform.rotation);
         BulletScript bulletScript = attack.GetComponent<BulletScript>();
 
