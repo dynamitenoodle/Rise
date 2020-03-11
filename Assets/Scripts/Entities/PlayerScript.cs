@@ -10,20 +10,18 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] float friction = .9f;
     Vector3 velocity;
     Vector3 direction;
+    Vector3 lastDir;
 
     // health stuffs
     [SerializeField] float healthMax = 3;
     float health;
-    bool invul;
+    public bool invulnerable;
+    public bool canMove;
     [SerializeField] float hitTimerMax = 2;
     float hitTimer;
 
     // Wall collisions
     List<GameObject> walls;
-
-    // ATTACK STUFF
-    float globalAttackTimer;
-    [SerializeField] float minTimeBtwnAttacks = 0.3f;
 
     //list of abilities
     Ability[] abilities = new Ability[5];
@@ -37,11 +35,15 @@ public class PlayerScript : MonoBehaviour
     {
         velocity = Vector3.zero;
         health = healthMax;
-        invul = false;
+        invulnerable = false;
 
         walls = new List<GameObject>();
 
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
+        abilities[0].abilitySlot = 0;
+        abilities[1] = gameObject.AddComponent<Ability_Dash>();
+        abilities[1].abilitySlot = 1;
+
     }
 
     // Update is called once per frame
@@ -49,15 +51,15 @@ public class PlayerScript : MonoBehaviour
     {
         InputCheck();
         ApplyVelocity();
-        Flicker();
+        Flicker();      
     }
 
     // Called by other scripts to hit the player
     void GetHit()
     {
-        if (!invul)
+        if (!invulnerable)
         {
-            invul = true;
+            invulnerable = true;
             health--;
 
             if (health - 1 < 0)
@@ -68,26 +70,36 @@ public class PlayerScript : MonoBehaviour
     // Flickering if hit
     public void Flicker()
     {
-        if (invul)
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        if (invulnerable)
         {
             hitTimer += Time.deltaTime;
 
             //Flicker effect
-            Color tempColor = GetComponent<SpriteRenderer>().color;
+            Color tempColor = spriteRenderer.color;
 
             if ((hitTimer * 100) % 20 > 10)
                 tempColor.a = .6f;
             else
                 tempColor.a = 1f;
 
-            GetComponent<SpriteRenderer>().color = tempColor;
+            spriteRenderer.color = tempColor;
 
             if (hitTimer > hitTimerMax)
             {
                 hitTimer = 0;
-                invul = false;
+                invulnerable = false;
                 tempColor.a = 1f;
-                GetComponent<SpriteRenderer>().color = tempColor;
+                spriteRenderer.color = tempColor;
+            }
+        }
+        else
+        {
+            if (spriteRenderer.color.a != 1)
+            {
+                Color color = spriteRenderer.color;
+                color.a = 1f;
+                spriteRenderer.color = color;
             }
         }
     }
@@ -95,6 +107,7 @@ public class PlayerScript : MonoBehaviour
     // Checks the inputs
     void InputCheck()
     {
+        //movement
         if (Input.GetKey(KeyCode.W))
             direction.y += 1;
         if (Input.GetKey(KeyCode.S))
@@ -111,14 +124,13 @@ public class PlayerScript : MonoBehaviour
             direction.x = 0;
 
         // If the player attacks
-        if (Input.GetMouseButtonDown(0) && globalAttackTimer >= minTimeBtwnAttacks)
+        if (Input.GetMouseButton(0))
         {
             abilities[0].Action();
-            globalAttackTimer = 0;
         }
-        else
+        if (Input.GetMouseButton(1))
         {
-            globalAttackTimer += Time.deltaTime;
+            abilities[1].Action();
         }
     }
 
@@ -166,8 +178,6 @@ public class PlayerScript : MonoBehaviour
     // Method for collisions
     void CollisionCheck(Collision2D col)
     {
-        //Debug.Log(col.gameObject.name + " collided the player");
-
         if (col.gameObject.tag == "Wall")
         {
             // Make an easier variable

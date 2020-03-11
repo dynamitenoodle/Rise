@@ -34,12 +34,13 @@ public class Constants
 
     //ability constants
 
-    public const float ABILITY_RANGED_ATTACK_DEFAULT = 0.1f;
+    public const float ABILITY_RANGED_ATTACK_DEFAULT_SPEED = 0.1f;
 
     //environment constants
     public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;
     public const float ENVIRONMENT_STEAM_CREATE_RADIUS_MULTIPLIER = 2f;
     public const float ENVIRONMENT_UPDATE_TIME = 0.2f;
+    public const float ENVIRONMENT_ADD_RIGIDBODY_AFTER_SECONDS = 0.1f;
 
     //UI constants
     public const float UI_ABILITY_COOLDOWN_UPDATE_TIME = 0.1f;
@@ -69,4 +70,7 @@ public class Constants
     public const float ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_BOSS_HEALTH_MAX = 10f;
     public const float ENEMY_BOSS_HIT_TIMER_MAX = 2f;
+    //Resources constants
+    public const string RESOURCES_ABILITIES = "Abilities";
+    public const string RESOURCES_PLAYER = "Entities/Player";
 }

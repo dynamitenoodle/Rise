@@ -9,6 +9,8 @@ public class WaveManager : MonoBehaviour
     public Transform enemyTransform;
     public List<GameObject> enemyPrefabs;
     List<ElevatorDescriber> elevators = null;
+    GameObject bossRoom = null;
+    GameObject boss = null;
 
     [HideInInspector]
     public List<GameObject> enemyQueue = null;
@@ -16,14 +18,10 @@ public class WaveManager : MonoBehaviour
     public List<GameObject> enemies;
 
     //enemy count vars
-    public int maxEnemiesForWave;
-    public int minEnemiesForWave;
+    public int[] maxEnemiesForWave;
+    public int[] minEnemiesForWave;
 
-    //spawn chance vars
-    public float commonSpawnChance;
-    public float uncommonSpawnChance;
-    public float rareSpawnChance;
-    public float specialSpawnChance;
+    public Gradient spawnChance;
 
     public Text enemyText;
 
@@ -40,6 +38,12 @@ public class WaveManager : MonoBehaviour
     bool spawnWave;
 
     Helper helper = new Helper();
+
+    private int waveNum = 0;
+    float waveTimer;
+
+    [Range(10, 120)]
+    public float waveTimeToWait;
 
     private void OnDrawGizmos()
     {
@@ -79,10 +83,12 @@ public class WaveManager : MonoBehaviour
 
         enemyQueue = new List<GameObject>();
         spawnWave = true;
-        StartCoroutine("SpawnWave");
+        waveNum = 0;
+        waveTimer = Time.time;
+        StartCoroutine(SpawnWave());
     }
 
-    public void SetupElevators(List<GameObject> elevatorObjs)
+    public void SetupElevators(List<GameObject> elevatorObjs, GameObject bossRoom, GameObject boss)
     {
         elevators = new List<ElevatorDescriber>();
         foreach (GameObject elevator in elevatorObjs)
@@ -90,6 +96,9 @@ public class WaveManager : MonoBehaviour
             ElevatorDescriber elevatorDesc = elevator.GetComponent<ElevatorDescriber>();
             elevators.Add(elevatorDesc);
         }
+
+        this.bossRoom = bossRoom;
+        this.boss = boss;
     }
 
     public void DestroyEnemy(GameObject enemy)
@@ -116,13 +125,31 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator SpawnWave()
     {
-        for(;;)
+        bool spawning = true;
+        while (spawning)
         {
-            if (elevators != null)
+            if (Time.time - waveTimer < waveTimeToWait)
+            {
+                enemyText.text = $"Time to Wave {waveNum+1}: {Mathf.Round((waveTimeToWait - (Time.time - waveTimer)))}";
+            }
+            else if (elevators != null)
             {
                 if (enemyQueue.Count == 0 && spawnWave)
                 {
-                    GenerateEnemyQueue();
+                    waveNum++;
+
+                    if (waveNum == 5)
+                    {
+                        spawning = false;
+                        yield return null;
+                    }
+
+                    waveTimer = Time.time;
+                    if (waveNum == 4) //5th wave = boss wave
+                        SpawnBoss();
+                    else
+                        GenerateEnemyQueue();
+
                     spawnWave = false;
                 }
                 else if (enemyQueue.Count == 0 && !spawnWave && enemies.Count == 0)
@@ -143,12 +170,13 @@ public class WaveManager : MonoBehaviour
                     }
 
                     SpawnEnemyGroup(spawnNum);
-                    enemyText.text = $"Enemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
+                    enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
                     yield return new WaitForSeconds(10f);
                 }
+                enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
+                yield return new WaitForSeconds(2f);
             }
-            enemyText.text = $"Enemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Spawned: {enemies.Count}";
-            yield return new WaitForSeconds(2f);
+            yield return null;
         }
     }
 
@@ -238,10 +266,21 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    private void SpawnBoss()
+    {
+        ElevatorDescriber bossRoomDescriber = bossRoom.GetComponent<ElevatorDescriber>();
+
+        player.transform.position = bossRoomDescriber.spawnPoints[0].position; //set player position to spawn point 0
+
+        //spawn boss at spawn point 1
+        GameObject bossObj = Instantiate(boss, bossRoomDescriber.spawnPoints[1].position, Quaternion.identity, enemyTransform);
+        enemyQueue.Add(bossObj);
+    }
+
     private void GenerateEnemyQueue()
     {
         //Debug.Log("Generating Enemy Queue");
-        int enemySpawns = Random.Range(minEnemiesForWave, maxEnemiesForWave);
+        int enemySpawns = Random.Range(minEnemiesForWave[waveNum], maxEnemiesForWave[waveNum]);
         //Debug.Log($"Spawning {enemySpawns} enemies for wave");
         enemyQueue = new List<GameObject>();
 
@@ -250,13 +289,13 @@ public class WaveManager : MonoBehaviour
             float enemyTypeSpawn = Random.Range(0, 100) / 100.0f;
             GameObject enemy = null;
 
-            if (enemyTypeSpawn <= specialSpawnChance)
+            if (enemyTypeSpawn <= spawnChance.colorKeys[0].time)
                 enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to specialEnemyPrefabs
-            else if (enemyTypeSpawn <= rareSpawnChance) 
+            else if (enemyTypeSpawn <= spawnChance.colorKeys[1].time) 
                 enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to rareEnemyPrefabs
-            else if (enemyTypeSpawn <= uncommonSpawnChance)
+            else if (enemyTypeSpawn <= spawnChance.colorKeys[2].time)
                 enemy = GetRandomEnemy(uncommonEnemyPrefabs);
-            else if (enemyTypeSpawn <= commonSpawnChance)
+            else if (enemyTypeSpawn <= spawnChance.colorKeys[3].time)
                 enemy = GetRandomEnemy(commonEnemyPrefabs);
             else
                 Debug.LogError("Enemy spawn chance went over 1.0?");

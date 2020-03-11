@@ -6,13 +6,13 @@ public class Ability_MagicBlast : Ability
 {
     public GameObject attackPrefab;
 
-    public float speed = Constants.ABILITY_RANGED_ATTACK_DEFAULT;
+    public float speed = Constants.ABILITY_RANGED_ATTACK_DEFAULT_SPEED;
     public float lifeSpan = 2.0f;
 
     public override void Setup()
     {
         lastUseTime = Time.time;
-        coolDown = 0.25f;
+        coolDown = 0.4f;
         modifiers.Add(gameObject.AddComponent<Modifier_WaterRune>());
         modifiers.Add(gameObject.AddComponent<Modifier_FlameRune>());
     }
@@ -22,7 +22,7 @@ public class Ability_MagicBlast : Ability
         //prevent action on cooldown not finished
         if (Time.time - lastUseTime < coolDown) { return; }
 
-        attackPrefab = Resources.Load<GameObject>("Abilities/magicBlast");
+        attackPrefab = Resources.Load<GameObject>($"{Constants.RESOURCES_ABILITIES}/magicBlast");
         GameObject attack = Instantiate(attackPrefab, player.transform.position, player.transform.rotation);
         BulletScript bulletScript = attack.GetComponent<BulletScript>();
 
@@ -39,7 +39,7 @@ public class Ability_MagicBlast : Ability
     public override void SetCooldown()
     {
         lastUseTime = Time.time;
-        abilityUIManager.SetAbilityCooldown(0, coolDown);
+        abilityUIManager.SetAbilityCooldown(abilitySlot, coolDown);
     }
 
     public void FinishAttack(GameObject attackObj)

@@ -16,6 +16,8 @@ public class BulletScript : MonoBehaviour
     private bool bulletDoesFade = false;
     private bool bulletDoesScale = false;
 
+    private bool bulletAlive = true;
+
     public Vector2 maxScale;
     public Vector2 minScale;
 
@@ -98,6 +100,8 @@ public class BulletScript : MonoBehaviour
 
     public void DestroyBullet()
     {
+        if (!bulletAlive) return;
+        bulletAlive = false;
         onDeathCallback?.Invoke(this.gameObject);
         Destroy(gameObject);
     }

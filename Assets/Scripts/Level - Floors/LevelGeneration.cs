@@ -29,6 +29,9 @@ public class LevelGeneration : MonoBehaviour
 
     public GameObject tester;
 
+    private RoomSpawn bossRoomPick;
+    private GameObject bossPick;
+
     Graph graph;
 
     //class vars
@@ -82,7 +85,7 @@ public class LevelGeneration : MonoBehaviour
         //Debug.Log($"...Finished!");
 
         //send elevator info to wave manager
-        waveManager.SetupElevators(elevators);
+        waveManager.SetupElevators(elevators, bossRoomPick.obj, bossPick);
     }
 
     /// <summary>
@@ -194,6 +197,9 @@ public class LevelGeneration : MonoBehaviour
 
                 bossRoomSpawn.doors[bossDoorPick].doorOpen = false;
                 validRooms[randomRoom].doors[roomDoorPick].doorOpen = false;
+
+                bossRoomPick = bossRoomSpawn;
+                bossPick = bossRoom.boss;
 
                 roomSpawns.Add(bossRoomSpawn);
                 graph.AddNodes(bossRoomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, 0);
