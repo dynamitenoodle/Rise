@@ -33,9 +33,6 @@ public class EnemyScript : MonoBehaviour
     // health
     float healthMax = 2;
     float health;
-    bool invul;
-    float hitTimerMax = 2;
-    float hitTimer;
 
     WaveManager waveManager;
 
@@ -95,10 +92,12 @@ public class EnemyScript : MonoBehaviour
             }
             else if (!attacking)
                 FollowNode();
+
+            else if (attacking)
+                AttackUpdate();
         }
 
         ApplyVelocity();
-        Flicker();
     }
 
     // Setting the variables that are constants
@@ -112,7 +111,6 @@ public class EnemyScript : MonoBehaviour
             detectionDistance = Constants.ENEMY_MELEE_DETECTION_DISTANCE;
             minTimeBtwnAttacks = Constants.ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS;
             healthMax = Constants.ENEMY_MELEE_HEALTH_MAX;
-            hitTimerMax = Constants.ENEMY_MELEE_HIT_TIMER_MAX;
         }
 
         else if (enemyAttackStyle == EnemyAttackStyle.ranged)
@@ -123,7 +121,6 @@ public class EnemyScript : MonoBehaviour
             detectionDistance = Constants.ENEMY_RANGED_DETECTION_DISTANCE;
             minTimeBtwnAttacks = Constants.ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS;
             healthMax = Constants.ENEMY_RANGED_HEALTH_MAX;
-            hitTimerMax = Constants.ENEMY_RANGED_HIT_TIMER_MAX;
         }
 
         else if (enemyAttackStyle == EnemyAttackStyle.boss)
@@ -134,7 +131,6 @@ public class EnemyScript : MonoBehaviour
             detectionDistance = Constants.ENEMY_BOSS_DETECTION_DISTANCE;
             minTimeBtwnAttacks = Constants.ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS;
             healthMax = Constants.ENEMY_BOSS_HEALTH_MAX;
-            hitTimerMax = Constants.ENEMY_BOSS_HIT_TIMER_MAX;
         }
     }
 
@@ -300,68 +296,20 @@ public class EnemyScript : MonoBehaviour
     // Called by other scripts to hit the player
     public void GetHit(Vector3 knockback, float knockbackAmt)
     {
-        if (!invul)
+        health--;
+
+        velocity -= knockback * knockbackAmt;
+        velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        if (health - 1 < 0)
         {
-            invul = true;
-            health--;
+            if (attackGO != null)
+                Destroy(attackGO);
 
-            velocity -= knockback * knockbackAmt;
-            velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
-
-            if (health - 1 < 0)
-            {
-                if (attackGO != null)
-                    Destroy(attackGO);
-
-                waveManager.DestroyEnemy(this.gameObject);
-                Destroy(gameObject);
-            }
+            waveManager.DestroyEnemy(this.gameObject);
+            Destroy(gameObject);
         }
-    }
 
-    // Flickering if hit
-    public void Flicker()
-    {
-        if (invul)
-        {
-            hitTimer += Time.deltaTime;
-
-            //Flicker effect
-            Color tempColor = GetComponent<SpriteRenderer>().color;
-
-            if ((hitTimer * 100) % 20 > 10)
-                tempColor.a = .6f;
-            else
-                tempColor.a = 1f;
-
-            GetComponent<SpriteRenderer>().color = tempColor;
-
-            if (attacks.Count != 1 || !attacks[0].isMelee)
-            {
-                //Flicker effect
-                Color tempColorCannon = transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color;
-
-                if ((hitTimer * 100) % 20 > 10)
-                    tempColorCannon.a = .6f;
-                else
-                    tempColorCannon.a = 1f;
-
-                transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColorCannon;
-                if (hitTimer > hitTimerMax)
-                {
-                    tempColorCannon.a = 1f;
-                    transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = tempColorCannon;
-                }
-            }
-
-            if (hitTimer > hitTimerMax)
-            {
-                hitTimer = 0;
-                invul = false;
-                tempColor.a = 1f;
-                GetComponent<SpriteRenderer>().color = tempColor;
-            }
-        }
     }
 
     // Apply the velocity to the enemy
@@ -395,7 +343,7 @@ public class EnemyScript : MonoBehaviour
     // Following the nodes
     void FollowNode()
     {
-        if (Vector3.Distance(node.pos, transform.position) < .1f)
+        if (Vector3.Distance(node.pos, transform.position) < .2f)
         {
             roomNum = node.roomNum;
             Node tempNode = node;

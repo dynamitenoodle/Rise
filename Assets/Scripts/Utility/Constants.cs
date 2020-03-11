@@ -19,7 +19,7 @@ public class Constants
 
     //Level Gen 
     public const int LEVELGENERATION_MIN_ROOM_DISTANCE = 5;
-    public const int LEVELGEN_MAX_ROOM_LOOPS = 25;
+    public const int LEVELGEN_MAX_ROOM_LOOPS = 40;
     public const int LEVELGEN_BOSS_ROOM_MAX_LOOPS = 5000;
 
     //wave gen
@@ -53,7 +53,6 @@ public class Constants
     public const float ENEMY_MELEE_DETECTION_DISTANCE = 15f;
     public const float ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_MELEE_HEALTH_MAX = 2f;
-    public const float ENEMY_MELEE_HIT_TIMER_MAX = 2f;
     // Ranged
     public const float ENEMY_RANGED_MAXSPEED = .035f;
     public const float ENEMY_RANGED_SPEED = .005f;
@@ -61,7 +60,6 @@ public class Constants
     public const float ENEMY_RANGED_DETECTION_DISTANCE = 15f;
     public const float ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_RANGED_HEALTH_MAX = 3f;
-    public const float ENEMY_RANGED_HIT_TIMER_MAX = 2f;
     // Boss
     public const float ENEMY_BOSS_MAXSPEED = .025f;
     public const float ENEMY_BOSS_SPEED = .001f;
@@ -69,7 +67,6 @@ public class Constants
     public const float ENEMY_BOSS_DETECTION_DISTANCE = 30f;
     public const float ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_BOSS_HEALTH_MAX = 10f;
-    public const float ENEMY_BOSS_HIT_TIMER_MAX = 2f;
     //Resources constants
     public const string RESOURCES_ABILITIES = "Abilities";
     public const string RESOURCES_PLAYER = "Entities/Player";
