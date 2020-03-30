@@ -482,9 +482,9 @@ RectTransform:
   m_Father: {fileID: 1930900664}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 556, y: 498}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &535123026
@@ -682,9 +682,8 @@ GameObject:
   m_Component:
   - component: {fileID: 898909568}
   - component: {fileID: 898909567}
-  - component: {fileID: 898909569}
   m_Layer: 0
-  m_Name: LevelManager
+  m_Name: WaveManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -758,19 +757,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &898909569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 898909566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59d02e6db17831542a814dec5fb6d067, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trader: {fileID: 6729381024479681171, guid: f2c3f02af1a8a6341b2bfd6846673d14, type: 3}
 --- !u!1 &913750218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1135,7 +1121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7edc6777a447d6f4c993d701ced9f785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxElements: 50
+  maxElements: 10
   environmentFire: {fileID: 3589028069193442107, guid: 3752641d214e79647a9c39c68d199808,
     type: 3}
   environmentWater: {fileID: 3589028069193442107, guid: 26739991d593af74ebfb189be8e4e65b,

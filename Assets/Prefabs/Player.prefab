@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 5
-  m_Sprite: {fileID: 21300000, guid: 3c4ac2ba11020c94a981592eeec109be, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3e9a6c004afd91f44a4cf38c78cb214d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -98,9 +98,9 @@ MonoBehaviour:
   speed: 0.02
   friction: 0.85
   healthMax: 10
-  invulnerable: 0
-  canMove: 0
   hitTimerMax: 3
+  melee: {fileID: 11400000, guid: 44bac2626ccc8274985339087e425b5f, type: 2}
+  minTimeBtwnAttacks: 2
 --- !u!61 &612161522938625950
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -118,7 +118,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 11.666667, y: 11.666667}
+    oldSize: {x: 10.24, y: 10.24}
     newSize: {x: 10.24, y: 10.24}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

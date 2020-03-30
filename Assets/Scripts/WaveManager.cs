@@ -25,8 +25,6 @@ public class WaveManager : MonoBehaviour
 
     public Text enemyText;
 
-    TraderManager traderManager;
-
     //max enemy spawns vars
     //maxEnemyGroupSpawn is the number of enemies that can be spawned in a given group spawn (how many are spawned in at once)
     public int maxEnemyGroupSpawn;
@@ -57,8 +55,6 @@ public class WaveManager : MonoBehaviour
 
     private void Start()
     {
-        traderManager = this.gameObject.GetComponent<TraderManager>();
-
         enemies = new List<GameObject>();
         commonEnemyPrefabs = new List<GameObject>();
         uncommonEnemyPrefabs = new List<GameObject>();
