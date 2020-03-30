@@ -47,7 +47,7 @@ public class EnemyScript : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        waveManager = GameObject.Find("WaveManager").GetComponent<WaveManager>();
+        waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
         graph = GameObject.Find("Graph").GetComponent<Graph>();
         velocity = Vector3.zero;
         health = healthMax;
