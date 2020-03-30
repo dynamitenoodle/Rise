@@ -109,10 +109,11 @@ public class BulletScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         // if the col isn't this object
+        if (col.gameObject.tag == "Enemy" && gameObject.tag == "PlayerAttack")
+            col.gameObject.GetComponent<EnemyScript>().GetHit(Vector2.zero, 2);
+
         if (col.gameObject.tag == "Wall" || (gameObject.tag == "PlayerAttack" && col.gameObject.tag == "Enemy") || (gameObject.tag == "EnemyAttack" && col.gameObject.tag == "Player"))
             DestroyBullet();
 
-        if (col.gameObject.tag == "Enemy" && gameObject.tag == "PlayerAttack")
-            col.gameObject.GetComponent<EnemyScript>().GetHit(Vector2.zero, 2);
     }
 }

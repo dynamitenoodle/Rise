@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7932270264175950732}
   - component: {fileID: 4481260164966246358}
   - component: {fileID: 5752485810399604700}
+  - component: {fileID: -4673170337627206247}
   m_Layer: 0
   m_Name: enemyRangeAttack
   m_TagString: EnemyAttack
@@ -94,8 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2e3ba0a5e6bcd43b43c38c9bb357d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  direction: {x: 0, y: 0, z: 0}
+  direction: {x: 0, y: 0}
   speed: 0
+  maxScale: {x: 0, y: 0}
+  minScale: {x: 0, y: 0}
 --- !u!61 &5752485810399604700
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -122,3 +125,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 10.24, y: 10.24}
   m_EdgeRadius: 0
+--- !u!50 &-4673170337627206247
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7932270264175950735}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
