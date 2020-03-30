@@ -60,7 +60,7 @@ public class EnemyScript : MonoBehaviour
 
         // setting constant values
         SetConstants();
-}
+    }
 
     // Update is called once per frame
     void Update()
