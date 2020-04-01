@@ -30,6 +30,8 @@ public class PlayerScript : MonoBehaviour
     Node node;
     public Node Node { get { return node; } }
 
+    public bool moving = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -152,6 +154,15 @@ public class PlayerScript : MonoBehaviour
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
         transform.position += velocity;
+
+        if (velocity != Vector3.zero)
+        {
+            moving = true;
+        }
+        else
+        {
+            moving = false;
+        }
 
         if (direction != Vector3.zero)
             direction = Vector3.zero;
