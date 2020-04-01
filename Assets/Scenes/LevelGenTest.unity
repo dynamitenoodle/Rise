@@ -683,6 +683,7 @@ GameObject:
   - component: {fileID: 898909568}
   - component: {fileID: 898909567}
   - component: {fileID: 898909569}
+  - component: {fileID: 898909570}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -770,7 +771,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d02e6db17831542a814dec5fb6d067, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trader: {fileID: 6729381024479681171, guid: f2c3f02af1a8a6341b2bfd6846673d14, type: 3}
+  traderPrefab: {fileID: 0}
+--- !u!114 &898909570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 898909566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b56c62cb42b0e3e49942c095a8c3d216, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &913750218
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,6 +1046,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   verticalMouseOffset: 1
   horizontalMouseOffset: 1
+  walkCycleSpeed: 0.1
 --- !u!1 &1750651936
 GameObject:
   m_ObjectHideFlags: 0

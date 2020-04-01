@@ -48,6 +48,11 @@ public class TraderManager : MonoBehaviour
 
     }
 
+    private void GenerateShopItems()
+    {
+
+    }
+
     public void RemoveShop()
     {
 

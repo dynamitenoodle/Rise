@@ -1,0 +1,27 @@
+
+//ability structure
+//name -> name of ability
+//asset -> location of prefab
+//description -> text description
+//cost -> cost multiplier
+//poolType -> common(0)/uncommon(1)/rare(2)/legendary(3)
+
+{
+  "abilities": [
+    {
+      "name": "Magic Blast",
+      "asset": "MagicBlast",
+      "description": "Its a magic blast or something",
+      "cost": 1.0,
+      "poolType": 0
+    },
+    {
+      "name": "Dash",
+      "asset": "Dash",
+      "description": "Its a dash!",
+      "cost": 1.0,
+      "poolType": 0
+    }
+
+  ]
+}
