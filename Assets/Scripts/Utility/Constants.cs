@@ -6,7 +6,7 @@ public class Constants
 {
 
     //Scene GameObject names
-    public const string GAMEOBJECT_NAME_WAVEMANAGER = "WaveManager";
+    public const string GAMEOBJECT_NAME_LEVELMANAGER = "LevelManager";
     public const string GAMEOBJECT_NAME_ENVIRONMENTMANAGER = "EnvironmentManager";
     public const string GAMEOBJECT_NAME_CANVAS = "Canvas";
 

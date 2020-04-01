@@ -56,7 +56,7 @@ public class LevelGeneration : MonoBehaviour
     void Start()
     {
         helper = new Helper();
-        waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_WAVEMANAGER).GetComponent<WaveManager>();
+        waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<WaveManager>();
         graph = GameObject.Find("Graph").GetComponent<Graph>();
         GenerateLevel(0);
         graph.SetGraph();
