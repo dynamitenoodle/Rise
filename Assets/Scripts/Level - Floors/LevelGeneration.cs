@@ -38,7 +38,7 @@ public class LevelGeneration : MonoBehaviour
     Helper helper;
     WaveManager waveManager;
 
-    struct RoomSpawn
+    public struct RoomSpawn
     {
         //type of room (based on given available rooms {rooms})
         public int type;
