@@ -70,4 +70,10 @@ public class Constants
     //Resources constants
     public const string RESOURCES_ABILITIES = "Abilities";
     public const string RESOURCES_PLAYER = "Entities/Player";
+
+    //item constants
+    public const float ITEM_SPAWNCHANCE_COMMON = 0.5f;
+    public const float ITEM_SPAWNCHANCE_UNCOMMON = 0.8f;
+    public const float ITEM_SPAWNCHANCE_RARE = 0.9f;
+    public const float ITEM_SPAWNCHANCE_SPECIAL = 1.0f;
 }

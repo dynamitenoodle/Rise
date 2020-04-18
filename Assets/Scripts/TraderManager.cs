@@ -14,6 +14,8 @@ public class TraderManager : MonoBehaviour
     private Helper helper;
     private GameObject player;
 
+    List<Item> items;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,7 +47,15 @@ public class TraderManager : MonoBehaviour
         trader = Instantiate(traderPrefab, randomRoom.location, Quaternion.identity, this.transform);
 
         //spawn in shop items
+        items = new List<Item>();
+        for (int i = 0; i < 3; i ++)
+        {
+            Item item = ItemPoolManager.Instance.GetModifierFromPool();
 
+            GameObject itemObj = Instantiate(item.obj, transform.transform);
+            item.obj = itemObj;
+            items.Add(item);
+        }
     }
 
     private void GenerateShopItems()

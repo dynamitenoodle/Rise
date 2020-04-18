@@ -39,7 +39,7 @@ public class WaveManager : MonoBehaviour
 
     Helper helper = new Helper();
 
-    private int waveNum = 0;
+    private int waveNum = 4;
     float waveTimer;
 
     [Range(10, 120)]
@@ -83,7 +83,7 @@ public class WaveManager : MonoBehaviour
 
         enemyQueue = new List<GameObject>();
         spawnWave = true;
-        waveNum = 0;
+        waveNum = 3;
         waveTimer = Time.time;
         StartCoroutine(SpawnWave());
     }
