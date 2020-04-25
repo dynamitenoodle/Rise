@@ -26,11 +26,15 @@ public class PlayerScript : MonoBehaviour
     //list of abilities
     Ability[] abilities = new Ability[5];
 
+    List<Item> modifierAdds;
+
     // room stuff
     Node node;
     public Node Node { get { return node; } }
 
     public bool moving = false;
+
+    AbilityUIManager abilityUIManager;
 
     // Start is called before the first frame update
     void Start()
@@ -41,10 +45,12 @@ public class PlayerScript : MonoBehaviour
 
         walls = new List<GameObject>();
 
+        modifierAdds = new List<Item>();
+
+        abilityUIManager = GameObject.Find(Constants.GAMEOBJECT_NAME_CANVAS).GetComponent<AbilityUIManager>();
+
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
         abilities[0].abilitySlot = 0;
-        abilities[1] = gameObject.AddComponent<Ability_Dash>();
-        abilities[1].abilitySlot = 1;
 
     }
 
@@ -54,6 +60,29 @@ public class PlayerScript : MonoBehaviour
         InputCheck();
         ApplyVelocity();
         Flicker();      
+        if (modifierAdds.Count > 0)
+        {
+            UpdateAddModifier(modifierAdds[0]);
+        }
+    }
+
+
+    void UpdateAddModifier(Item modifier)
+    {
+        abilityUIManager.AbilityUpgradeUISetData(modifier.name, modifier.image);
+    }
+
+    public void AddModifier(Item modifier)
+    {
+        modifierAdds.Add(modifier);
+    }
+
+    public void UpgradeAbility(int ability)
+    {
+        abilities[ability].AddModifier(modifierAdds[0].modifier);
+        modifierAdds.RemoveAt(0);
+
+        abilityUIManager.AbilityUpgradeUIActive(false);
     }
 
     // Called by other scripts to hit the player
@@ -126,11 +155,11 @@ public class PlayerScript : MonoBehaviour
             direction.x = 0;
 
         // If the player attacks
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && abilities[0] != null)
         {
             abilities[0].Action();
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && abilities[1] != null)
         {
             abilities[1].Action();
         }

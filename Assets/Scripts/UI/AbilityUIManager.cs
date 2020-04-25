@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class AbilityPanel
@@ -13,6 +14,12 @@ public class AbilityPanel
 public class AbilityUIManager : MonoBehaviour
 {
     public AbilityPanel[] abilityPanels;
+
+    public GameObject abilityUpgradeUI;
+    public Image abilityUpgradeImage;
+    public Text abilityUpgradeTitle;
+
+    public GameObject buttons;
     
     public void SetAbilityPanel(AbilityPanel abilityPanel, int abilityNum)
     {
@@ -45,5 +52,26 @@ public class AbilityUIManager : MonoBehaviour
                 yield return new WaitForSeconds(Constants.UI_ABILITY_COOLDOWN_UPDATE_TIME);
             }
         }
+    }
+
+    public void AbilityUpgradeUIActive(bool active)
+    {
+        abilityUpgradeUI.SetActive(active);
+    }
+
+    public void AbilityUpgradeUISetData(string title, string image)
+    {
+        if (abilityUpgradeUI.activeSelf) { return; }
+
+        abilityUpgradeTitle.text = title;
+        abilityUpgradeImage.sprite = Resources.Load<Sprite>(image);
+
+        AbilityUpgradeUIActive(true);
+
+        for (int i = 0; i < abilityPanels.Length; i++)
+        {
+            buttons.transform.GetChild(i).gameObject.SetActive(abilityPanels[i].panel.activeInHierarchy);
+        }
+
     }
 }

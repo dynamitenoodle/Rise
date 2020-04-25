@@ -12,6 +12,11 @@ public class Modifier_WaterRune : Modifier
 
     public override void Action(ModifierInfo modifierInfo)
     {
+        if (environmentManager == null)
+        {
+            environmentManager = GameObject.Find(Constants.GAMEOBJECT_NAME_ENVIRONMENTMANAGER).GetComponent<EnvironmentManager>();
+        }
+
         for (int i = 0; i < modifierInfo.points.Length; i++)
         {
             environmentManager.AddWater(modifierInfo.points[i], modifierInfo.radius);

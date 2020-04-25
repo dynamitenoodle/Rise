@@ -38,12 +38,15 @@ public class WaveManager : MonoBehaviour
     bool spawnWave;
 
     Helper helper = new Helper();
+    TraderManager traderManager;
 
-    private int waveNum = 4;
+    private int waveNum = 0;
     float waveTimer;
 
     [Range(10, 120)]
     public float waveTimeToWait;
+
+    private bool traderOut;
 
     private void OnDrawGizmos()
     {
@@ -60,6 +63,8 @@ public class WaveManager : MonoBehaviour
         uncommonEnemyPrefabs = new List<GameObject>();
         rareEnemyPrefabs = new List<GameObject>();
         specialEnemyPrefabs = new List<GameObject>();
+
+        traderManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<TraderManager>();
 
         //sort enemies into appropriate lists
         foreach (GameObject enemy in enemyPrefabs)
@@ -83,7 +88,7 @@ public class WaveManager : MonoBehaviour
 
         enemyQueue = new List<GameObject>();
         spawnWave = true;
-        waveNum = 3;
+        waveNum = -1;
         waveTimer = Time.time;
         StartCoroutine(SpawnWave());
     }
@@ -151,6 +156,9 @@ public class WaveManager : MonoBehaviour
                         GenerateEnemyQueue();
 
                     spawnWave = false;
+
+                    traderManager.GenerateShop();
+                    traderOut = true;
                 }
                 else if (enemyQueue.Count == 0 && !spawnWave && enemies.Count == 0)
                 {
@@ -158,23 +166,37 @@ public class WaveManager : MonoBehaviour
                 }
                 else
                 {
-                    int spawnNum = maxEnemyGroupSpawn;
 
-                    if (spawnNum + enemies.Count > maxEnemiesOut)
+                    if (Time.time - waveTimer < Constants.WAVEGEN_GROUP_SPAWN_TIME) { }
+                    else
                     {
-                        spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
-                    }
-                    if (spawnNum > enemyQueue.Count)
-                    {
-                        spawnNum = enemyQueue.Count;
+                        if (traderOut)
+                        {
+                            traderManager.RemoveShop();
+                        }
+
+                        int spawnNum = maxEnemyGroupSpawn;
+
+                        if (spawnNum + enemies.Count > maxEnemiesOut)
+                        {
+                            spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
+                        }
+                        if (spawnNum > enemyQueue.Count)
+                        {
+                            spawnNum = enemyQueue.Count;
+                        }
+
+                        SpawnEnemyGroup(spawnNum);
+
+                        waveTimer = Time.time;
+
+                        enemyText.text = $"Wave: {waveNum + 1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
                     }
 
-                    SpawnEnemyGroup(spawnNum);
-                    enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
-                    yield return new WaitForSeconds(10f);
+                    yield return new WaitForSeconds(1f);
                 }
                 enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(1f);
             }
             yield return null;
         }

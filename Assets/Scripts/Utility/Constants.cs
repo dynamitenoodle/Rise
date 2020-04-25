@@ -9,7 +9,7 @@ public class Constants
     public const string GAMEOBJECT_NAME_LEVELMANAGER = "LevelManager";
     public const string GAMEOBJECT_NAME_ENVIRONMENTMANAGER = "EnvironmentManager";
     public const string GAMEOBJECT_NAME_CANVAS = "Canvas";
-
+    public const string GAMEOBJECT_NAME_GRAPH = "Graph";
 
     //tags
     public const string TAG_PLAYER = "Player";
@@ -25,6 +25,7 @@ public class Constants
     //wave gen
     public const float WAVEGEN_SAFE_ZONE = 15f;
     public const float WAVEGEN_SPAWN_ZONE = 30f; // this needs to be higher than the WAVEGEN_SAFE_ZONE number
+    public const float WAVEGEN_GROUP_SPAWN_TIME = 10.0f;
 
     //camera
     public const float CAMERA_MAX_MOVE_DISTANCE = 1.5f;
@@ -76,4 +77,7 @@ public class Constants
     public const float ITEM_SPAWNCHANCE_UNCOMMON = 0.8f;
     public const float ITEM_SPAWNCHANCE_RARE = 0.9f;
     public const float ITEM_SPAWNCHANCE_SPECIAL = 1.0f;
+
+    //trader constants
+    public const float TRADER_ITEMUI_ACTIVE_DISTANCE = 0.5f;
 }

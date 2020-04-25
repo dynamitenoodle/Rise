@@ -2,15 +2,19 @@
   "Abilities": [
     {
       "name": "Flame Rune",
-      "asset": "FlameRune",
+      "asset": "Entities/Pickups/Modifiers/FlameRune",
+      "className":  "Modifier_FlameRune",
       "description": "Adds fire",
+      "image":  "Entities/Pickups/Modifiers/Images/FlameRune",
       "cost": 1.0,
       "poolType": 0
     },
     {
       "name": "Water Rune",
-      "asset": "WaterRune",
+      "asset": "Entities/Pickups/Modifiers/WaterRune",
+      "className": "Modifier_WaterRune",
       "description": "Adds Water",
+      "image": "Entities/Pickups/Modifiers/Images/WaterRune",
       "cost": 1.0,
       "poolType": 0
     }
