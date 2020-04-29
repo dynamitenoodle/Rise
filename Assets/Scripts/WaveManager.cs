@@ -42,6 +42,7 @@ public class WaveManager : MonoBehaviour
 
     private int waveNum = 0;
     float waveTimer;
+    float waveSpawnTimer;
 
     [Range(10, 120)]
     public float waveTimeToWait;
@@ -90,6 +91,7 @@ public class WaveManager : MonoBehaviour
         spawnWave = true;
         waveNum = -1;
         waveTimer = Time.time;
+        waveSpawnTimer = Time.time;
         StartCoroutine(SpawnWave());
     }
 
@@ -133,9 +135,13 @@ public class WaveManager : MonoBehaviour
         bool spawning = true;
         while (spawning)
         {
-            if (Time.time - waveTimer < waveTimeToWait)
+            if (Time.time - waveTimer < waveTimeToWait && enemies.Count == 0)
             {
-                enemyText.text = $"Time to Wave {waveNum+1}: {Mathf.Round((waveTimeToWait - (Time.time - waveTimer)))}";
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    waveTimer -= waveTimeToWait;
+                }
+                 enemyText.text = $"Time to Wave {waveNum+1}: {Mathf.Round((waveTimeToWait - (Time.time - waveTimer)))}";
             }
             else if (elevators != null)
             {
@@ -167,7 +173,7 @@ public class WaveManager : MonoBehaviour
                 else
                 {
 
-                    if (Time.time - waveTimer < Constants.WAVEGEN_GROUP_SPAWN_TIME) { }
+                    if (Time.time - waveSpawnTimer < Constants.WAVEGEN_GROUP_SPAWN_TIME) { }
                     else
                     {
                         if (traderOut)
@@ -188,7 +194,7 @@ public class WaveManager : MonoBehaviour
 
                         SpawnEnemyGroup(spawnNum);
 
-                        waveTimer = Time.time;
+                        waveSpawnTimer = Time.time;
 
                         enemyText.text = $"Wave: {waveNum + 1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
                     }

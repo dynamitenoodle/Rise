@@ -42,9 +42,14 @@ public class TraderManager : MonoBehaviour
                 itemUI.SetUIData(items[i]);
                 itemUI.ShowUI(true);
 
-                if (Input.GetKeyDown(KeyCode.E))
+                bool canBuy = playerScript.HasGold(items[i].cost);
+
+                itemUI.SetCostCanBuy(canBuy);
+
+                if (Input.GetKeyDown(KeyCode.E) && canBuy)
                 {
                     playerScript.AddModifier(items[i]);
+                    playerScript.AddGold(-items[i].cost);
                     Destroy(items[i].obj);
                     items.RemoveAt(i);
                 }

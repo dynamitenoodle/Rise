@@ -34,6 +34,8 @@ public class PlayerScript : MonoBehaviour
 
     public bool moving = false;
 
+    int gold;
+
     AbilityUIManager abilityUIManager;
 
     // Start is called before the first frame update
@@ -42,7 +44,7 @@ public class PlayerScript : MonoBehaviour
         velocity = Vector3.zero;
         health = healthMax;
         invulnerable = false;
-
+        gold = 0;
         walls = new List<GameObject>();
 
         modifierAdds = new List<Item>();
@@ -64,6 +66,11 @@ public class PlayerScript : MonoBehaviour
         {
             UpdateAddModifier(modifierAdds[0]);
         }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            AddGold(100);
+        }
     }
 
 
@@ -83,6 +90,17 @@ public class PlayerScript : MonoBehaviour
         modifierAdds.RemoveAt(0);
 
         abilityUIManager.AbilityUpgradeUIActive(false);
+    }
+
+    public bool HasGold(int amount)
+    {
+        return gold >= amount;
+    }
+
+    public void AddGold(int amount)
+    {
+        gold += amount;
+        abilityUIManager.UpdateGoldText(gold);
     }
 
     // Called by other scripts to hit the player

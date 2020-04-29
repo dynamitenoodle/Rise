@@ -30,4 +30,10 @@ public class ItemDescriptionUI : MonoBehaviour
         this.description.text = description;
         this.cost.text = $"${cost}";
     }
+
+    public void SetCostCanBuy(bool canBuy)
+    {
+        Color color = (canBuy) ? Color.yellow : Color.red;
+        this.cost.color = color;
+    }
 }

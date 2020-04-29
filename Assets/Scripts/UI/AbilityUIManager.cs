@@ -19,8 +19,15 @@ public class AbilityUIManager : MonoBehaviour
     public Image abilityUpgradeImage;
     public Text abilityUpgradeTitle;
 
+    public Text goldText;
+
     public GameObject buttons;
-    
+
+    private void Start()
+    {
+        UpdateGoldText(0);
+    }
+
     public void SetAbilityPanel(AbilityPanel abilityPanel, int abilityNum)
     {
         abilityPanels[abilityNum]=abilityPanel;
@@ -73,5 +80,10 @@ public class AbilityUIManager : MonoBehaviour
             buttons.transform.GetChild(i).gameObject.SetActive(abilityPanels[i].panel.activeInHierarchy);
         }
 
+    }
+
+    public void UpdateGoldText(int gold)
+    {
+        goldText.text = $"${gold}";
     }
 }
