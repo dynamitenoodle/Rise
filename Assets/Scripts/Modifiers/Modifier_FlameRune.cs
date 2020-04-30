@@ -20,4 +20,9 @@ public class Modifier_FlameRune : Modifier
             environmentManager.AddFire(modifierInfo.points[i], modifierInfo.radius);
         }
     }
+
+    public override ModifierStartAction StartAction(Ability ability)
+    {
+        return ModifierStartAction.remain_after;
+    }
 }

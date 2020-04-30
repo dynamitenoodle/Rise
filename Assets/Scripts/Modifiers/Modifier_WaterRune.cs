@@ -22,4 +22,9 @@ public class Modifier_WaterRune : Modifier
             environmentManager.AddWater(modifierInfo.points[i], modifierInfo.radius);
         }
     }
+
+    public override ModifierStartAction StartAction(Ability ability)
+    {
+        return ModifierStartAction.remain_after;
+    }
 }

@@ -131,8 +131,8 @@ public class ItemPoolManager : MonoBehaviour
 
         itemTier = 0;
 
-        int randomItem = Random.Range(0, modifierPool[itemTier].Count - 1);
-
+        int randomItem = Random.Range(0, modifierPool[itemTier].Count);
+        randomItem = 2;
         Item item = modifierPool[itemTier][randomItem];
         modifierPool[itemTier].RemoveAt(randomItem);
         return item;

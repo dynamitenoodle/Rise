@@ -3,9 +3,9 @@
     {
       "name": "Flame Rune",
       "asset": "Entities/Pickups/Modifiers/FlameRune",
-      "className":  "Modifier_FlameRune",
+      "className": "Modifier_FlameRune",
       "description": "Adds fire",
-      "image":  "Entities/Pickups/Modifiers/Images/FlameRune",
+      "image": "Entities/Pickups/Modifiers/Images/FlameRune",
       "cost": 1.0,
       "poolType": 0
     },
@@ -15,6 +15,15 @@
       "className": "Modifier_WaterRune",
       "description": "Adds Water",
       "image": "Entities/Pickups/Modifiers/Images/WaterRune",
+      "cost": 1.0,
+      "poolType": 0
+    },
+    {
+      "name": "Cool Down",
+      "asset": "Entities/Pickups/Modifiers/CoolDown",
+      "className": "Modifier_CoolDown",
+      "description": "Fixes those pesky cooldowns",
+      "image": "Entities/Pickups/Modifiers/Images/CoolDown",
       "cost": 1.0,
       "poolType": 0
     }
