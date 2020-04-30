@@ -18,6 +18,8 @@ public class TraderManager : MonoBehaviour
 
     private ItemDescriptionUI itemUI;
 
+    private MinimapController minimapController;
+
     List<Item> items;
 
     // Start is called before the first frame update
@@ -26,6 +28,9 @@ public class TraderManager : MonoBehaviour
         helper = new Helper();
         player = GameObject.FindGameObjectWithTag(Constants.TAG_PLAYER);
         playerScript = player.GetComponent<PlayerScript>();
+
+        minimapController = GameObject.Find(Constants.GAMEOBJECT_NAME_MINIMAPCAMERA).GetComponent<MinimapController>();
+
         levelManagerTransform = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).transform;
         itemUI = GameObject.Find(Constants.GAMEOBJECT_NAME_CANVAS).GetComponent<ItemDescriptionUI>();
         items = new List<Item>();
@@ -87,27 +92,47 @@ public class TraderManager : MonoBehaviour
 
         trader = Instantiate(traderPrefab, randomRoom.location, Quaternion.identity, levelManagerTransform);
 
+        GenerateShopItems();
+        minimapController.ShowTraderArrow(trader);
+    }
+
+    private void GenerateShopItems()
+    {
         //spawn in shop items
         items = new List<Item>();
-        for (int i = 0; i < 1; i ++)
+        float offset = 1.0f;
+        float initialOffset = 0.5f;
+        for (int i = 0; i < Constants.TRADER_ITEM_SPAWN_COUNT; i++)
         {
             Item item = ItemPoolManager.Instance.GetModifierFromPool();
 
             GameObject itemObj = Instantiate(item.obj, trader.transform);
+            Vector3 pos = itemObj.transform.position;
+            pos.x += -initialOffset + (offset * i);
+            itemObj.transform.position = pos;
             item.obj = itemObj;
             items.Add(item);
         }
     }
 
-    private void GenerateShopItems()
-    {
-
-    }
-
     public void RemoveShop()
     {
+        if (trader == null) { return; }
+
         Debug.Log("removing shop");
+
+        if (items.Count > 0)
+        {
+            foreach (Item item in items)
+            {
+                ItemPoolManager.Instance.AddModifierToPoll(item);
+            }
+        }
+
         Destroy(trader);
+        trader = null;
         items = new List<Item>();
+
+        minimapController.HideTraderArrow();
     }
 }

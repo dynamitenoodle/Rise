@@ -13,6 +13,7 @@ public class Item
     public string image;
     public float costMultiplier;
     public int cost;
+    public int tier;
 }
 
 [System.Serializable]
@@ -104,6 +105,7 @@ public class ItemPoolManager : MonoBehaviour
             itemDescription.description = item.description;
             itemDescription.costMultiplier = item.cost;
             itemDescription.cost = (int)Random.Range(((item.poolType + 1) * 40) * item.cost, (((item.poolType + 1) * 40) * 4) * item.cost);
+            itemDescription.tier = item.poolType;
             itemsLoad[item.poolType].Add(itemDescription);
         }
 
@@ -132,10 +134,15 @@ public class ItemPoolManager : MonoBehaviour
         itemTier = 0;
 
         int randomItem = Random.Range(0, modifierPool[itemTier].Count);
-        randomItem = 2;
+
         Item item = modifierPool[itemTier][randomItem];
         modifierPool[itemTier].RemoveAt(randomItem);
         return item;
+    }
+
+    public void AddModifierToPoll(Item item)
+    {
+        modifierPool[item.tier].Add(item);
     }
 
     public Item GetModifierFromPool(int overrideSpawnType)

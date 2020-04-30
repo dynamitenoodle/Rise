@@ -10,6 +10,8 @@ public class Constants
     public const string GAMEOBJECT_NAME_ENVIRONMENTMANAGER = "EnvironmentManager";
     public const string GAMEOBJECT_NAME_CANVAS = "Canvas";
     public const string GAMEOBJECT_NAME_GRAPH = "Graph";
+    public const string GAMEOBJECT_NAME_PLAYER = "Player";
+    public const string GAMEOBJECT_NAME_MINIMAPCAMERA = "MinimapCamera";
 
     //tags
     public const string TAG_PLAYER = "Player";
@@ -80,4 +82,9 @@ public class Constants
 
     //trader constants
     public const float TRADER_ITEMUI_ACTIVE_DISTANCE = 0.5f;
+    public const int TRADER_ITEM_SPAWN_COUNT = 2;
+
+    //minimap
+    public const float MINIMAP_ARROW_UPDATE_TIME = 0.2f;
+    public const float MINIMAP_ARROW_MIN_DISTANCE = 20.0f;
 }
