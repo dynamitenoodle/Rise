@@ -38,12 +38,16 @@ public class WaveManager : MonoBehaviour
     bool spawnWave;
 
     Helper helper = new Helper();
+    TraderManager traderManager;
 
     private int waveNum = 0;
     float waveTimer;
+    float waveSpawnTimer;
 
     [Range(10, 120)]
     public float waveTimeToWait;
+
+    private bool traderOut;
 
     private void OnDrawGizmos()
     {
@@ -60,6 +64,8 @@ public class WaveManager : MonoBehaviour
         uncommonEnemyPrefabs = new List<GameObject>();
         rareEnemyPrefabs = new List<GameObject>();
         specialEnemyPrefabs = new List<GameObject>();
+
+        traderManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<TraderManager>();
 
         //sort enemies into appropriate lists
         foreach (GameObject enemy in enemyPrefabs)
@@ -83,8 +89,9 @@ public class WaveManager : MonoBehaviour
 
         enemyQueue = new List<GameObject>();
         spawnWave = true;
-        waveNum = 0;
+        waveNum = -1;
         waveTimer = Time.time;
+        waveSpawnTimer = Time.time;
         StartCoroutine(SpawnWave());
     }
 
@@ -128,9 +135,13 @@ public class WaveManager : MonoBehaviour
         bool spawning = true;
         while (spawning)
         {
-            if (Time.time - waveTimer < waveTimeToWait)
+            if (Time.time - waveTimer < waveTimeToWait && enemies.Count == 0)
             {
-                enemyText.text = $"Time to Wave {waveNum+1}: {Mathf.Round((waveTimeToWait - (Time.time - waveTimer)))}";
+                if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    waveTimer -= waveTimeToWait;
+                }
+                 enemyText.text = $"Time to Wave {waveNum+1}: {Mathf.Round((waveTimeToWait - (Time.time - waveTimer)))}";
             }
             else if (elevators != null)
             {
@@ -151,6 +162,9 @@ public class WaveManager : MonoBehaviour
                         GenerateEnemyQueue();
 
                     spawnWave = false;
+
+                    traderManager.GenerateShop();
+                    traderOut = true;
                 }
                 else if (enemyQueue.Count == 0 && !spawnWave && enemies.Count == 0)
                 {
@@ -158,23 +172,37 @@ public class WaveManager : MonoBehaviour
                 }
                 else
                 {
-                    int spawnNum = maxEnemyGroupSpawn;
 
-                    if (spawnNum + enemies.Count > maxEnemiesOut)
+                    if (Time.time - waveSpawnTimer < Constants.WAVEGEN_GROUP_SPAWN_TIME) { }
+                    else
                     {
-                        spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
-                    }
-                    if (spawnNum > enemyQueue.Count)
-                    {
-                        spawnNum = enemyQueue.Count;
+                        if (traderOut)
+                        {
+                            traderManager.RemoveShop();
+                        }
+
+                        int spawnNum = maxEnemyGroupSpawn;
+
+                        if (spawnNum + enemies.Count > maxEnemiesOut)
+                        {
+                            spawnNum = spawnNum - ((spawnNum + enemies.Count) - maxEnemiesOut);
+                        }
+                        if (spawnNum > enemyQueue.Count)
+                        {
+                            spawnNum = enemyQueue.Count;
+                        }
+
+                        SpawnEnemyGroup(spawnNum);
+
+                        waveSpawnTimer = Time.time;
+
+                        enemyText.text = $"Wave: {waveNum + 1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
                     }
 
-                    SpawnEnemyGroup(spawnNum);
-                    enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
-                    yield return new WaitForSeconds(10f);
+                    yield return new WaitForSeconds(1f);
                 }
                 enemyText.text = $"Wave: {waveNum+1}\nEnemies Remaining: {enemyQueue.Count + enemies.Count}\nEnemies Out: {enemies.Count}";
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(1f);
             }
             yield return null;
         }

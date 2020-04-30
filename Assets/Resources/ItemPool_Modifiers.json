@@ -1,27 +1,31 @@
-
-//ability structure
-//name -> name of ability
-//asset -> location of prefab
-//description -> text description
-//cost -> cost multiplier
-//poolType -> common(0)/uncommon(1)/rare(2)/legendary(3)
-
 {
-  "abilities": [
+  "Abilities": [
     {
-      "name": "Magic Blast",
-      "asset": "MagicBlast",
-      "description": "Its a magic blast or something",
+      "name": "Flame Rune",
+      "asset": "Entities/Pickups/Modifiers/FlameRune",
+      "className": "Modifier_FlameRune",
+      "description": "Adds fire",
+      "image": "Entities/Pickups/Modifiers/Images/FlameRune",
       "cost": 1.0,
       "poolType": 0
     },
     {
-      "name": "Dash",
-      "asset": "Dash",
-      "description": "Its a dash!",
+      "name": "Water Rune",
+      "asset": "Entities/Pickups/Modifiers/WaterRune",
+      "className": "Modifier_WaterRune",
+      "description": "Adds Water",
+      "image": "Entities/Pickups/Modifiers/Images/WaterRune",
+      "cost": 1.0,
+      "poolType": 0
+    },
+    {
+      "name": "Cool Down",
+      "asset": "Entities/Pickups/Modifiers/CoolDown",
+      "className": "Modifier_CoolDown",
+      "description": "Fixes those pesky cooldowns",
+      "image": "Entities/Pickups/Modifiers/Images/CoolDown",
       "cost": 1.0,
       "poolType": 0
     }
-
   ]
 }

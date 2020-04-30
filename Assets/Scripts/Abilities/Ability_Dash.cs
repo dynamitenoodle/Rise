@@ -14,7 +14,6 @@ public class Ability_Dash : Ability
     {
         lastUseTime = Time.time;
         coolDown = 2f;
-        modifiers.Add(player.AddComponent<Modifier_FlameRune>());
     }
 
     public override void Action()

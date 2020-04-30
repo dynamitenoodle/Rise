@@ -37,6 +37,7 @@ public class LevelGeneration : MonoBehaviour
     //class vars
     Helper helper;
     WaveManager waveManager;
+    TraderManager traderManager;
 
     public struct RoomSpawn
     {
@@ -57,9 +58,10 @@ public class LevelGeneration : MonoBehaviour
     {
         helper = new Helper();
         waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<WaveManager>();
-        graph = GameObject.Find("Graph").GetComponent<Graph>();
+        traderManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<TraderManager>();
+
+        graph = GameObject.Find(Constants.GAMEOBJECT_NAME_GRAPH).GetComponent<Graph>();
         GenerateLevel(0);
-        graph.SetGraph();
     }
 
     /// <summary>
@@ -72,10 +74,17 @@ public class LevelGeneration : MonoBehaviour
         int numRooms = Random.Range(minRoomSpawns, maxRoomSpawns);
         //Debug.Log($"NumRooms: {numRooms}");
         List<RoomSpawn> roomSpawns = SpawnRooms(numRooms);
-
+        List<RoomSpawn> currentRooms = roomSpawns; //backup list incase bossroom is unable to spawn
         //Debug.Log("Spawning elevators...");
         //Debug.Log($"Spawning boss room...");
         roomSpawns = SpawnBossRoom(roomSpawns, floor);
+
+        if (roomSpawns == null)
+        {
+            Debug.LogWarning("roomSpawns came back null from boss generation... stopping GenerateLevel() and destroying old level");
+            DestroyLevel(currentRooms);
+            return;
+        }
 
         //Debug.Log("Spawning elevators...");
         List<GameObject> elevators = SpawnElevators(roomSpawns);
@@ -86,6 +95,18 @@ public class LevelGeneration : MonoBehaviour
 
         //send elevator info to wave manager
         waveManager.SetupElevators(elevators, bossRoomPick.obj, bossPick);
+        //send info to trader manager
+        traderManager.SetupRoomData(roomSpawns);
+
+        graph.SetGraph();
+    }
+
+    private void DestroyLevel(List<RoomSpawn> roomSpawns)
+    {
+        foreach (RoomSpawn roomSpawn in roomSpawns)
+        {
+            Destroy(roomSpawn.obj);
+        }
     }
 
     /// <summary>
@@ -162,10 +183,22 @@ public class LevelGeneration : MonoBehaviour
 
         bool finished = false;
         int maxLoops = Constants.LEVELGEN_BOSS_ROOM_MAX_LOOPS;
+        List<int> usableRooms = new List<int>();
+
+        for (int i = 0; i < validRooms.Count; i++) { usableRooms.Add(i); }
+
         do
         {
             //pick random valid room, then pick random valid door
-            int randomRoom = Random.Range(0, validRooms.Count - 1);
+            int randomPick = Random.Range(0, usableRooms.Count - 1);
+            usableRooms.RemoveAt(randomPick);
+            if (usableRooms.Count == 0)
+            {
+                Debug.LogError("Ran out of usable rooms to spawn boss room: Regenerating level");
+                GenerateLevel(floor);
+                return null;
+            }
+            int randomRoom = usableRooms[randomPick];
             int bossDoorPick = -1;
             int roomDoorPick = -1;
             for (int i = 0; i < validRooms[randomRoom].doors.Count; i++)
@@ -206,11 +239,16 @@ public class LevelGeneration : MonoBehaviour
                 finished = true;
             }
             maxLoops--;
-        } while (maxLoops > 0 && !finished);
+        } while (maxLoops > 0 && !finished && usableRooms.Count > 0);
         if (maxLoops == 0)
         {
-            Debug.LogError("Boss room failed to spawn, 20 iterations passed, do{}while force stopped");
+            Debug.LogError("Boss room failed to spawn, max iterations passed");
         }
+        else if (usableRooms.Count == 0)
+        {
+            Debug.LogError("Boss room failed to spawn, ran out of rooms to search through");
+        }
+        Debug.Log($"Generating boss room took {Constants.LEVELGEN_BOSS_ROOM_MAX_LOOPS - maxLoops} iterations");
         return roomSpawns;
     }
 
@@ -307,7 +345,7 @@ public class LevelGeneration : MonoBehaviour
             List<int> usedDoors = new List<int>();
             bool validRoom = true;
             bool forceFinish = false;
-            
+
             //pick a random valid room that already exists and generate the room with location based off randomly picked room
             int roomPick = GetRandomValidRoom(roomSpawns);
             roomSpawn = GenerateRoom((int)roomSpawns[roomPick].location.x, (int)roomSpawns[roomPick].location.y);
@@ -377,7 +415,7 @@ public class LevelGeneration : MonoBehaviour
                 //add room to list of existing rooms and update doors if any doors are now connected to existing rooms
                 roomSpawns.Add(roomSpawn);
                 // Add to graph
-                graph.AddNodes(roomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, i+1);
+                graph.AddNodes(roomSpawn.obj.GetComponent<RoomDescriber>().enemyPathPoints, i + 1);
                 CheckOverlapDoors(roomSpawns);
                 retryCount = 0;
             }
@@ -595,7 +633,7 @@ public class LevelGeneration : MonoBehaviour
         {
             doors.Add(describer.doorways[i].GetComponent<DoorDescriber>());
             doors[i].location = new Vector2(
-                describer.doorways[i].transform.position.x, 
+                describer.doorways[i].transform.position.x,
                 describer.doorways[i].transform.position.y);
             doors[i].doorOpen = true;
             doors[i].elevatorDoor = false;

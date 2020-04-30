@@ -16,6 +16,7 @@ public class EnemyScript : MonoBehaviour
     Vector3 velocity;
     Vector3 direction;
     GameObject player;
+    PlayerScript playerScript;
 
     // attack stuff
     [SerializeField] List<Attack> attacks;
@@ -47,6 +48,7 @@ public class EnemyScript : MonoBehaviour
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        playerScript = player.GetComponent<PlayerScript>();
         waveManager = GameObject.Find(Constants.GAMEOBJECT_NAME_LEVELMANAGER).GetComponent<WaveManager>();
         graph = GameObject.Find("Graph").GetComponent<Graph>();
         velocity = Vector3.zero;
@@ -305,6 +307,8 @@ public class EnemyScript : MonoBehaviour
         {
             if (attackGO != null)
                 Destroy(attackGO);
+
+            playerScript.AddGold(Random.Range(1, 5));
 
             waveManager.DestroyEnemy(this.gameObject);
             Destroy(gameObject);
