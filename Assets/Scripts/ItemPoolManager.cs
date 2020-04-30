@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Item
 {
+    public bool isAbility;
     public string name;
     public GameObject obj;
+    public Ability ability;
+    public Modifier modifier;
     public string description;
+    public string image;
     public float costMultiplier;
+    public int cost;
+    public int tier;
 }
 
 [System.Serializable]
@@ -21,7 +27,9 @@ public class Abilities
 {
     public string name;
     public string asset;
+    public string className;
     public string description;
+    public string image;
     public float cost;
     public byte poolType;
 }
@@ -35,6 +43,18 @@ public class ItemPoolManager : MonoBehaviour
     List<List<Item>> abilityPool;
     List<List<Item>> modifierPool;
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     float[] spawnChances;
 
@@ -47,11 +67,11 @@ public class ItemPoolManager : MonoBehaviour
         spawnChances[2] = Constants.ITEM_SPAWNCHANCE_RARE;
         spawnChances[3] = Constants.ITEM_SPAWNCHANCE_SPECIAL;
 
-        modifierPool = LoadJSONItems("ItemPool_Modifiers");
-        abilityPool = LoadJSONItems("ItemPool_Abilities");
+        modifierPool = LoadJSONItems("ItemPool_Modifiers", false);
+        //abilityPool = LoadJSONItems("ItemPool_Abilities");
     }
 
-    private List<List<Item>> LoadJSONItems(string fileName)
+    private List<List<Item>> LoadJSONItems(string fileName, bool isAbilities)
     {
         string json = GetJSONFromFile(fileName);
 
@@ -69,10 +89,23 @@ public class ItemPoolManager : MonoBehaviour
         foreach (Abilities item in jsonAbilitiesLoad.Abilities)
         {
             Item itemDescription = new Item();
+            itemDescription.isAbility = isAbilities;
+            if (isAbilities)
+            {
+                itemDescription.ability = (Ability)System.Activator.CreateInstance(System.Type.GetType(item.className));
+                itemDescription.modifier = null;
+            }
+            else
+            {
+                itemDescription.modifier = (Modifier)System.Activator.CreateInstance(System.Type.GetType(item.className));
+                itemDescription.ability = null;
+            }
             itemDescription.name = item.name;
             itemDescription.obj = Resources.Load<GameObject>(item.asset);
             itemDescription.description = item.description;
             itemDescription.costMultiplier = item.cost;
+            itemDescription.cost = (int)Random.Range(((item.poolType + 1) * 40) * item.cost, (((item.poolType + 1) * 40) * 4) * item.cost);
+            itemDescription.tier = item.poolType;
             itemsLoad[item.poolType].Add(itemDescription);
         }
 
@@ -98,11 +131,18 @@ public class ItemPoolManager : MonoBehaviour
             }
         }
 
-        int randomItem = Random.Range(0, modifierPool[itemTier].Count - 1);
+        itemTier = 0;
+
+        int randomItem = Random.Range(0, modifierPool[itemTier].Count);
 
         Item item = modifierPool[itemTier][randomItem];
         modifierPool[itemTier].RemoveAt(randomItem);
         return item;
+    }
+
+    public void AddModifierToPoll(Item item)
+    {
+        modifierPool[item.tier].Add(item);
     }
 
     public Item GetModifierFromPool(int overrideSpawnType)

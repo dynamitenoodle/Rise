@@ -13,8 +13,6 @@ public class Ability_MagicBlast : Ability
     {
         lastUseTime = Time.time;
         coolDown = 0.4f;
-        modifiers.Add(gameObject.AddComponent<Modifier_WaterRune>());
-        modifiers.Add(gameObject.AddComponent<Modifier_FlameRune>());
         attackPrefab = Resources.Load<GameObject>($"{Constants.RESOURCES_ABILITIES}/magicBlast");
     }
 

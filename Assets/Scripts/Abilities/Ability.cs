@@ -8,7 +8,7 @@ public abstract class Ability : MonoBehaviour
     protected GameObject player;
     protected PlayerScript playerScript;
     protected List<Modifier> modifiers;
-    protected float coolDown;
+    public float coolDown;
     protected float lastUseTime;
     protected AbilityUIManager abilityUIManager;
     public int abilitySlot;
@@ -30,8 +30,16 @@ public abstract class Ability : MonoBehaviour
     {
         //Debug.Log("adding modifier!");
         //check for modifier combinations
+        Modifier.ModifierStartAction action = modifier.StartAction(this);
 
-        //add to list
-        modifiers.Add(modifier);
+        if (action == Modifier.ModifierStartAction.delete_after)
+        {
+            //dont add
+        }
+        else if (action == Modifier.ModifierStartAction.remain_after)
+        {
+            //add to list
+            modifiers.Add(modifier);
+        }
     }
 }
