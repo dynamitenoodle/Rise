@@ -24,6 +24,7 @@ public class EnemyScript : MonoBehaviour
     int attackRoll;
     float attackTimer;
     GameObject attackGO;
+    GameObject tempAttackGO;
     bool fired = false;
     Vector3 attackDir;
     int shotNum;
@@ -107,12 +108,24 @@ public class EnemyScript : MonoBehaviour
     {
         if (enemyAttackStyle == EnemyAttackStyle.melee)
         {
-            maxSpeed = Constants.ENEMY_MELEE_MAXSPEED;
-            speed = Constants.ENEMY_MELEE_SPEED;
-            friction = Constants.ENEMY_MELEE_FRICTION;
-            detectionDistance = Constants.ENEMY_MELEE_DETECTION_DISTANCE;
-            minTimeBtwnAttacks = Constants.ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS;
-            healthMax = Constants.ENEMY_MELEE_HEALTH_MAX;
+            if (enemySpawnType == EnemySpawnType.rare)
+            {
+                maxSpeed = Constants.ENEMY_FAST_MELEE_MAXSPEED;
+                speed = Constants.ENEMY_FAST_MELEE_SPEED;
+                friction = Constants.ENEMY_FAST_MELEE_FRICTION;
+                detectionDistance = Constants.ENEMY_FAST_MELEE_DETECTION_DISTANCE;
+                minTimeBtwnAttacks = Constants.ENEMY_FAST_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS;
+                healthMax = Constants.ENEMY_FAST_MELEE_HEALTH_MAX;
+            }
+            else
+            {
+                maxSpeed = Constants.ENEMY_MELEE_MAXSPEED;
+                speed = Constants.ENEMY_MELEE_SPEED; 
+                friction = Constants.ENEMY_MELEE_FRICTION;
+                detectionDistance = Constants.ENEMY_MELEE_DETECTION_DISTANCE;
+                minTimeBtwnAttacks = Constants.ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS;
+                healthMax = Constants.ENEMY_MELEE_HEALTH_MAX;
+            }
         }
 
         else if (enemyAttackStyle == EnemyAttackStyle.ranged)
@@ -169,7 +182,24 @@ public class EnemyScript : MonoBehaviour
             // Create the attackGO when it is time
             if (CanAttackCheck())
             {
+                if (tempAttackGO)
+                    Destroy(tempAttackGO);
+
                 Attack();
+            }
+
+            // create the faded melee attack
+            else if (tempAttackGO == null && attacks[attackRoll].isMelee && attackTimer < attacks[attackRoll].attackDelay)
+            {
+                if (tempAttackGO == null)
+                {
+                    CreateFadeAttack();
+                }
+                else if (tempAttackGO.transform.position != transform.position + (attackDir * attacks[attackRoll].attackSpacing))
+                {
+                    Destroy(tempAttackGO);
+                    CreateFadeAttack();
+                }
             }
 
             // Reset the attack timer
@@ -293,6 +323,19 @@ public class EnemyScript : MonoBehaviour
             gameObject.transform.GetChild(0).transform.rotation = Quaternion.Euler(0, 0, cannonAngle);
         }
     }
+    
+    // Creates the before image of an attack
+    void CreateFadeAttack()
+    {
+        tempAttackGO = Instantiate(attacks[attackRoll].attackPrefab);
+        Destroy(tempAttackGO.GetComponent<Collider2D>());
+        Color fade = tempAttackGO.GetComponent<SpriteRenderer>().color;
+        fade.a = .5f;
+        tempAttackGO.GetComponent<SpriteRenderer>().color = fade;
+        tempAttackGO.transform.position = transform.position + (attackDir * attacks[attackRoll].attackSpacing);
+        tempAttackGO.transform.right = attackDir;
+    }
+    
     #endregion
 
     // Called by other scripts to hit the player
@@ -303,10 +346,13 @@ public class EnemyScript : MonoBehaviour
         velocity -= knockback * knockbackAmt;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
-        if (health - 1 < 0)
+        if (health <= 0)
         {
             if (attackGO != null)
                 Destroy(attackGO);
+
+            if (tempAttackGO != null)
+                Destroy(tempAttackGO);
 
             playerScript.AddGold(Random.Range(1, 5));
 

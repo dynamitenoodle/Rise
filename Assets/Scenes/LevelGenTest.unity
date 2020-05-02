@@ -1706,10 +1706,11 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 1202682115124967237, guid: cb92b3cdbf0b4d64aa6be7ff71453db4, type: 3}
   - {fileID: 3856345244267791272, guid: ed37f00900ed78c449f3483235cc4b59, type: 3}
+  - {fileID: 1202682115124967237, guid: 15eb4b296652972418bb6cfce9134899, type: 3}
   enemyQueue: []
   enemies: []
-  maxEnemiesForWave: 01000000020000000300000004000000
-  minEnemiesForWave: 01000000020000000300000004000000
+  maxEnemiesForWave: 0a000000020000000300000004000000
+  minEnemiesForWave: 0a000000020000000300000004000000
   spawnChance:
     serializedVersion: 2
     key0: {r: 1, g: 0, b: 0, a: 1}

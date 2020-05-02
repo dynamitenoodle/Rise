@@ -320,7 +320,7 @@ public class WaveManager : MonoBehaviour
             if (enemyTypeSpawn <= spawnChance.colorKeys[0].time)
                 enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to specialEnemyPrefabs
             else if (enemyTypeSpawn <= spawnChance.colorKeys[1].time) 
-                enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to rareEnemyPrefabs
+                enemy = GetRandomEnemy(rareEnemyPrefabs);
             else if (enemyTypeSpawn <= spawnChance.colorKeys[2].time)
                 enemy = GetRandomEnemy(uncommonEnemyPrefabs);
             else if (enemyTypeSpawn <= spawnChance.colorKeys[3].time)

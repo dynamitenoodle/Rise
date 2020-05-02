@@ -54,14 +54,21 @@ public class Constants
     public const float ENEMY_MELEE_SPEED = .005f;
     public const float ENEMY_MELEE_FRICTION = .9f;
     public const float ENEMY_MELEE_DETECTION_DISTANCE = 15f;
-    public const float ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
-    public const float ENEMY_MELEE_HEALTH_MAX = 2f;
+    public const float ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 1.0f;
+    public const float ENEMY_MELEE_HEALTH_MAX = 3f;
+    // Melee
+    public const float ENEMY_FAST_MELEE_MAXSPEED = .07f;
+    public const float ENEMY_FAST_MELEE_SPEED = .015f;
+    public const float ENEMY_FAST_MELEE_FRICTION = .9f;
+    public const float ENEMY_FAST_MELEE_DETECTION_DISTANCE = 15f;
+    public const float ENEMY_FAST_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 0.7f;
+    public const float ENEMY_FAST_MELEE_HEALTH_MAX = 2f;
     // Ranged
     public const float ENEMY_RANGED_MAXSPEED = .035f;
     public const float ENEMY_RANGED_SPEED = .005f;
     public const float ENEMY_RANGED_FRICTION = .9f;
     public const float ENEMY_RANGED_DETECTION_DISTANCE = 15f;
-    public const float ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
+    public const float ENEMY_RANGED_MINIMUM_TIME_BETWEEN_ATTACKS = 1.0f;
     public const float ENEMY_RANGED_HEALTH_MAX = 3f;
     // Boss
     public const float ENEMY_BOSS_MAXSPEED = .025f;
@@ -70,6 +77,7 @@ public class Constants
     public const float ENEMY_BOSS_DETECTION_DISTANCE = 30f;
     public const float ENEMY_BOSS_MINIMUM_TIME_BETWEEN_ATTACKS = 2.0f;
     public const float ENEMY_BOSS_HEALTH_MAX = 10f;
+
     //Resources constants
     public const string RESOURCES_ABILITIES = "Abilities";
     public const string RESOURCES_PLAYER = "Entities/Player";

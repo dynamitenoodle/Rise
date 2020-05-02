@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 978165682433616989}
   - component: {fileID: 978165682433616988}
   - component: {fileID: 2150914827247730941}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bossShock
   m_TagString: EnemyAttack
   m_Icon: {fileID: 0}
