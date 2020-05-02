@@ -18,7 +18,7 @@ MonoBehaviour:
   attackSpacing: 0
   attackPrefab: {fileID: 2592537362949441743, guid: 79a344c2c65f6864bb641bab9d503352,
     type: 3}
-  kickBack: 150
+  kickBack: 500
   isMelee: 1
   bulletSpeed: 0.2
   shotNumMax: 1

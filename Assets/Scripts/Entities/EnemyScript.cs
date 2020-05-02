@@ -189,7 +189,7 @@ public class EnemyScript : MonoBehaviour
             }
 
             // create the faded melee attack
-            else if (tempAttackGO == null && attacks[attackRoll].isMelee && attackTimer < attacks[attackRoll].attackDelay)
+            else if (enemyAttackStyle != EnemyAttackStyle.boss && tempAttackGO == null && attacks[attackRoll].isMelee && attackTimer < attacks[attackRoll].attackDelay)
             {
                 if (tempAttackGO == null)
                 {
@@ -365,11 +365,28 @@ public class EnemyScript : MonoBehaviour
     // Apply the velocity to the enemy
     void ApplyVelocity()
     {
-        // Slowdown if nothing
-        if (direction == Vector3.zero)
-            velocity *= friction;
+        Vector3 force = (direction * speed);
 
-        velocity += (direction * speed);
+        if (!attacking && roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
+        {
+            foreach (GameObject enemy in waveManager.enemies)
+            {
+                if (enemy != gameObject)
+                {
+                    if (Vector3.Distance(enemy.transform.position, gameObject.transform.position) < 1f)
+                    {
+                        Vector3 wantedSpeed = -(enemy.transform.position - gameObject.transform.position);
+                        wantedSpeed = wantedSpeed.normalized * maxSpeed;
+
+                        // Steering rule
+                        Vector3 steer = wantedSpeed - velocity;
+                        steer = Vector3.ClampMagnitude(steer, maxSpeed);
+
+                        force += steer;
+                    }
+                }
+            }    
+        }
 
         if (attackRoll != -1)
         {
@@ -379,7 +396,12 @@ public class EnemyScript : MonoBehaviour
                 velocity = Vector3.ClampMagnitude(velocity, maxSpeed * attacks[attackRoll].kickBack);
         }
 
+        // Slowdown if nothing
+        if (direction == Vector3.zero)
+            velocity *= friction;
+
         // Carry out the math
+        velocity += force;
         transform.position += velocity;
         direction = Vector3.zero;
     }
