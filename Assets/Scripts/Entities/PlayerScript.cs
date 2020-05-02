@@ -81,6 +81,9 @@ public class PlayerScript : MonoBehaviour
 
     public void AddModifier(Item modifier)
     {
+
+        if (modifier.modifier.StartAction(null))
+
         modifierAdds.Add(modifier);
     }
 
