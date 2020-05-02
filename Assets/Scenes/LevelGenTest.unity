@@ -1709,8 +1709,8 @@ MonoBehaviour:
   - {fileID: 1202682115124967237, guid: 15eb4b296652972418bb6cfce9134899, type: 3}
   enemyQueue: []
   enemies: []
-  maxEnemiesForWave: 0a000000020000000300000004000000
-  minEnemiesForWave: 0a000000020000000300000004000000
+  maxEnemiesForWave: 05000000020000000300000004000000
+  minEnemiesForWave: 05000000020000000300000004000000
   spawnChance:
     serializedVersion: 2
     key0: {r: 1, g: 0, b: 0, a: 1}

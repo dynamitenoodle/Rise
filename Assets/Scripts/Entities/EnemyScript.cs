@@ -195,7 +195,7 @@ public class EnemyScript : MonoBehaviour
                 {
                     CreateFadeAttack();
                 }
-                else if (tempAttackGO.transform.position != transform.position + (attackDir * attacks[attackRoll].attackSpacing))
+                else
                 {
                     Destroy(tempAttackGO);
                     CreateFadeAttack();

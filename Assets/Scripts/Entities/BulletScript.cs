@@ -74,6 +74,7 @@ public class BulletScript : MonoBehaviour
             if (gameObject.tag == "PlayerAttack" && enemy.GetComponent<Collider2D>().bounds.Intersects(GetComponent<Collider2D>().bounds))
             {
                 enemy.GetComponent<EnemyScript>().GetHit(Vector2.zero, 1);
+                DestroyBullet();
             }
         }
     }

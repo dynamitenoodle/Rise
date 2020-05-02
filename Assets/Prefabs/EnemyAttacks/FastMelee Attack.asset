@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: FastMelee Attack
   m_EditorClassIdentifier: 
   attackRange: 1.3
-  attackTimerMax: 0.5
+  attackTimerMax: 1
   attackDelay: 0.5
-  attackSpacing: 0.8
+  attackSpacing: 1
   attackPrefab: {fileID: 978165682433616991, guid: c1a95768ef399954d940fbf1fe45c0bc,
     type: 3}
   kickBack: 1.5
   isMelee: 1
   bulletSpeed: 0.2
   shotNumMax: 1
-  increasedDelay: 0
+  increasedDelay: 0.5
   speen: 0
   speenSpeed: 15
