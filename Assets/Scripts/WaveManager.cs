@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour
@@ -151,6 +152,7 @@ public class WaveManager : MonoBehaviour
 
                     if (waveNum == 5)
                     {
+                        SceneManager.LoadScene("MainMenu");
                         spawning = false;
                         yield return null;
                     }
@@ -302,7 +304,6 @@ public class WaveManager : MonoBehaviour
 
         //spawn boss at spawn point 1
         GameObject bossObj = Instantiate(boss, bossRoomDescriber.spawnPoints[1].position, Quaternion.identity, enemyTransform);
-        enemyQueue.Add(bossObj);
     }
 
     private void GenerateEnemyQueue()
@@ -320,7 +321,7 @@ public class WaveManager : MonoBehaviour
             if (enemyTypeSpawn <= spawnChance.colorKeys[0].time)
                 enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to specialEnemyPrefabs
             else if (enemyTypeSpawn <= spawnChance.colorKeys[1].time) 
-                enemy = GetRandomEnemy(commonEnemyPrefabs);//TODO: change this to rareEnemyPrefabs
+                enemy = GetRandomEnemy(rareEnemyPrefabs);
             else if (enemyTypeSpawn <= spawnChance.colorKeys[2].time)
                 enemy = GetRandomEnemy(uncommonEnemyPrefabs);
             else if (enemyTypeSpawn <= spawnChance.colorKeys[3].time)

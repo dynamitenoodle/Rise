@@ -1,20 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
     // attributes
-    [SerializeField] float maxSpeed = .1f;
-    [SerializeField] float speed = .02f;
+    public float maxSpeed = .1f;
+    public float speed = .02f;
     [SerializeField] float friction = .9f;
     Vector3 velocity;
     Vector3 direction;
     Vector3 lastDir;
 
     // health stuffs
-    [SerializeField] float healthMax = 3;
-    float health;
+    [SerializeField] int healthMax = 10;
+    int health;
     public bool invulnerable;
     public bool canMove;
     [SerializeField] float hitTimerMax = 2;
@@ -54,6 +55,7 @@ public class PlayerScript : MonoBehaviour
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
         abilities[0].abilitySlot = 0;
 
+        abilityUIManager.UpdateHealth(health, healthMax);
     }
 
     // Update is called once per frame
@@ -71,16 +73,38 @@ public class PlayerScript : MonoBehaviour
         {
             AddGold(100);
         }
+
     }
 
+    public void HealPlayer(int amount)
+    {
+        if (health + amount > healthMax)
+        {
+            health = healthMax;
+        }
+        else
+        {
+            health += amount;
+        }
+
+        abilityUIManager.UpdateHealth(health, healthMax);
+    }
 
     void UpdateAddModifier(Item modifier)
     {
-        abilityUIManager.AbilityUpgradeUISetData(modifier.name, modifier.image);
+        abilityUIManager.AbilityUpgradeUISetData(modifier);
+    }
+
+    public void AddItem(ItemPickup item)
+    {
+        item.Action(this);
     }
 
     public void AddModifier(Item modifier)
     {
+        bool shouldRemove = modifier.modifier.ModifyPlayer(this);
+        if (shouldRemove) { return; }
+
         modifierAdds.Add(modifier);
     }
 
@@ -111,9 +135,14 @@ public class PlayerScript : MonoBehaviour
             invulnerable = true;
             health--;
 
-            if (health - 1 < 0)
-                Application.Quit();
+            if (health <= 0)
+            {
+                SceneManager.LoadScene("Main Menu");
+            }
+
         }
+
+        abilityUIManager.UpdateHealth(health, healthMax);
     }
 
     // Flickering if hit

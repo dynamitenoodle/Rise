@@ -26,6 +26,24 @@
       "image": "Entities/Pickups/Modifiers/Images/CoolDown",
       "cost": 1.0,
       "poolType": 0
+    },
+    {
+      "name": "Speed Up",
+      "asset": "Entities/Pickups/Modifiers/SpeedUp",
+      "className": "Modifier_SpeedUp",
+      "description": "SPEEEEEEEED",
+      "image": "Entities/Pickups/Modifiers/Images/SpeedUp",
+      "cost": 1.0,
+      "poolType": 0
+    },
+    {
+      "name": "Electric Rune",
+      "asset": "Entities/Pickups/Modifiers/ElectricRune",
+      "className": "Modifier_ElectricRune",
+      "description": "SPEEEEEEEED",
+      "image": "Entities/Pickups/Modifiers/Images/ElectricRune",
+      "cost": 1.5,
+      "poolType": 0
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "Abilities": [
+    {
+      "name": "Healh Refill",
+      "asset": "Entities/Pickups/ItemPickups/Health_Pickup",
+      "className": "Item_Health",
+      "description": "Refills your health by 10!",
+      "cost": 1.0,
+      "poolType": 0
+    }
+  ]
+}

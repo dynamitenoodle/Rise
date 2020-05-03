@@ -21,6 +21,7 @@ public class TraderManager : MonoBehaviour
     private MinimapController minimapController;
 
     List<Item> items;
+    List<GameObject> itemObjs;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +42,7 @@ public class TraderManager : MonoBehaviour
         bool active = false;
         for (int i = 0; i < items.Count; i++)
         {
-            if (helper.getDistance(player.transform.position, items[i].obj.transform.position) < Constants.TRADER_ITEMUI_ACTIVE_DISTANCE)
+            if (helper.getDistance(player.transform.position, itemObjs[i].transform.position) < Constants.TRADER_ITEMUI_ACTIVE_DISTANCE)
             {
                 active = true;
                 itemUI.SetUIData(items[i]);
@@ -53,9 +54,17 @@ public class TraderManager : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.E) && canBuy)
                 {
-                    playerScript.AddModifier(items[i]);
+                    if (items[i].modifier != null)
+                    {
+                        playerScript.AddModifier(items[i]);
+                    }
+                    else if (items[i].item != null)
+                    {
+                        playerScript.AddItem(items[i].item);
+                    }
                     playerScript.AddGold(-items[i].cost);
-                    Destroy(items[i].obj);
+                    Destroy(itemObjs[i]);
+                    itemObjs.RemoveAt(i);
                     items.RemoveAt(i);
                 }
             }
@@ -102,15 +111,15 @@ public class TraderManager : MonoBehaviour
         items = new List<Item>();
         float offset = 1.0f;
         float initialOffset = 0.5f;
+        itemObjs = new List<GameObject>();
         for (int i = 0; i < Constants.TRADER_ITEM_SPAWN_COUNT; i++)
         {
-            Item item = ItemPoolManager.Instance.GetModifierFromPool();
-
-            GameObject itemObj = Instantiate(item.obj, trader.transform);
-            Vector3 pos = itemObj.transform.position;
+            Item item = ItemPoolManager.Instance.GetItemForTrader();
+            Debug.Log("Spawning: " + item.name);
+            itemObjs.Add(Instantiate(item.obj, trader.transform));
+            Vector3 pos = itemObjs[i].transform.position;
             pos.x += -initialOffset + (offset * i);
-            itemObj.transform.position = pos;
-            item.obj = itemObj;
+            itemObjs[i].transform.position = pos;
             items.Add(item);
         }
     }

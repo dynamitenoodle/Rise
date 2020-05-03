@@ -23,6 +23,19 @@ public class AbilityUIManager : MonoBehaviour
 
     public GameObject buttons;
 
+    public RectTransform healthBar;
+    public Text healthText;
+
+    private float healthBarMaxWidth;
+    private float healthBarMaxPos;
+
+    private void Awake()
+    {
+        healthBarMaxWidth = healthBar.rect.width;
+        healthBarMaxPos = healthBar.rect.x;
+
+    }
+
     private void Start()
     {
         UpdateGoldText(0);
@@ -66,12 +79,12 @@ public class AbilityUIManager : MonoBehaviour
         abilityUpgradeUI.SetActive(active);
     }
 
-    public void AbilityUpgradeUISetData(string title, string image)
+    public void AbilityUpgradeUISetData(Item modifier)
     {
         if (abilityUpgradeUI.activeSelf) { return; }
 
-        abilityUpgradeTitle.text = title;
-        abilityUpgradeImage.sprite = Resources.Load<Sprite>(image);
+        abilityUpgradeTitle.text = modifier.name;
+        abilityUpgradeImage.sprite = modifier.obj.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
 
         AbilityUpgradeUIActive(true);
 
@@ -85,5 +98,20 @@ public class AbilityUIManager : MonoBehaviour
     public void UpdateGoldText(int gold)
     {
         goldText.text = $"${gold}";
+    }
+
+    public void UpdateHealth(int health, int healthMax)
+    {
+        healthText.text = $"{health} / {healthMax}";
+        float percentage = ((float)health / (float)healthMax);
+
+        float x = healthBarMaxPos - (healthBarMaxPos * percentage);
+        float width = healthBarMaxWidth * percentage;
+        
+        Vector2 pos = new Vector2(x, healthBar.localPosition.y);
+        Vector2 size = new Vector2(width, healthBar.sizeDelta.y);
+
+        healthBar.localPosition = pos;
+        healthBar.sizeDelta = size;
     }
 }

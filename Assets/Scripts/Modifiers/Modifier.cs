@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Modifier : MonoBehaviour
+public abstract class Modifier
 {
     public enum ModifierStartAction
     {
@@ -10,6 +10,7 @@ public abstract class Modifier : MonoBehaviour
         remain_after
     }
 
+    public abstract bool ModifyPlayer(PlayerScript playerScript);
     public abstract ModifierStartAction StartAction(Ability ability);
     public abstract void Action(ModifierInfo modifierInfo);
 }
