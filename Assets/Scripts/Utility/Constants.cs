@@ -18,6 +18,7 @@ public class Constants
     public const string TAG_ENVIRONMENT_WATER = "Environment_Water";
     public const string TAG_ENVIRONMENT_FIRE = "Environment_Fire";
     public const string TAG_ENVIRONMENT_STEAM = "Environment_Steam";
+    public const string TAG_ENEMY = "Enemy";
 
     //Level Gen 
     public const int LEVELGENERATION_MIN_ROOM_DISTANCE = 5;
@@ -41,6 +42,7 @@ public class Constants
 
     //environment constants
     public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;
+    public const float ENVIRONMENT_ELECTRIC_LIFE_SPAN = 1f;
     public const float ENVIRONMENT_STEAM_CREATE_RADIUS_MULTIPLIER = 2f;
     public const float ENVIRONMENT_UPDATE_TIME = 0.2f;
     public const float ENVIRONMENT_ADD_RIGIDBODY_AFTER_SECONDS = 0.1f;

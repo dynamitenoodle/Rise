@@ -10,6 +10,8 @@ public class EnvironmentManager : MonoBehaviour
     public GameObject environmentFire;
     public GameObject environmentWater;
     public GameObject environmentSteam;
+    public GameObject environmentElectric;
+    public GameObject environmentElectricWater;
 
     private Dictionary<string, GameObject> environmentDict;
 

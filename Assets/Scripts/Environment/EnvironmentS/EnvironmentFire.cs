@@ -22,7 +22,7 @@ public class EnvironmentFire : EnvironmentElement
         StartCoroutine("UpdateFire");
     }
 
-    public override void EnvironmentAction()
+    public override void EnvironmentAction(EnemyScript enemy)
     {
         
     }

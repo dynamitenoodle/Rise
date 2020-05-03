@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnvironmentSteam : EnvironmentElement
+public class EnvironmentWater : EnvironmentElement
 {
-    private void Start()
-    {
 
-    }
-
-    public override void EnvironmentAction()
+    public override void EnvironmentAction(EnemyScript enemyScript)
     {
 
     }

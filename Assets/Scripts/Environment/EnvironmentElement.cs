@@ -11,7 +11,7 @@ public abstract class EnvironmentElement : MonoBehaviour
         environmentManager = GameObject.Find(Constants.GAMEOBJECT_NAME_ENVIRONMENTMANAGER).GetComponent<EnvironmentManager>();
         inUse = false;
     }
-    public abstract void EnvironmentAction();
+    public abstract void EnvironmentAction(EnemyScript enemyScript);
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         if (inUse) return;
@@ -21,10 +21,12 @@ public abstract class EnvironmentElement : MonoBehaviour
         {
             environmentManager = GameObject.Find(Constants.GAMEOBJECT_NAME_ENVIRONMENTMANAGER).GetComponent<EnvironmentManager>();
         }
-
-        if (environmentManager.CheckForEnvironmentTag(collision.gameObject.tag))
+        else if (collision.gameObject.tag == Constants.TAG_ENEMY)
         {
-
+            
+        }
+        else if (environmentManager.CheckForEnvironmentTag(collision.gameObject.tag))
+        {
             environmentManager.UpdateEnvironmentElements(this.gameObject, collision.gameObject);
         }
         inUse = false;
