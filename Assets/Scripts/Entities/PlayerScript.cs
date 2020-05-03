@@ -85,6 +85,7 @@ public class PlayerScript : MonoBehaviour
     {
         bool shouldRemove = modifier.modifier.ModifyPlayer(this);
         if (shouldRemove) { return; }
+
         modifierAdds.Add(modifier);
     }
 

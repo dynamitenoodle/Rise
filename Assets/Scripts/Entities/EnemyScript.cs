@@ -71,6 +71,11 @@ public class EnemyScript : MonoBehaviour
         if (player == null)
             Destroy(gameObject);
 
+        if (GetComponent<SpriteRenderer>().color.r != 0)
+            GetComponent<SpriteRenderer>().color *= .9f;
+
+        GetComponent<SpriteRenderer>().color = new Color (GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1.0f);
+
         // If we don't have an attack selected
         if (attackRoll == -1)
         {
@@ -189,7 +194,7 @@ public class EnemyScript : MonoBehaviour
             }
 
             // create the faded melee attack
-            else if (tempAttackGO == null && attacks[attackRoll].isMelee && attackTimer < attacks[attackRoll].attackDelay)
+            else if (enemyAttackStyle != EnemyAttackStyle.boss && tempAttackGO == null && attacks[attackRoll].isMelee && attackTimer < attacks[attackRoll].attackDelay)
             {
                 if (tempAttackGO == null)
                 {
@@ -346,6 +351,8 @@ public class EnemyScript : MonoBehaviour
         velocity -= knockback * knockbackAmt;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
+        GetComponent<SpriteRenderer>().color = Color.red;
+
         if (health <= 0)
         {
             if (attackGO != null)
@@ -365,11 +372,28 @@ public class EnemyScript : MonoBehaviour
     // Apply the velocity to the enemy
     void ApplyVelocity()
     {
-        // Slowdown if nothing
-        if (direction == Vector3.zero)
-            velocity *= friction;
+        Vector3 force = (direction * speed);
 
-        velocity += (direction * speed);
+        if (!attacking && roomNum == player.GetComponent<PlayerScript>().Node.roomNum)
+        {
+            foreach (GameObject enemy in waveManager.enemies)
+            {
+                if (enemy != gameObject)
+                {
+                    if (Vector3.Distance(enemy.transform.position, gameObject.transform.position) < 1f)
+                    {
+                        Vector3 wantedSpeed = -(enemy.transform.position - gameObject.transform.position);
+                        wantedSpeed = wantedSpeed.normalized * maxSpeed;
+
+                        // Steering rule
+                        Vector3 steer = wantedSpeed - velocity;
+                        steer = Vector3.ClampMagnitude(steer, maxSpeed);
+
+                        force += steer;
+                    }
+                }
+            }    
+        }
 
         if (attackRoll != -1)
         {
@@ -379,7 +403,12 @@ public class EnemyScript : MonoBehaviour
                 velocity = Vector3.ClampMagnitude(velocity, maxSpeed * attacks[attackRoll].kickBack);
         }
 
+        // Slowdown if nothing
+        if (direction == Vector3.zero)
+            velocity *= friction;
+
         // Carry out the math
+        velocity += force;
         transform.position += velocity;
         direction = Vector3.zero;
     }

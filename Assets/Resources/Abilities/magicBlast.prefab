@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4481260164966246358}
   - component: {fileID: 5752485810399604700}
   - component: {fileID: 2433002237037068888}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: magicBlast
   m_TagString: PlayerAttack
   m_Icon: {fileID: 0}
@@ -97,6 +97,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: {x: 0, y: 0}
   speed: 0
+  maxScale: {x: 0, y: 0}
+  minScale: {x: 0, y: 0}
 --- !u!61 &5752485810399604700
 BoxCollider2D:
   m_ObjectHideFlags: 0
