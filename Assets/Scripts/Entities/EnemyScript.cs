@@ -71,6 +71,11 @@ public class EnemyScript : MonoBehaviour
         if (player == null)
             Destroy(gameObject);
 
+        if (GetComponent<SpriteRenderer>().color.r != 0)
+            GetComponent<SpriteRenderer>().color *= .9f;
+
+        GetComponent<SpriteRenderer>().color = new Color (GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1.0f);
+
         // If we don't have an attack selected
         if (attackRoll == -1)
         {
@@ -345,6 +350,8 @@ public class EnemyScript : MonoBehaviour
 
         velocity -= knockback * knockbackAmt;
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
+
+        GetComponent<SpriteRenderer>().color = Color.red;
 
         if (health <= 0)
         {
