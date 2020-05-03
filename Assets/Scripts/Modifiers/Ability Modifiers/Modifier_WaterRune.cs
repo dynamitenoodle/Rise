@@ -28,8 +28,8 @@ public class Modifier_WaterRune : Modifier
         return ModifierStartAction.remain_after;
     }
 
-    public override void ModifyPlayer(PlayerScript player)
+    public override bool ModifyPlayer(PlayerScript player)
     {
-        return;
+        return false;
     }
 }

@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Modifier_SpeedUp : MonoBehaviour
+public class Modifier_SpeedUp : Modifier
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Action(ModifierInfo modifierInfo)
     {
-        
+        return;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override ModifierStartAction StartAction(Ability ability)
     {
-        
+        return ModifierStartAction.delete_after;
+    }
+
+    public override bool ModifyPlayer(PlayerScript player)
+    {
+        player.speed *= 2f;
+        player.maxSpeed *= 2f;
+        return true;
     }
 }

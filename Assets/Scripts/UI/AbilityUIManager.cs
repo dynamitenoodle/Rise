@@ -23,9 +23,19 @@ public class AbilityUIManager : MonoBehaviour
 
     public GameObject buttons;
 
+    public RectTransform healthBar;
+    public Text healthText;
+
+    private float healthBarMaxWidth;
+    private float healthBarMaxPos;
+
     private void Start()
     {
         UpdateGoldText(0);
+
+        healthBarMaxWidth = healthBar.rect.width;
+        healthBarMaxPos = healthBar.rect.x;
+
     }
 
     public void SetAbilityPanel(AbilityPanel abilityPanel, int abilityNum)
@@ -85,5 +95,22 @@ public class AbilityUIManager : MonoBehaviour
     public void UpdateGoldText(int gold)
     {
         goldText.text = $"${gold}";
+    }
+
+    public void UpdateHealth(int health, int healthMax)
+    {
+        healthText.text = $"{health} / {healthMax}";
+        float percentage = ((float)health / (float)healthMax);
+        Debug.Log($"health: {health} / healthMax: {healthMax}");
+        float x = healthBarMaxPos - (healthBarMaxPos * percentage);
+        float width = healthBarMaxWidth * percentage;
+
+        Debug.Log($"percentage: {percentage}, x: {x}, width: {width}");
+
+        Vector2 pos = new Vector2(x, healthBar.localPosition.y);
+        Vector2 size = new Vector2(width, healthBar.sizeDelta.y);
+
+        healthBar.localPosition = pos;
+        healthBar.sizeDelta = size;
     }
 }

@@ -10,7 +10,7 @@ public abstract class Modifier : MonoBehaviour
         remain_after
     }
 
-    public abstract void ModifyPlayer(PlayerScript playerScript);
+    public abstract bool ModifyPlayer(PlayerScript playerScript);
     public abstract ModifierStartAction StartAction(Ability ability);
     public abstract void Action(ModifierInfo modifierInfo);
 }

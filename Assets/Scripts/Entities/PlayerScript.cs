@@ -5,16 +5,16 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     // attributes
-    [SerializeField] float maxSpeed = .1f;
-    [SerializeField] float speed = .02f;
+    public float maxSpeed = .1f;
+    public float speed = .02f;
     [SerializeField] float friction = .9f;
     Vector3 velocity;
     Vector3 direction;
     Vector3 lastDir;
 
     // health stuffs
-    [SerializeField] float healthMax = 3;
-    float health;
+    [SerializeField] int healthMax = 3;
+    int health;
     public bool invulnerable;
     public bool canMove;
     [SerializeField] float hitTimerMax = 2;
@@ -71,6 +71,8 @@ public class PlayerScript : MonoBehaviour
         {
             AddGold(100);
         }
+
+        abilityUIManager.UpdateHealth(health, healthMax);
     }
 
 
@@ -81,9 +83,8 @@ public class PlayerScript : MonoBehaviour
 
     public void AddModifier(Item modifier)
     {
-
-        if (modifier.modifier.StartAction(null))
-
+        bool shouldRemove = modifier.modifier.ModifyPlayer(this);
+        if (shouldRemove) { return; }
         modifierAdds.Add(modifier);
     }
 
