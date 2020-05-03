@@ -12,6 +12,7 @@ public class EnvironmentManager : MonoBehaviour
     public GameObject environmentSteam;
     public GameObject environmentElectric;
     public GameObject environmentElectricWater;
+    public GameObject environmentElectricSteam;
 
     private Dictionary<string, GameObject> environmentDict;
 
@@ -29,6 +30,9 @@ public class EnvironmentManager : MonoBehaviour
         environmentDict.Add(Constants.TAG_ENVIRONMENT_FIRE, environmentFire);
         environmentDict.Add(Constants.TAG_ENVIRONMENT_WATER, environmentWater);
         environmentDict.Add(Constants.TAG_ENVIRONMENT_STEAM, environmentSteam);
+        environmentDict.Add(Constants.TAG_ENVIRONMENT_ELECTRIC, environmentElectric);
+        environmentDict.Add(Constants.TAG_ENVIRONMENT_ELECTRICWATER, environmentElectricWater);
+        environmentDict.Add(Constants.TAG_ENVIRONMENT_ELECTRICSTEAM, environmentElectricSteam);
 
         //environmentElements = new List<GameObject>();
     }
@@ -89,11 +93,29 @@ public class EnvironmentManager : MonoBehaviour
         AddEnvironmentFromTag(Constants.TAG_ENVIRONMENT_STEAM, position, radius);
     }
 
+    public void AddElectric(Vector2 position, float radius)
+    {
+        AddEnvironmentFromTag(Constants.TAG_ENVIRONMENT_ELECTRIC, position, radius);
+    }
+
+    public void AddElectricWater(Vector2 position, float radius)
+    {
+        AddEnvironmentFromTag(Constants.TAG_ENVIRONMENT_ELECTRICWATER, position, radius);
+    }
+
+    public void AddElectricSteam(Vector2 position, float radius)
+    {
+        AddEnvironmentFromTag(Constants.TAG_ENVIRONMENT_ELECTRICSTEAM, position, radius);
+    }
+
     public bool CheckForEnvironmentTag(string tag)
     {
         return (tag.Equals(Constants.TAG_ENVIRONMENT_FIRE) ||
             tag.Equals(Constants.TAG_ENVIRONMENT_STEAM) ||
-            tag.Equals(Constants.TAG_ENVIRONMENT_WATER));
+            tag.Equals(Constants.TAG_ENVIRONMENT_WATER) ||
+            tag.Equals(Constants.TAG_ENVIRONMENT_ELECTRIC) ||
+            tag.Equals(Constants.TAG_ENVIRONMENT_ELECTRICWATER) ||
+            tag.Equals(Constants.TAG_ENVIRONMENT_ELECTRICSTEAM));
     }
 
     public void UpdateEnvironmentElements(GameObject element1, GameObject element2)
@@ -116,6 +138,19 @@ public class EnvironmentManager : MonoBehaviour
             Destroy(element2);
             //create steam obj
             AddSteam(position, scale);
+        }
+
+        if (element1.tag.Equals(Constants.TAG_ENVIRONMENT_WATER) && element2.tag.Equals(Constants.TAG_ENVIRONMENT_ELECTRIC))
+        {
+            Destroy(element1);
+            AddElectricWater(element1.transform.position, element1.transform.localScale.x);
+        }
+
+        if (element1.tag.Equals(Constants.TAG_ENVIRONMENT_STEAM) && element2.tag.Equals(Constants.TAG_ENVIRONMENT_ELECTRIC))
+        {
+            Destroy(element1);
+            Destroy(element2);
+            AddElectricSteam(element1.transform.position, element1.transform.localScale.x);
         }
     }
 

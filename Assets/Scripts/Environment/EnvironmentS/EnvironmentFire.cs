@@ -24,7 +24,7 @@ public class EnvironmentFire : EnvironmentElement
 
     public override void EnvironmentAction(EnemyScript enemy)
     {
-        
+        enemy.GetHit(Vector3.zero, 0);
     }
 
     IEnumerator UpdateFire()

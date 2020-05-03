@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 3047658489855881176}
   - component: {fileID: 1389775669088282482}
-  - component: {fileID: -8676533911636025877}
-  - component: {fileID: 3462219249573966859}
-  - component: {fileID: 672881925724425396}
+  - component: {fileID: 732066631395800123}
+  - component: {fileID: 9128360914028580351}
+  - component: {fileID: 5701341703172404915}
   m_Layer: 0
-  m_Name: Environment_Steam
-  m_TagString: Environment_Steam
+  m_Name: Environment_Electric
+  m_TagString: Environment_Electric
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,9 +71,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 5
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 1}
+  m_Color: {r: 0.5673854, g: 0.81960785, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -83,20 +83,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-8676533911636025877
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3589028069193442107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efffb69ca2ce8e147bd15ed1dbd23edc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inUse: 0
---- !u!58 &3462219249573966859
+--- !u!58 &732066631395800123
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -112,7 +99,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.09
---- !u!50 &672881925724425396
+--- !u!50 &9128360914028580351
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -133,3 +120,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &5701341703172404915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3589028069193442107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4f7b51a73443bc4fa678760c99cd892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inUse: 0

@@ -18,6 +18,9 @@ public class Constants
     public const string TAG_ENVIRONMENT_WATER = "Environment_Water";
     public const string TAG_ENVIRONMENT_FIRE = "Environment_Fire";
     public const string TAG_ENVIRONMENT_STEAM = "Environment_Steam";
+    public const string TAG_ENVIRONMENT_ELECTRIC = "Environment_Electric";
+    public const string TAG_ENVIRONMENT_ELECTRICWATER = "Environment_ElectricWater";
+    public const string TAG_ENVIRONMENT_ELECTRICSTEAM = "Environment_ElectricSteam";
     public const string TAG_ENEMY = "Enemy";
 
     //Level Gen 
@@ -38,11 +41,13 @@ public class Constants
 
     //ability constants
 
-    public const float ABILITY_RANGED_ATTACK_DEFAULT_SPEED = 0.1f;
+    public const float ABILITY_RANGED_ATTACK_DEFAULT_SPEED = 0.2f;
 
     //environment constants
     public const float ENVIRONMENT_FIRE_LIFE_SPAN = 20f;
-    public const float ENVIRONMENT_ELECTRIC_LIFE_SPAN = 1f;
+    public const float ENVIRONMENT_ELECTRIC_LIFE_SPAN = 0.4f;
+    public const float ENVIRONMENT_ELECTRIC_WATER_LIFE_SPAN = 5f;
+    public const float ENVIRONMENT_ELECTRIC_STEAM_LIFE_SPAN = 5f;
     public const float ENVIRONMENT_STEAM_CREATE_RADIUS_MULTIPLIER = 2f;
     public const float ENVIRONMENT_UPDATE_TIME = 0.2f;
     public const float ENVIRONMENT_ADD_RIGIDBODY_AFTER_SECONDS = 0.1f;
@@ -52,8 +57,8 @@ public class Constants
 
     // Enemy constants
     // Melee
-    public const float ENEMY_MELEE_MAXSPEED = .04f;
-    public const float ENEMY_MELEE_SPEED = .005f;
+    public const float ENEMY_MELEE_MAXSPEED = .08f;
+    public const float ENEMY_MELEE_SPEED = .02f;
     public const float ENEMY_MELEE_FRICTION = .85f;
     public const float ENEMY_MELEE_DETECTION_DISTANCE = 15f;
     public const float ENEMY_MELEE_MINIMUM_TIME_BETWEEN_ATTACKS = 1.0f;

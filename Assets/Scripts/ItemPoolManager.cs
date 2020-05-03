@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Item
 {
-    public bool isAbility;
     public string name;
     public GameObject obj;
     public Ability ability;
     public Modifier modifier;
+    public ItemPickup item;
     public string description;
-    public string image;
     public float costMultiplier;
     public int cost;
     public int tier;
@@ -29,7 +28,6 @@ public class Abilities
     public string asset;
     public string className;
     public string description;
-    public string image;
     public float cost;
     public byte poolType;
 }
@@ -38,10 +36,19 @@ public class Abilities
 public class ItemPoolManager : MonoBehaviour
 {
 
+    private enum LoadType
+    {
+        ability,
+        modifier,
+        item
+    }
+
+
     public static ItemPoolManager Instance { get; private set; }
 
     List<List<Item>> abilityPool;
     List<List<Item>> modifierPool;
+    List<List<Item>> itemPool;
 
     private void Awake()
     {
@@ -67,11 +74,12 @@ public class ItemPoolManager : MonoBehaviour
         spawnChances[2] = Constants.ITEM_SPAWNCHANCE_RARE;
         spawnChances[3] = Constants.ITEM_SPAWNCHANCE_SPECIAL;
 
-        modifierPool = LoadJSONItems("ItemPool_Modifiers", false);
+        modifierPool = LoadJSONItems("ItemPool_Modifiers", LoadType.modifier);
+        itemPool = LoadJSONItems("ItemPool_ItemPickups", LoadType.item);
         //abilityPool = LoadJSONItems("ItemPool_Abilities");
     }
 
-    private List<List<Item>> LoadJSONItems(string fileName, bool isAbilities)
+    private List<List<Item>> LoadJSONItems(string fileName, LoadType loadType)
     {
         string json = GetJSONFromFile(fileName);
 
@@ -89,22 +97,35 @@ public class ItemPoolManager : MonoBehaviour
         foreach (Abilities item in jsonAbilitiesLoad.Abilities)
         {
             Item itemDescription = new Item();
-            itemDescription.isAbility = isAbilities;
-            if (isAbilities)
+
+            itemDescription.ability = null;
+            itemDescription.modifier = null;
+            itemDescription.item = null;
+            itemDescription.cost = 0;
+
+            if (loadType == LoadType.ability)
             {
                 itemDescription.ability = (Ability)System.Activator.CreateInstance(System.Type.GetType(item.className));
-                itemDescription.modifier = null;
             }
-            else
+            else if (loadType == LoadType.modifier)
             {
                 itemDescription.modifier = (Modifier)System.Activator.CreateInstance(System.Type.GetType(item.className));
-                itemDescription.ability = null;
+                itemDescription.cost = (int)Random.Range(((item.poolType + 1) * 40) * item.cost, (((item.poolType + 1) * 40) * 4) * item.cost);
             }
+            else if (loadType == LoadType.item)
+            {
+                itemDescription.item = (ItemPickup)System.Activator.CreateInstance(System.Type.GetType(item.className));
+                itemDescription.cost = (int)Random.Range((30 * item.cost), (70 * item.cost));
+            }
+
             itemDescription.name = item.name;
             itemDescription.obj = Resources.Load<GameObject>(item.asset);
+            if (itemDescription.obj == null)
+            {
+                Debug.LogError("Failed to load object for item name: " + item.name);
+            }
             itemDescription.description = item.description;
             itemDescription.costMultiplier = item.cost;
-            itemDescription.cost = (int)Random.Range(((item.poolType + 1) * 40) * item.cost, (((item.poolType + 1) * 40) * 4) * item.cost);
             itemDescription.tier = item.poolType;
             itemsLoad[item.poolType].Add(itemDescription);
         }
@@ -133,10 +154,55 @@ public class ItemPoolManager : MonoBehaviour
 
         itemTier = 0;
 
+        bool fixTier = true;
+        do
+        {
+            if (modifierPool[itemTier].Count == 0 && itemTier != 3)
+            {
+                itemTier++;
+            }
+            else if (itemTier == 3)
+            {
+                return null;
+            }
+            else
+            {
+                fixTier = false;
+            }
+        } while (fixTier);
+
         int randomItem = Random.Range(0, modifierPool[itemTier].Count);
 
         Item item = modifierPool[itemTier][randomItem];
         modifierPool[itemTier].RemoveAt(randomItem);
+        return item;
+    }
+
+    public Item GetItemPickupFromPool()
+    {
+        int randomItem = Random.Range(0, itemPool[0].Count);
+        Item item = itemPool[0][randomItem];
+        return item;
+    }
+
+    public Item GetItemForTrader()
+    {
+        Item item;
+        float randomPickup = Random.Range(0.0f, 1.0f);
+
+        if (randomPickup > 0.2f)
+        {
+            item = GetModifierFromPool();
+            if (item == null)
+            {
+                item = GetItemPickupFromPool();
+            }
+        }
+        else
+        {
+            item = GetItemPickupFromPool();
+        }
+
         return item;
     }
 

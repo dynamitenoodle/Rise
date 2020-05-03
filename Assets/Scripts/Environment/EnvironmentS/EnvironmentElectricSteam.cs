@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnvironmentElectric : EnvironmentElement
+public class EnvironmentElectricSteam : EnvironmentElement
 {
     float startTime;
     float lifeSpan;
@@ -12,7 +12,7 @@ public class EnvironmentElectric : EnvironmentElement
 
     private void Start()
     {
-        lifeSpan = Constants.ENVIRONMENT_ELECTRIC_LIFE_SPAN;
+        lifeSpan = Constants.ENVIRONMENT_FIRE_LIFE_SPAN;
         startTime = Time.time;
 
         //temporary
@@ -30,7 +30,7 @@ public class EnvironmentElectric : EnvironmentElement
 
     IEnumerator UpdateFire()
     {
-        for (; ; )
+        for(;;)
         {
             Vector2 scale = Vector2.Lerp(maxScale, minScale, ((Time.time - startTime) / lifeSpan));
             this.transform.localScale = scale;

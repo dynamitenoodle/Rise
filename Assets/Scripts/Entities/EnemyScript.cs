@@ -33,7 +33,7 @@ public class EnemyScript : MonoBehaviour
     bool speenDir = false;
 
     // health
-    float healthMax = 2;
+    float healthMax = 6;
     float health;
 
     WaveManager waveManager;

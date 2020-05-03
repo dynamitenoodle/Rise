@@ -23,7 +23,7 @@ public abstract class EnvironmentElement : MonoBehaviour
         }
         else if (collision.gameObject.tag == Constants.TAG_ENEMY)
         {
-            
+            EnvironmentAction(collision.gameObject.GetComponent<EnemyScript>());
         }
         else if (environmentManager.CheckForEnvironmentTag(collision.gameObject.tag))
         {

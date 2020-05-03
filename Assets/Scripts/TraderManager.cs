@@ -54,7 +54,14 @@ public class TraderManager : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.E) && canBuy)
                 {
-                    playerScript.AddModifier(items[i]);
+                    if (items[i].modifier != null)
+                    {
+                        playerScript.AddModifier(items[i]);
+                    }
+                    else if (items[i].item != null)
+                    {
+                        playerScript.AddItem(items[i].item);
+                    }
                     playerScript.AddGold(-items[i].cost);
                     Destroy(itemObjs[i]);
                     itemObjs.RemoveAt(i);
@@ -107,8 +114,8 @@ public class TraderManager : MonoBehaviour
         itemObjs = new List<GameObject>();
         for (int i = 0; i < Constants.TRADER_ITEM_SPAWN_COUNT; i++)
         {
-            Item item = ItemPoolManager.Instance.GetModifierFromPool();
-
+            Item item = ItemPoolManager.Instance.GetItemForTrader();
+            Debug.Log("Spawning: " + item.name);
             itemObjs.Add(Instantiate(item.obj, trader.transform));
             Vector3 pos = itemObjs[i].transform.position;
             pos.x += -initialOffset + (offset * i);

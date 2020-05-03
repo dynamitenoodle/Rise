@@ -12,6 +12,9 @@ TagManager:
   - Environment_Water
   - Environment_Fire
   - Environment_Steam
+  - Environment_Electric
+  - Environment_ElectricWater
+  - Environment_ElectricSteam
   layers:
   - Default
   - TransparentFX

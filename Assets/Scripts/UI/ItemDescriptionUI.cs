@@ -20,13 +20,14 @@ public class ItemDescriptionUI : MonoBehaviour
 
     public void SetUIData(Item item)
     {
-        SetUIData(item.name, item.image, item.description, item.cost);
+        Sprite image = item.obj.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite;
+        SetUIData(item.name, image, item.description, item.cost);
     }
 
-    public void SetUIData(string title, string image, string description, int cost)
+    public void SetUIData(string title, Sprite image, string description, int cost)
     {
         this.title.text = title;
-        this.image.sprite = Resources.Load<Sprite>(image);
+        this.image.sprite = image;
         this.description.text = description;
         this.cost.text = $"${cost}";
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlayerScript : MonoBehaviour
     Vector3 lastDir;
 
     // health stuffs
-    [SerializeField] int healthMax = 3;
+    [SerializeField] int healthMax = 10;
     int health;
     public bool invulnerable;
     public bool canMove;
@@ -54,6 +55,7 @@ public class PlayerScript : MonoBehaviour
         abilities[0] = gameObject.AddComponent<Ability_MagicBlast>();
         abilities[0].abilitySlot = 0;
 
+        abilityUIManager.UpdateHealth(health, healthMax);
     }
 
     // Update is called once per frame
@@ -72,13 +74,30 @@ public class PlayerScript : MonoBehaviour
             AddGold(100);
         }
 
+    }
+
+    public void HealPlayer(int amount)
+    {
+        if (health + amount > healthMax)
+        {
+            health = healthMax;
+        }
+        else
+        {
+            health += amount;
+        }
+
         abilityUIManager.UpdateHealth(health, healthMax);
     }
 
-
     void UpdateAddModifier(Item modifier)
     {
-        abilityUIManager.AbilityUpgradeUISetData(modifier.name, modifier.image);
+        abilityUIManager.AbilityUpgradeUISetData(modifier);
+    }
+
+    public void AddItem(ItemPickup item)
+    {
+        item.Action(this);
     }
 
     public void AddModifier(Item modifier)
@@ -116,9 +135,14 @@ public class PlayerScript : MonoBehaviour
             invulnerable = true;
             health--;
 
-            if (health - 1 < 0)
-                Application.Quit();
+            if (health <= 0)
+            {
+                SceneManager.LoadScene("Main Menu");
+            }
+
         }
+
+        abilityUIManager.UpdateHealth(health, healthMax);
     }
 
     // Flickering if hit
